@@ -1,0 +1,30 @@
+{
+  "name": "innerken-utils",
+  "version": "1.0.0",
+  "description": "Utils for innerken GmbH",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/innerken-gmbh/InnerKenUtils.git"
+  },
+  "keywords": [
+    "utils",
+    "js"
+  ],
+  "author": "haodong-ju",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/innerken-gmbh/InnerKenUtils/issues"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "core-js": "^3.6.2",
+    "js-cookie": "^2.2.1",
+    "qs": "^6.9.1",
+    "sweetalert2": "^9.8.2"
+  },
+  "homepage": "https://github.com/innerken-gmbh/InnerKenUtils#readme"
+}

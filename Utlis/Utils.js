@@ -13,7 +13,6 @@ const Toast = Swal.mixin({
     },
 });
 
-
 export function showConfirm(title = 'Are you sure?', content = 'You won\'t be able to revert this!', callback, failCallback) {
     Swal.fire({
         title: title,
@@ -25,13 +24,17 @@ export function showConfirm(title = 'Are you sure?', content = 'You won\'t be ab
         confirmButtonText: 'OK',
     }).then((result) => {
         if (result.value) {
-            callback()
+            if (callback) {
+                callback()
+            }
+
         } else {
-            failCallback()
+            if (failCallback) {
+                failCallback()
+            }
         }
     })
 }
-
 
 export function toast(title = 'Successful!', type = 'success') {
     Toast.fire({
@@ -53,7 +56,7 @@ export function showLoading(canCancel = false) {
     Swal.fire({
         title: '正在加载',
         allowOutsideClick: () => !Swal.isLoading(),
-        allowEscapeKey: false,
+        allowEscapeKey: canCancel,
     });
     Swal.showLoading()
 }
@@ -119,9 +122,9 @@ export function deepCopy(target) {
     return _deepCopy(target)
 }
 
-// 获取cookie、
+// 获取cookie
 export function getCookie(name) {
-    let arr
+    let arr={}
     const reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
     if (arr === document.cookie.match(reg)) {
         return (arr[2])
@@ -129,7 +132,6 @@ export function getCookie(name) {
         return null
     }
 }
-
 
 // 设置cookie,增加到vue实例方便全局调用
 export function setCookie(cName, value, expiredays) {

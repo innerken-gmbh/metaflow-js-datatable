@@ -27,5 +27,6 @@
     "qs": "^6.9.1",
     "sweetalert2": "^9.8.2"
   },
+  "type": "module",
   "homepage": "https://github.com/innerken-gmbh/InnerKenUtils#readme"
 }

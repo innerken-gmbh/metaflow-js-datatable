@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2'
-import http from './http'
+import {http} from './http.js';
 
 const Toast = Swal.mixin({
     toast: true,

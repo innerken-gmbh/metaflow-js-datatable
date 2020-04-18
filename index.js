@@ -1,7 +1,7 @@
-import Utils from "./Utlis/Utils";
-import http from "./Utlis/http";
+import Utils from "./Utlis/Utils.js";
+import {http} from "./Utlis/http.js";
 
-
+console.log(http)
 
 export const IKUtils={...Utils}
 

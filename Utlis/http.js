@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-import Utils from './Utils'
+import Utils from './Utils.js'
 
 const instance = axios.create({timeout: 1000 * 30})
 

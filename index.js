@@ -1,13 +1,11 @@
 import Utils from "./Utlis/Utils";
 import http from "./Utlis/http";
 
-let IKUtils = {
-    ...Utils
-}
-let ego = {
+
+
+export const IKUtils={...Utils}
+
+export const ego = {
     ...http
 }
 
-export {
-    IKUtils, ego
-}

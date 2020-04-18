@@ -20,12 +20,13 @@
     "url": "https://github.com/innerken-gmbh/InnerKenUtils/issues"
   },
   "dependencies": {
+    "@sweetalert2/theme-material-ui": "^3.1.4",
     "axios": "^0.19.2",
     "core-js": "^3.6.2",
     "js-cookie": "^2.2.1",
     "np": "^6.2.1",
     "qs": "^6.9.1",
-    "sweetalert2": "^9.8.2"
+    "sweetalert2": "^9.10.12"
   },
   "type": "module",
   "homepage": "https://github.com/innerken-gmbh/InnerKenUtils#readme"

@@ -1,7 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-import Utils from './Utils.js'
-
+import Utils from "./Utils.js";
 
 
 const httpCode = { // 这里我简单列出一些常见的http状态码信息，可以自己去调整配置
@@ -20,18 +19,7 @@ const RqConfig = {
     LoadingUtils: { showLoading: Utils.showLoading, hideLoading: Utils.hideLoading, showError: Utils.showError },
 }
 
-const JHRequestBase = {}
-
 const instance = axios.create({ timeout: 1000 * 30 })
-
-JHRequestBase.instance = instance
-JHRequestBase.initialed = false
-
-JHRequestBase.initial = function (baseUrl) {
-    instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
-    instance.defaults.baseURL = baseUrl
-    JHRequestBase.initialed = true
-}
 
 export function initial (baseUrl) {
     instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
@@ -110,4 +98,5 @@ instance.interceptors.response.use(
         }
     },
 )
+
 export { instance as http }

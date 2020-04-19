@@ -1,5 +1,4 @@
 import Swal from 'sweetalert2'
-import {http} from './http.js';
 
 const Toast = Swal.mixin({
     toast: true,
@@ -64,31 +63,6 @@ export function showLoading(canCancel = false) {
 export function hideLoading() {
     Swal.hideLoading();
     Swal.close()
-}
-
-export function fastSweetAlertRequest(title, input, url, dataName, dataObj, callback = false) {
-    dataObj[dataName] = '';
-    Swal.fire({
-        title: title,
-        input: input,
-        inputAttributes: {
-            autocapitalize: 'off',
-        },
-        showCancelButton: true,
-        confirmButtonText: 'confirm',
-        showLoaderOnConfirm: true,
-        preConfirm: (data) => {
-            dataObj[dataName] = data
-            return http.post(url, dataObj)
-                .then(response => {
-                    console.log(response)
-                    if (callback) {
-                        callback()
-                    }
-                })
-        },
-        allowOutsideClick: () => !Swal.isLoading(),
-    })
 }
 
 export function deepCopy(target) {
@@ -187,5 +161,5 @@ export const ValidateRules = {
 
 export default {
     ValidateRules, compose, trick, delCookie, setCookie, getCookie,
-    deepCopy, fastSweetAlertRequest, hideLoading, showLoading, showError, toast, showConfirm
+    deepCopy, hideLoading, showLoading, showError, toast, showConfirm
 }

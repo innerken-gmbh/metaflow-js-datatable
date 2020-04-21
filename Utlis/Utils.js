@@ -167,11 +167,11 @@ export function safeCallFunction (on, func, ...args) {
     if (typeof func === 'function') {
         return func.call(on, ...args)
     }
-    return safeCallFunction(this, IKUtils.showError, ('Calling a Invalid Function'))
+    return safeCallFunction(this, showError, ('Calling a Invalid Function'))
 }
 
 export function extend (target, ...args) {
-    return Object.assign(IKUtils.deepCopy(target), ...args)
+    return Object.assign(deepCopy(target), ...args)
 }
 
 export default {

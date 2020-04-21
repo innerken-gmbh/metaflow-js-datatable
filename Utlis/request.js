@@ -54,7 +54,6 @@ function fastSweetAlertRequest(title, input, url, dataName, dataObj, callback = 
     })
 }
 
-
 export default {
     post, fastSweetAlertRequest,get,postWithUploadFile
 }

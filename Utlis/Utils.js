@@ -159,7 +159,22 @@ export const ValidateRules = {
 
 }
 
+export function checkKeyExist (item, key) {
+    return !!item[key]
+}
+
+export function safeCallFunction (on, func, ...args) {
+    if (typeof func === 'function') {
+        return func.call(on, ...args)
+    }
+    return safeCallFunction(this, IKUtils.showError, ('Calling a Invalid Function'))
+}
+
+export function extend (target, ...args) {
+    return Object.assign(IKUtils.deepCopy(target), ...args)
+}
+
 export default {
     ValidateRules, compose, trick, delCookie, setCookie, getCookie,
-    deepCopy, hideLoading, showLoading, showError, toast, showConfirm
+    deepCopy, hideLoading, showLoading, showError, toast, showConfirm,checkKeyExist,safeCallFunction,extend
 }

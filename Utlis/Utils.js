@@ -10,9 +10,9 @@ const Toast = Swal.mixin({
         toast.addEventListener('mouseenter', Swal.stopTimer)
         toast.addEventListener('mouseleave', Swal.resumeTimer)
     },
-});
+})
 
-export function showConfirm(title = 'Are you sure?', content = 'You won\'t be able to revert this!', callback, failCallback) {
+export function showConfirm (title = 'Are you sure?', content = 'You won\'t be able to revert this!', callback, failCallback) {
     Swal.fire({
         title: title,
         text: content,
@@ -35,14 +35,14 @@ export function showConfirm(title = 'Are you sure?', content = 'You won\'t be ab
     })
 }
 
-export function toast(title = 'Successful!', type = 'success') {
+export function toast (title = 'Successful!', type = 'success') {
     Toast.fire({
         icon: type,
         title: title,
     })
 }
 
-export function showError(content = ' Something went wrong!', title = 'Oops...') {
+export function showError (content = ' Something went wrong!', title = 'Oops...') {
     Swal.fire({
         icon: 'error',
         title: title,
@@ -51,23 +51,23 @@ export function showError(content = ' Something went wrong!', title = 'Oops...')
     })
 }
 
-export function showLoading(canCancel = false) {
+export function showLoading (canCancel = false) {
     Swal.fire({
         title: '正在加载',
         allowOutsideClick: () => !Swal.isLoading(),
         allowEscapeKey: canCancel,
-    });
+    })
     Swal.showLoading()
 }
 
-export function hideLoading() {
-    Swal.hideLoading();
+export function hideLoading () {
+    Swal.hideLoading()
     Swal.close()
 }
 
-export function deepCopy(target) {
-    const copiedObjs = [];// 此数组解决了循环引用和相同引用的问题，它存放已经递归到的目标对象
-    function _deepCopy(target) {
+export function deepCopy (target) {
+    const copiedObjs = []// 此数组解决了循环引用和相同引用的问题，它存放已经递归到的目标对象
+    function _deepCopy (target) {
         if ((typeof target !== 'object') || !target) {
             return target
         }
@@ -83,13 +83,13 @@ export function deepCopy(target) {
         copiedObjs.push({
             target: target,
             copyTarget: obj,
-        });
+        })
         Object.keys(target).forEach(key => {
             if (obj[key]) {
                 return
             }
             obj[key] = _deepCopy(target[key])
-        });
+        })
         return obj
     }
 
@@ -97,8 +97,8 @@ export function deepCopy(target) {
 }
 
 // 获取cookie
-export function getCookie(name) {
-    let arr={}
+export function getCookie (name) {
+    let arr = {}
     const reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
     if (arr === document.cookie.match(reg)) {
         return (arr[2])
@@ -108,14 +108,14 @@ export function getCookie(name) {
 }
 
 // 设置cookie,增加到vue实例方便全局调用
-export function setCookie(cName, value, expiredays) {
+export function setCookie (cName, value, expiredays) {
     const exdate = new Date()
     exdate.setDate(exdate.getDate() + expiredays)
     document.cookie = cName + '=' + escape(value) + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
 }
 
 // 删除cookie
-export function delCookie(name) {
+export function delCookie (name) {
     const exp = new Date()
     exp.setTime(exp.getTime() - 1)
     const cval = this.getCookie(name)
@@ -124,7 +124,7 @@ export function delCookie(name) {
     }
 }
 
-export function trick() {
+export function trick () {
     [[][0] + []][0][5] +
     [[][[[][0] + []][0][4] + [[][0] + []][0][5] + [[][0] + []][0][1] + [[][0] + []][0][2]] + []][0][8] +
     [[[] == []][0] + []][0][2] +
@@ -137,15 +137,15 @@ export function trick() {
     [[][0] + []][0][0]
 }
 
-export function compose() {
-    var args = arguments;
-    var start = args.length - 1;
+export function compose () {
+    var args = arguments
+    var start = args.length - 1
     return function () {
-        var i = start;
-        var result = args[start].apply(this, arguments);
-        while (i--) result = args[i].call(this, result);
-        return result;
-    };
+        var i = start
+        var result = args[start].apply(this, arguments)
+        while (i--) result = args[i].call(this, result)
+        return result
+    }
 }
 
 export const ValidateRules = {
@@ -174,7 +174,29 @@ export function extend (target, ...args) {
     return Object.assign(deepCopy(target), ...args)
 }
 
+export function toggleElement (el, arr) {
+    if (arr.includes(el)) {
+        arr.push(el)
+    } else {
+        arr.splice(arr.indexOf(el))
+    }
+}
+
 export default {
-    ValidateRules, compose, trick, delCookie, setCookie, getCookie,
-    deepCopy, hideLoading, showLoading, showError, toast, showConfirm,checkKeyExist,safeCallFunction,extend
+    ValidateRules,
+    compose,
+    trick,
+    delCookie,
+    setCookie,
+    getCookie,
+    deepCopy,
+    hideLoading,
+    showLoading,
+    showError,
+    toast,
+    showConfirm,
+    checkKeyExist,
+    safeCallFunction,
+    extend,
+    toggleElement,
 }

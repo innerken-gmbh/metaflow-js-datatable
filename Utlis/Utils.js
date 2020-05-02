@@ -178,8 +178,12 @@ export function toggleElement (el, arr) {
     if (arr.includes(el)) {
         arr.push(el)
     } else {
-        arr.splice(arr.indexOf(el))
+        removeElement(el, arr)
     }
+}
+
+export function removeElement (el, arr) {
+    arr.splice(arr.indexOf(el), 1)
 }
 
 export default {
@@ -199,4 +203,5 @@ export default {
     safeCallFunction,
     extend,
     toggleElement,
+    removeElement
 }

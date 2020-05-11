@@ -1,5 +1,6 @@
 import {ego,IKUtils,hillo} from './index.js'
-console.log(ego,IKUtils,hillo)
+import {IKDataEntity} from "./index";
+console.log(ego,IKUtils,hillo,IKDataEntity)
 hillo.post("https://www.baidu.com",{}).then(res=>{
     console.log(res)
 })

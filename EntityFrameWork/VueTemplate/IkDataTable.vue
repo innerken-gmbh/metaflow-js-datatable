@@ -1,5 +1,5 @@
 <template>
-  <base-material-card
+  <material-card
           class="px-5 py-3 "
           color="indigo"
           :icon="icon"
@@ -120,7 +120,7 @@
         </v-icon>
       </template>
     </v-data-table>
-  </base-material-card>
+  </material-card>
 </template>
 
 <script>
@@ -128,12 +128,14 @@
   import GeneralForm from './GeneralForm'
   import { IKDataEntity, IKUtils } from 'innerken-utils'
   import ImgTemplate from './ImgTemplate'
+  import MaterialCard from "./MaterialCard";
 
   export default {
-    name: 'InnerKenDataTable',
+    name: 'IkDataTable',
     components: {
       ImgTemplate,
       GeneralForm,
+      MaterialCard
     },
     props: {
       entityName: {
@@ -236,12 +238,12 @@
       },
       save () {
         if (this.editedIndex > -1) {
-          IKUtils.safeCallFunction(this.model, this.model.edit, this.editedItem).then((res) => {
+          IKUtils.safeCallFunction(this.model, this.model.edit, this.editedItem).then(() => {
             IKUtils.toast(this.$i18n.t('编辑成功'))
             this.closeDialog()
           })
         } else {
-          IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem).then((res) => {
+          IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem).then(() => {
             IKUtils.toast(this.$i18n.t('添加成功'))
             this.closeDialog()
           })
@@ -252,7 +254,7 @@
                 this.$i18n.t('Are you sure?'),
                 this.$i18n.t('you want to delete this item?'), () => {
                   IKUtils.safeCallFunction(this.model, this.model.delete, item.id)
-                          .then(res => {
+                          .then(() => {
                             IKUtils.toast(this.$i18n.t('删除成功'))
                             this.reload()
                           })

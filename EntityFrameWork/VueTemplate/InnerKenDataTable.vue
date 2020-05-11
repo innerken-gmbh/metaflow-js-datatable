@@ -1,9 +1,9 @@
 <template>
   <base-material-card
-    class="px-5 py-3 "
-    color="indigo"
-    :icon="icon"
-    inline
+          class="px-5 py-3 "
+          color="indigo"
+          :icon="icon"
+          inline
   >
     <template v-slot:after-heading>
       <div class="display-2 font-weight-light">
@@ -12,67 +12,67 @@
       <slot name="extra-heading"/>
     </template>
     <v-text-field
-      v-model="search"
-      append-icon="mdi-magnify"
-      class="ml-auto"
-      hide-details
-      label="Search"
-      single-line
-      style="max-width: 250px;"
+            v-model="search"
+            append-icon="mdi-magnify"
+            class="ml-auto"
+            hide-details
+            label="Search"
+            single-line
+            style="max-width: 250px;"
     />
     <v-divider class="mt-3"/>
     <v-data-table
-      :fixed-header="true"
-      :headers="realHeaders"
-      :items="tableItem"
-      :items-per-page="15"
-      :loading="loading"
-      :search.sync="search"
-      multi-sort
+            :fixed-header="true"
+            :headers="realHeaders"
+            :items="tableItem"
+            :items-per-page="15"
+            :loading="loading"
+            :search.sync="search"
+            multi-sort
     >
       <template
-        v-for="slottedItem in slottedItems"
-        v-slot:[slottedItem.name]="{ item }"
+              v-for="slottedItem in slottedItems"
+              v-slot:[slottedItem.name]="{ item }"
       >
         <slot
-          :name="slottedItem.name"
-          :item="item"
+                :name="slottedItem.name"
+                :item="item"
         />
       </template>
       <template
-        v-for="adItem in advancedItems"
-        v-slot:[adItem.name]="{ item }"
+              v-for="adItem in advancedItems"
+              v-slot:[adItem.name]="{ item }"
       >
         <template
-          v-if="
+                v-if="
             adItem.dataType===Types.Image"
         >
           <img-template
-            :key="adItem.name"
-            :model="adItem.value"
-            :item="item"
-            :root="adItem.type.root()"
+                  :key="adItem.name"
+                  :model="adItem.value"
+                  :item="item"
+                  :root="adItem.type.root()"
           />
         </template>
         <template
-          v-else-if="
+                v-else-if="
             adItem.dataType===Types.Boolean"
         >
           <v-checkbox
-            :key="adItem.name"
-            :readonly="true"
-            :input-value="item[adItem.value]"
-            disabled
+                  :key="adItem.name"
+                  :readonly="true"
+                  :input-value="item[adItem.value]"
+                  disabled
           />
         </template>
         <template
-          v-else-if="
+                v-else-if="
             adItem.dataType===Types.Option"
         >
           <v-chip
-            :key="adItem.name"
-            class="mx-2"
-            label
+                  :key="adItem.name"
+                  class="mx-2"
+                  label
           >
             {{ adItemList(adItem,item) }}
           </v-chip>
@@ -81,20 +81,20 @@
       <template v-slot:footer>
         <slot name="footer">
           <general-form
-            :title="entityName"
-            :dialog="dialog"
-            :edited-item="editedItem"
-            :edited-index="editedIndex"
-            :form-field="formField"
-            @change-general-form="dialogChange"
+                  :title="entityName"
+                  :dialog="dialog"
+                  :edited-item="editedItem"
+                  :edited-index="editedIndex"
+                  :form-field="formField"
+                  @change-general-form="dialogChange"
           />
         </slot>
       </template>
       <template v-slot:no-data>
         <slot name="no-data">
           <v-btn
-            color="primary"
-            @click="reload"
+                  color="primary"
+                  @click="reload"
           >
             {{ $t('重新加载') }}
           </v-btn>
@@ -102,19 +102,19 @@
       </template>
       <template v-slot:item.action="{ item }">
         <slot
-          name="item.action"
-          :item="{ item }"
+                name="item.action"
+                :item="{ item }"
         />
         <v-icon
-          class="mr-2"
-          small
-          @click="editItem(item)"
+                class="mr-2"
+                small
+                @click="editItem(item)"
         >
           mdi-pencil
         </v-icon>
         <v-icon
-          small
-          @click="deleteItem(item)"
+                small
+                @click="deleteItem(item)"
         >
           mdi-delete
         </v-icon>
@@ -126,13 +126,15 @@
 <script>
 
   import GeneralForm from './GeneralForm'
-  import { IKUtils } from 'innerken-utils'
-  import { parseField, Types } from '../../model/DataEntity'
+  import { IKDataEntity, IKUtils } from 'innerken-utils'
   import ImgTemplate from './ImgTemplate'
 
   export default {
     name: 'InnerKenDataTable',
-    components: { ImgTemplate, GeneralForm },
+    components: {
+      ImgTemplate,
+      GeneralForm,
+    },
     props: {
       entityName: {
         type: String,
@@ -154,7 +156,7 @@
     },
     data: function () {
       return {
-        Types: Types,
+        Types: IKDataEntity.Types,
         search: '',
         loading: false,
         items: [],
@@ -179,21 +181,27 @@
 
       advancedItems: function () {
         return this.headers
-          .filter(item => [Types.Image, Types.Boolean, Types.Option].includes(item.dataType))
-          .map(item => {
-            return { ...item, name: 'item.' + item.value }
-          })
+                .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+                .map(item => {
+                  return {
+                    ...item,
+                    name: 'item.' + item.value,
+                  }
+                })
       },
       slottedItems: function () {
         return this.headers
-          .filter(item => item.overwrite)
-          .map(item => {
-            return { ...item, name: 'item.' + item.value }
-          })
+                .filter(item => item.overwrite)
+                .map(item => {
+                  return {
+                    ...item,
+                    name: 'item.' + item.value,
+                  }
+                })
       },
     },
     created () {
-      [this.headers, this.formField, this.defaultItem] = parseField(this.model)
+      [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
       if (this.useAction) {
         this.headers.push({
           text: 'action',
@@ -241,14 +249,14 @@
       },
       deleteItem (item) {
         IKUtils.showConfirm(
-          this.$i18n.t('Are you sure?'),
-          this.$i18n.t('you want to delete this item?'), () => {
-            IKUtils.safeCallFunction(this.model, this.model.delete, item.id)
-              .then(res => {
-                IKUtils.toast(this.$i18n.t('删除成功'))
-                this.reload()
-              })
-          },
+                this.$i18n.t('Are you sure?'),
+                this.$i18n.t('you want to delete this item?'), () => {
+                  IKUtils.safeCallFunction(this.model, this.model.delete, item.id)
+                          .then(res => {
+                            IKUtils.toast(this.$i18n.t('删除成功'))
+                            this.reload()
+                          })
+                },
         )
       },
       editItem (item) {

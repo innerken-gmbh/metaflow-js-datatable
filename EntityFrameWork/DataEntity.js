@@ -102,9 +102,20 @@ const OptionFormConfig = {
     },
 }
 
+const ImageFormConfig = {
+    type: {
+        name: 'image',
+        root:'/',
+        fileStorage: 'file',
+    },
+}
+
 function generateEntity(_entity, key) {
     if (_entity.type === Types.Time) {
         _entity.formConfig = Utils.extend(TimeFormConfig, _entity.formConfig)
+    }
+    if (_entity.type === Types.Image) {
+        _entity.formConfig = Utils.extend(ImageFormConfig, _entity.formConfig)
     }
     if (_entity.type === Types.Option) {
         if (_entity.formConfig.type) {

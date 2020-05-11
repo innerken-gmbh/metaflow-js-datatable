@@ -41,7 +41,7 @@
                 <img-with-loading
                         v-if="editedItem[type.fileStorage]"
                         :height="'200px'"
-                        :img-src="URL.createObjectURL(editedItem[type.fileStorage])"
+                        :img-src="uploadUrl"
                 />
                 <img-with-loading
                         v-else
@@ -145,6 +145,9 @@
             }
         },
         computed: {
+            uploadUrl:function(){
+                return URL.createObjectURL(editedItem[type.fileStorage])
+            },
             isNew: function () {
                 return this.currentState === -1
             },

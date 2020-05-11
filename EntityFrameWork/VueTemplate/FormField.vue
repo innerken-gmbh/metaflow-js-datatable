@@ -110,7 +110,7 @@
 <script>
 
   import ImgWithLoading from './ImgWithLoading'
-  import Utils from '../Utlis/Utils'
+  import Utils from '../../Utlis/Utils'
 
   export default {
     name: 'FormField',

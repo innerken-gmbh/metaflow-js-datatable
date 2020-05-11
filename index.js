@@ -14,7 +14,7 @@ export const ego = {
 export const hillo = {
     ...request
 }
-export const IKDataTable = {
+export const IkDataTable = {
     ...InnerKenDataTable
 }
 

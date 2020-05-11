@@ -1,7 +1,7 @@
 import Utils from "./Utlis/Utils.js";
 import {http, initial} from "./Utlis/http.js";
 import request from "./Utlis/request.js"
-import DataEntity from './EntityFrameWork/DataEntity'
+import DataEntity from './EntityFrameWork/DataEntity.js'
 
 
 export const IKDataEntity = {...DataEntity}

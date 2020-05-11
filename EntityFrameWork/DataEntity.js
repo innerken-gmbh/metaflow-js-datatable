@@ -1,4 +1,4 @@
-import { Utils } from 'Utlis/Utils'
+import Utils from '../Utlis/Utils.js'
 
 export const Types = {
   Integer: Symbol('Type:Integer'),
@@ -181,4 +181,12 @@ export function parseField (model) {
   }, {})
 
   return [headers, formField, defaultItem]
+}
+
+
+export default {
+  parseDataForEntity,
+  parseField,
+  Types,
+  getFieldFromModel
 }

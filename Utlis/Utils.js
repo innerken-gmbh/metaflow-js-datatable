@@ -12,6 +12,10 @@ const Toast = Swal.mixin({
     },
 })
 
+/**
+ * @param {string|HTMLElement|JQuery} title
+ * @param {string} content
+ */
 export function showConfirm(title = 'Are you sure?', content = 'You won\'t be able to revert this!', callback, failCallback) {
     Swal.fire({
         title: title,
@@ -42,6 +46,10 @@ export function toast(title = 'Successful!', type = 'success') {
     })
 }
 
+/**
+ * @param {string} content
+ * @param {string|HTMLElement|JQuery} title
+ */
 export function showError(content = ' Something went wrong!', title = 'Oops...') {
     Swal.fire({
         icon: 'error',
@@ -51,6 +59,9 @@ export function showError(content = ' Something went wrong!', title = 'Oops...')
     })
 }
 
+/**
+ * @param {boolean} canCancel
+ */
 export function showLoading(canCancel = false) {
     Swal.fire({
         title: '正在加载',
@@ -65,6 +76,9 @@ export function hideLoading() {
     Swal.close()
 }
 
+/**
+ * @param {Object} target
+ */
 export function deepCopy(target) {
     const copiedObjs = []// 此数组解决了循环引用和相同引用的问题，它存放已经递归到的目标对象
     function _deepCopy(target) {
@@ -108,10 +122,15 @@ export function getCookie(name) {
 }
 
 // 设置cookie,增加到vue实例方便全局调用
-export function setCookie(cName, value, expiredays) {
+/**
+ * @param cName
+ * @param {string} value
+ * @param {number} expireDays
+ */
+export function setCookie(cName, value, expireDays) {
     const exdate = new Date()
-    exdate.setDate(exdate.getDate() + expiredays)
-    document.cookie = cName + '=' + escape(value) + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
+    exdate.setDate(exdate.getDate() + expireDays)
+    document.cookie = cName + '=' + escape(value) + ((expireDays == null) ? '' : ';expires=' + exdate.toGMTString())
 }
 
 // 删除cookie
@@ -159,10 +178,19 @@ export const ValidateRules = {
 
 }
 
+/**
+ * @param item
+ * @param {number} key
+ */
 export function checkKeyExist(item, key) {
     return !!item[key]
 }
 
+/**
+ * @param {Object} on
+ * @param {function} func
+ * @param {(string|(any|any)[])[]} args
+ */
 export function safeCallFunction(on, func, ...args) {
     if (typeof func === 'function') {
         return func.call(on, ...args)
@@ -175,10 +203,20 @@ export function play() {
     audio.play()
 }
 
+/**
+ * @param {Object} target
+ * @param args
+ * @return
+ */
 function extend(target, ...args) {
     return Object.assign(deepCopy(target), ...args)
 }
 
+/**
+ * @param {Object} el
+ * @param {Array} arr
+ * @return
+ */
 export function toggleElement(el, arr) {
     if (arr.includes(el)) {
         arr.push(el)
@@ -187,10 +225,19 @@ export function toggleElement(el, arr) {
     }
 }
 
+/**
+ * @param {Object} el
+ * @param {Array} arr
+ * @return
+ */
+
 export function removeElement(el, arr) {
     arr.splice(arr.indexOf(el), 1)
 }
 
+/**
+ * @param {string} name
+ */
 function getQueryString(name) {
     return decodeURIComponent(
         (new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || ['', ''])[1].replace(/\+/g, '%20')) || null

@@ -179,7 +179,6 @@ export function parseField (model) {
     }
     return map
   }, {})
-
   return [headers, formField, defaultItem]
 }
 

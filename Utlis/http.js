@@ -21,6 +21,10 @@ const RqConfig = {
 
 const instance = axios.create({ timeout: 1000 * 30 })
 
+/**
+ * 使用某个BaseUrl来初始化本库，一定要调用本函数后才可以使用
+ * @param baseUrl
+ */
 export function initial (baseUrl) {
     instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
     instance.defaults.baseURL = baseUrl

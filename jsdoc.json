@@ -1,0 +1,25 @@
+{
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "source": {
+    "exclude": [
+      "node_modules"
+    ]
+  },
+  "markdown": {
+    "parser": "gfm",
+    "hardwrap": true
+  },
+  "templates": {
+    "name": "Doc Template",
+    "tabNames": {
+      "tutorials": "wiki"
+    }
+  },
+  "opts": {
+    "encoding": "utf8",
+    "recurse": true,
+    "package": "package.json"
+  }
+}

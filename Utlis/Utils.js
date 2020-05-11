@@ -12,7 +12,7 @@ const Toast = Swal.mixin({
     },
 })
 
-export function showConfirm (title = 'Are you sure?', content = 'You won\'t be able to revert this!', callback, failCallback) {
+export function showConfirm(title = 'Are you sure?', content = 'You won\'t be able to revert this!', callback, failCallback) {
     Swal.fire({
         title: title,
         text: content,
@@ -35,14 +35,14 @@ export function showConfirm (title = 'Are you sure?', content = 'You won\'t be a
     })
 }
 
-export function toast (title = 'Successful!', type = 'success') {
+export function toast(title = 'Successful!', type = 'success') {
     Toast.fire({
         icon: type,
         title: title,
     })
 }
 
-export function showError (content = ' Something went wrong!', title = 'Oops...') {
+export function showError(content = ' Something went wrong!', title = 'Oops...') {
     Swal.fire({
         icon: 'error',
         title: title,
@@ -51,7 +51,7 @@ export function showError (content = ' Something went wrong!', title = 'Oops...'
     })
 }
 
-export function showLoading (canCancel = false) {
+export function showLoading(canCancel = false) {
     Swal.fire({
         title: '正在加载',
         allowOutsideClick: () => !Swal.isLoading(),
@@ -60,14 +60,14 @@ export function showLoading (canCancel = false) {
     Swal.showLoading()
 }
 
-export function hideLoading () {
+export function hideLoading() {
     Swal.hideLoading()
     Swal.close()
 }
 
-export function deepCopy (target) {
+export function deepCopy(target) {
     const copiedObjs = []// 此数组解决了循环引用和相同引用的问题，它存放已经递归到的目标对象
-    function _deepCopy (target) {
+    function _deepCopy(target) {
         if ((typeof target !== 'object') || !target) {
             return target
         }
@@ -97,7 +97,7 @@ export function deepCopy (target) {
 }
 
 // 获取cookie
-export function getCookie (name) {
+export function getCookie(name) {
     let arr = {}
     const reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
     if (arr === document.cookie.match(reg)) {
@@ -108,14 +108,14 @@ export function getCookie (name) {
 }
 
 // 设置cookie,增加到vue实例方便全局调用
-export function setCookie (cName, value, expiredays) {
+export function setCookie(cName, value, expiredays) {
     const exdate = new Date()
     exdate.setDate(exdate.getDate() + expiredays)
     document.cookie = cName + '=' + escape(value) + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
 }
 
 // 删除cookie
-export function delCookie (name) {
+export function delCookie(name) {
     const exp = new Date()
     exp.setTime(exp.getTime() - 1)
     const cval = this.getCookie(name)
@@ -124,7 +124,7 @@ export function delCookie (name) {
     }
 }
 
-export function trick () {
+export function trick() {
     [[][0] + []][0][5] +
     [[][[[][0] + []][0][4] + [[][0] + []][0][5] + [[][0] + []][0][1] + [[][0] + []][0][2]] + []][0][8] +
     [[[] == []][0] + []][0][2] +
@@ -137,7 +137,7 @@ export function trick () {
     [[][0] + []][0][0]
 }
 
-export function compose () {
+export function compose() {
     var args = arguments
     var start = args.length - 1
     return function () {
@@ -159,22 +159,27 @@ export const ValidateRules = {
 
 }
 
-export function checkKeyExist (item, key) {
+export function checkKeyExist(item, key) {
     return !!item[key]
 }
 
-export function safeCallFunction (on, func, ...args) {
+export function safeCallFunction(on, func, ...args) {
     if (typeof func === 'function') {
         return func.call(on, ...args)
     }
     return safeCallFunction(this, showError, ('Calling a Invalid Function'))
 }
 
-export function extend (target, ...args) {
+export function play() {
+    const audio = new Audio('http://i.cloudup.com/E021I9zUG3.m4a')
+    audio.play()
+}
+
+function extend(target, ...args) {
     return Object.assign(deepCopy(target), ...args)
 }
 
-export function toggleElement (el, arr) {
+export function toggleElement(el, arr) {
     if (arr.includes(el)) {
         arr.push(el)
     } else {
@@ -182,8 +187,13 @@ export function toggleElement (el, arr) {
     }
 }
 
-export function removeElement (el, arr) {
+export function removeElement(el, arr) {
     arr.splice(arr.indexOf(el), 1)
+}
+
+function getQueryString(name) {
+    return decodeURIComponent(
+        (new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || ['', ''])[1].replace(/\+/g, '%20')) || null
 }
 
 export default {
@@ -203,5 +213,7 @@ export default {
     safeCallFunction,
     extend,
     toggleElement,
-    removeElement
+    removeElement,
+    play,
+    getQueryString
 }

@@ -35,21 +35,22 @@
             />
         </template>
         <template v-else-if="type.name==='image'">
-            <div
-                    v-if="currentState>-1"
-            >
+            <div>
                 <img-with-loading
                         v-if="editedItem[type.fileStorage]"
                         :height="'200px'"
                         :img-src="uploadUrl"
                 />
-                <img-with-loading
+                <template
                         v-else
-                        :height="'200px'"
-                        :img-src="root + editedItem[value]"
-                />
+                        v-if="currentState>-1"
+                >
+                    <img-with-loading
+                            :height="'200px'"
+                            :img-src="root + editedItem[value]"
+                    />
+                </template>
             </div>
-
             <v-file-input
                     v-model="editedItem[type.fileStorage]"
                     :disabled="shouldDisable"
@@ -145,7 +146,7 @@
             }
         },
         computed: {
-            uploadUrl:function(){
+            uploadUrl: function () {
                 return URL.createObjectURL(editedItem[type.fileStorage])
             },
             isNew: function () {

@@ -147,7 +147,7 @@
         },
         computed: {
             uploadUrl: function () {
-                return URL.createObjectURL(editedItem[type.fileStorage])
+                return URL.createObjectURL(this.editedItem[this.type.fileStorage])
             },
             isNew: function () {
                 return this.currentState === -1

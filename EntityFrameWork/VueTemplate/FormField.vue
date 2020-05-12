@@ -42,8 +42,7 @@
                         :img-src="uploadUrl"
                 />
                 <template
-                        v-else
-                        v-if="currentState>-1"
+                        v-else-if="currentState>-1"
                 >
                     <img-with-loading
                             :height="'200px'"

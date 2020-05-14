@@ -112,7 +112,7 @@
             <template v-slot:item.action="{ item }">
                 <slot
                         name="item.action"
-                        :item="{ item }"
+                        :item="item"
                 />
                 <template v-if="useDefaultAction">
                     <v-icon

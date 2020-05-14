@@ -15,9 +15,9 @@
                 color="white"
                 flat
         >
-            <slot name="filterLeft"></slot>
+            <slot :items="items" name="filterLeft"></slot>
             <v-spacer/>
-            <slot name="filterRight"></slot>
+            <slot :items="items" name="filterRight"></slot>
             <v-text-field
                     v-model="search"
                     append-icon="mdi-magnify"

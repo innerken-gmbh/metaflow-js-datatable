@@ -11,15 +11,24 @@
             </div>
             <slot name="extra-heading"/>
         </template>
-        <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                class="ml-auto"
-                hide-details
-                label="Search"
-                single-line
-                style="max-width: 250px;"
-        />
+        <v-toolbar
+                color="white"
+                flat
+        >
+            <slot name="filterLeft"></slot>
+            <v-spacer/>
+            <slot name="filterRight"></slot>
+            <v-text-field
+                    v-model="search"
+                    append-icon="mdi-magnify"
+                    class="ml-auto"
+                    hide-details
+                    label="Search"
+                    single-line
+                    style="max-width: 250px;"
+            />
+        </v-toolbar>
+
         <v-divider class="mt-3"/>
         <v-data-table
                 :fixed-header="true"

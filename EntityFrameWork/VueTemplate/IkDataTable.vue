@@ -114,19 +114,22 @@
                         name="item.action"
                         :item="{ item }"
                 />
-                <v-icon
-                        class="mr-2"
-                        small
-                        @click="editItem(item)"
-                >
-                    mdi-pencil
-                </v-icon>
-                <v-icon
-                        small
-                        @click="deleteItem(item)"
-                >
-                    mdi-delete
-                </v-icon>
+                <template v-if="useDefaultAction">
+                    <v-icon
+                            class="mr-2"
+                            small
+                            @click="editItem(item)"
+                    >
+                        mdi-pencil
+                    </v-icon>
+                    <v-icon
+                            small
+                            @click="deleteItem(item)"
+                    >
+                        mdi-delete
+                    </v-icon>
+                </template>
+
             </template>
         </v-data-table>
     </material-card>
@@ -161,6 +164,10 @@
                 default: '',
             },
             useAction: {
+                type: Boolean,
+                default: true,
+            },
+            useDefaultAction: {
                 type: Boolean,
                 default: true,
             },

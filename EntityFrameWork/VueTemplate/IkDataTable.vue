@@ -236,8 +236,10 @@
                 this.loading = false
                 this.items = []
             })
+
         },
         methods: {
+
             dialogChange(save) {
                 if (save) {
                     this.save()
@@ -245,11 +247,13 @@
                     this.closeDialog()
                 }
             },
+
             adItemList: async function (adItem, item) {
                 const list = await adItem.type.selectItems
                 console.log(list.find(t => t[adItem.type.itemValue] === item[adItem.value])[adItem.type.itemText])
                 return list.find(t => t[adItem.type.itemValue] === item[adItem.value])[adItem.type.itemText]
             },
+
             closeDialog() {
                 console.log('should close dialog')
                 this.editedItem = IKUtils.deepCopy(this.defaultItem)
@@ -257,6 +261,7 @@
                 this.dialog = false
                 this.reload()
             },
+
             save() {
                 if (this.editedIndex > -1) {
                     IKUtils.safeCallFunction(this.model, this.model.edit, this.editedItem).then(() => {
@@ -270,6 +275,7 @@
                     })
                 }
             },
+
             deleteItem(item) {
                 IKUtils.showConfirm(
                     this.$i18n.t('Are you sure?'),
@@ -282,12 +288,14 @@
                     },
                 )
             },
+
             editItem(item) {
                 // console.log(item)
                 this.editedIndex = this.items.indexOf(item)
                 this.editedItem = Object.assign({}, item)
                 this.dialog = true
             },
+
             async reload() {
                 this.loading = true
                 const filter = this.filter ? [...this.filter] : []

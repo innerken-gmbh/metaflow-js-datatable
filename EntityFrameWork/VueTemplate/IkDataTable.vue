@@ -290,7 +290,7 @@
             },
             async reload() {
                 this.loading = true
-                this.items = await IKUtils.safeCallFunction(this.model, this.model.getList, true, ...this.filter)
+                this.items = await IKUtils.safeCallFunction(this.model, this.model.getList, true, this.filter)
                 this.loading = false
                 // console.log(this.items)
             }

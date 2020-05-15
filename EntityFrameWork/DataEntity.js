@@ -118,8 +118,10 @@ const BooleanFormConfig = {
 
 function generateEntity(_entity, key) {
     if (_entity.type === Types.Boolean) {
-        if (_entity.formConfig.type) {
-            _entity.formConfig.type = Utils.extend(BooleanFormConfig.type, _entity.formConfig.type)
+        if (_entity.formConfig) {
+            if (_entity.formConfig.type) {
+                _entity.formConfig.type = Utils.extend(BooleanFormConfig.type, _entity.formConfig.type)
+            }
         }
         _entity.formConfig = Utils.extend(BooleanFormConfig, _entity.formConfig)
     }

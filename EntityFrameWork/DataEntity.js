@@ -63,7 +63,7 @@ const generalGetOne = async function (asyncListFunc, conditionFunc) {
 function ModelFactory (entity, config) {
     let list = null
 
-    const load = async function (filter) {
+    const load = config.load || async function (filter) {
         return []
     }
     const add = function (item) {

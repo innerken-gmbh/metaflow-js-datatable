@@ -55,6 +55,10 @@ async function generalLoad (url, data) {
         })
 }
 
+/**
+ * @param {function(*=, ...[*]=): null} asyncListFunc
+ * @param {*} conditionFunc
+ */
 const generalGetOne = async function (asyncListFunc, conditionFunc) {
     const _list = await asyncListFunc()
     return _list.find(item => conditionFunc(item))

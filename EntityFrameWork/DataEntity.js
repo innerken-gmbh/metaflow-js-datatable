@@ -279,4 +279,5 @@ export default {
     parseField,
     Types,
     getFieldFromModel,
+    ModelFactory
 }

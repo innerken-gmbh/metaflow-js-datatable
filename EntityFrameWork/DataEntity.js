@@ -65,7 +65,7 @@ const generalGetOne = async function (asyncListFunc, conditionFunc) {
     return _list.find(item => conditionFunc(item))
 }
 
-function ModelFactory (entity, config) {
+export function ModelFactory (entity, config) {
     let list = null
 
     const load = config.load || async function (filter) {
@@ -87,7 +87,6 @@ function ModelFactory (entity, config) {
         }
         return list
     }
-
     const getOne = async function (conditionFunc) {
         return generalGetOne(getList, conditionFunc)
     }

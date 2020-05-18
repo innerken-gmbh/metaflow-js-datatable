@@ -66,7 +66,7 @@ const generalGetOne = async function (asyncListFunc, conditionFunc) {
 }
 
 export function ModelFactory(entity, config) {
-    let list = null
+    let list = config.list || null
 
     const load = config.load || async function (filter) {
         return []

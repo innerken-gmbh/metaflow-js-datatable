@@ -83,7 +83,7 @@
                             class="mx-2"
                             label
                     >
-                        {{ item[adItem.value] }}
+                        {{ adItemList(adItem,item) }}
                     </v-chip>
                 </template>
             </template>
@@ -184,11 +184,6 @@
                     this.reload()
                 },
             },
-            items: {
-                handler: function (val) {
-                    this.renderTableItems()
-                },
-            },
         },
         data: function () {
             return {
@@ -202,16 +197,19 @@
                 editedIndex: -1,
                 editedItem: null,
                 defaultItem: null,
-                tableItem: [],
             }
         },
         computed: {
+            tableItem: function () {
+                return this.items
+            },
             realHeaders: function () {
                 return this.headers.map(item => {
                     item.text = this.$i18n.t(item.text)
                     return item
                 })
             },
+
             advancedItems: function () {
                 return this.headers
                     .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
@@ -246,8 +244,10 @@
                 this.loading = false
                 this.items = []
             })
+
         },
         methods: {
+
             dialogChange (save) {
                 if (save) {
                     this.save()
@@ -255,21 +255,11 @@
                     this.closeDialog()
                 }
             },
-            async renderTableItems () {
-                const options = this.advancedItems.filter(item => item.dataType === IKDataEntity.Types.Option)
-                for (const opt of options) {
-                    for (const item of this.items) {
-                        item[opt.value] = await this.adItemList(opt, IKUtils.deepCopy(item))
-                    }
-                }
-                this.tableItem = this.items
-                return this.items
-            },
+
             adItemList: async function (adItem, item) {
-                const list = typeof adItem.type.selectItems === 'function' ?
-                    await IKUtils.safeCallFunction(this.model, adItem.type.selectItems) :
-                    adItem.type.selectItems
-                return list.find(t => t[adItem.type.itemValue] == item[adItem.value])[adItem.type.itemText]
+                const list = await adItem.type.selectItems
+                console.log(list.find(t => t[adItem.type.itemValue] === item[adItem.value])[adItem.type.itemText])
+                return list.find(t => t[adItem.type.itemValue] === item[adItem.value])[adItem.type.itemText]
             },
 
             closeDialog () {
@@ -314,15 +304,15 @@
                 this.dialog = true
             },
 
-            async reload () {
+            async reload (model) {
+
+                model = model || this.model
                 this.loading = true
-                this.items = await IKUtils.safeCallFunction(this.model, this.model.getList, true, this.filter)
+                this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.filter)
                 this.loading = false
                 // console.log(this.items)
-            }
-            ,
-        }
-        ,
+            },
+        },
     }
 </script>
 

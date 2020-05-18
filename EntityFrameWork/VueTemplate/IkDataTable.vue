@@ -298,7 +298,7 @@
                 IKUtils.showConfirm(
                     this.$i18n.t('Are you sure?'),
                     this.$i18n.t('you want to delete this item?'), () => {
-                        IKUtils.safeCallFunction(this.model, this.model.delete, item.id)
+                        IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
                             .then(() => {
                                 IKUtils.toast(this.$i18n.t('删除成功'))
                                 this.reload()

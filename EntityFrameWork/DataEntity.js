@@ -1,5 +1,5 @@
 import Utils from '../Utlis/Utils.js'
-import { IKUtils } from '../index'
+import {IKUtils} from '../index'
 
 export const Types = {
     Integer: Symbol('Type:Integer'),
@@ -10,7 +10,7 @@ export const Types = {
     Image: Symbol('Type:Image'),
     Time: Symbol('Type:Time'),
     Option: Symbol('Type:Option'),
-    getTypeDefault (type) {
+    getTypeDefault(type) {
         if (!type) {
             type = Types.String
         }
@@ -34,7 +34,7 @@ export const Types = {
             return undefined
         }
     },
-    parseValue (type, value) {
+    parseValue(type, value) {
         if (type === Types.Integer) {
             return parseInt(value)
         } else if (type === Types.Float) {
@@ -49,7 +49,7 @@ export const Types = {
 
 Object.freeze(Types)
 
-async function generalLoad (url, data) {
+export async function generalLoad(url, data, entity) {
     return (await hillo.get(url, data))
         .content.map(function (item) {
             return IKDataEntity.parseDataForEntity(item, entity)
@@ -65,7 +65,7 @@ const generalGetOne = async function (asyncListFunc, conditionFunc) {
     return _list.find(item => conditionFunc(item))
 }
 
-export function ModelFactory (entity, config) {
+export function ModelFactory(entity, config) {
     let list = null
 
     const load = config.load || async function (filter) {
@@ -119,7 +119,7 @@ const DefaultEntity = {
         cols: 12,
         md: 6,
         sm: 12,
-        type: { name: 'text' },
+        type: {name: 'text'},
         // PossibleValue of types
         /*
         Text:{ name: 'text' }
@@ -147,11 +147,11 @@ const DefaultEntity = {
         requiredEdit: true,
         requiredNew: true,
     },
-    tableConfig: { overwrite: false },
+    tableConfig: {overwrite: false},
 }
 
 const TimeFormConfig = {
-    type: { name: 'time' },
+    type: {name: 'time'},
 }
 
 const OptionFormConfig = {
@@ -177,7 +177,7 @@ const BooleanFormConfig = {
     },
 }
 
-function generateEntity (_entity, key) {
+function generateEntity(_entity, key) {
     if (_entity.type === Types.Boolean) {
         if (_entity.formConfig) {
             if (_entity.formConfig.type) {
@@ -216,7 +216,7 @@ function generateEntity (_entity, key) {
     }
 }
 
-export function getFieldFromModel (model) {
+export function getFieldFromModel(model) {
     const field = []
     Object.keys(model.entity).forEach((key) => {
         field.push(generateEntity(model.entity[key], key))
@@ -228,7 +228,7 @@ export function getFieldFromModel (model) {
  * @param {*} item
  * @param {{}} structure
  */
-export function parseDataForEntity (item, structure) {
+export function parseDataForEntity(item, structure) {
     // console.log(structure)
     for (const key of Object.keys(structure)) {
         const instruction = structure[key]
@@ -247,7 +247,7 @@ export function parseDataForEntity (item, structure) {
  * @param { * } model
  * @return [header,formField,defaultItem]
  */
-export function parseField (model) {
+export function parseField(model) {
     const headers = []
     const formField = []
     const defaultItem = getFieldFromModel(model).reduce((map, item) => {
@@ -279,5 +279,6 @@ export default {
     parseField,
     Types,
     getFieldFromModel,
-    ModelFactory
+    ModelFactory,
+    generalLoad
 }

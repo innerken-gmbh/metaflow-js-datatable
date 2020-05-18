@@ -83,7 +83,7 @@
                             class="mx-2"
                             label
                     >
-                        {{ adItemList(adItem,item) }}
+                        {{ item[adItem.value] }}
                     </v-chip>
                 </template>
             </template>
@@ -184,6 +184,11 @@
                     this.reload()
                 },
             },
+            items: {
+                handler: function (val) {
+                    this.renderTableItems()
+                },
+            },
         },
         data: function () {
             return {
@@ -197,12 +202,11 @@
                 editedIndex: -1,
                 editedItem: null,
                 defaultItem: null,
+                tableItem: [],
             }
         },
         computed: {
-            tableItem: function () {
-                return this.items
-            },
+
             realHeaders: function () {
                 return this.headers.map(item => {
                     item.text = this.$i18n.t(item.text)
@@ -220,6 +224,7 @@
                         }
                     })
             },
+
             slottedItems: function () {
                 return this.headers
                     .filter(item => item.overwrite)
@@ -256,10 +261,23 @@
                 }
             },
 
+            async renderTableItems () {
+                const options = this.advancedItems.filter(item => item.dataType === IKDataEntity.Types.Option)
+                for (const opt of options) {
+                    for (const item of this.items) {
+                        item[opt.value] = await this.adItemList(opt, IKUtils.deepCopy(item))
+                    }
+                }
+                this.tableItem = this.items
+                return this.items
+            },
+
             adItemList: async function (adItem, item) {
-                const list = await adItem.type.selectItems
-                console.log(list.find(t => t[adItem.type.itemValue] === item[adItem.value])[adItem.type.itemText])
-                return list.find(t => t[adItem.type.itemValue] === item[adItem.value])[adItem.type.itemText]
+
+                const list = typeof adItem.type.selectItems === 'function' ?
+                    await IKUtils.safeCallFunction(this.model, adItem.type.selectItems) :
+                    adItem.type.selectItems
+                return list.find(t => t[adItem.type.itemValue] == item[adItem.value])[adItem.type.itemText]
             },
 
             closeDialog () {

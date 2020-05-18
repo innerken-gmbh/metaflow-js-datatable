@@ -46,6 +46,7 @@ export const Types = {
         }
     },
 }
+
 Object.freeze(Types)
 
 async function generalLoad (url, data) {

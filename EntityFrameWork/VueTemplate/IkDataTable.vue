@@ -138,7 +138,7 @@
 <script>
 
     import GeneralForm from './GeneralForm'
-    import { IKDataEntity, IKUtils } from 'innerken-utils'
+    import {IKDataEntity, IKUtils} from 'innerken-utils'
     import ImgTemplate from './ImgTemplate'
     import MaterialCard from './MaterialCard'
 
@@ -180,7 +180,7 @@
         watch: {
             filter: {
                 immediate: true,
-                handler (val) {
+                handler(val) {
                     this.reload()
                 },
             },
@@ -236,7 +236,7 @@
                     })
             },
         },
-        created () {
+        created() {
             [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
             if (this.useAction) {
                 this.headers.push({
@@ -253,7 +253,7 @@
         },
         methods: {
 
-            dialogChange (save) {
+            dialogChange(save) {
                 if (save) {
                     this.save()
                 } else {
@@ -261,7 +261,7 @@
                 }
             },
 
-            async renderTableItems () {
+            async renderTableItems() {
                 const options = this.advancedItems.filter(item => item.dataType === IKDataEntity.Types.Option)
                 for (const opt of options) {
                     for (const item of this.items) {
@@ -280,7 +280,7 @@
                 return list.find(t => t[adItem.type.itemValue] == item[adItem.value])[adItem.type.itemText]
             },
 
-            closeDialog () {
+            closeDialog() {
                 console.log('should close dialog')
                 this.editedItem = IKUtils.deepCopy(this.defaultItem)
                 this.editedIndex = -1
@@ -288,7 +288,7 @@
                 this.reload()
             },
 
-            save () {
+            save() {
                 if (this.editedIndex > -1) {
                     IKUtils.safeCallFunction(this.model, this.model.edit, this.editedItem).then(() => {
                         IKUtils.toast(this.$i18n.t('编辑成功'))
@@ -302,7 +302,7 @@
                 }
             },
 
-            deleteItem (item) {
+            deleteItem(item) {
                 IKUtils.showConfirm(
                     this.$i18n.t('Are you sure?'),
                     this.$i18n.t('you want to delete this item?'), () => {
@@ -315,14 +315,14 @@
                 )
             },
 
-            editItem (item) {
+            editItem(item) {
                 // console.log(item)
                 this.editedIndex = this.items.indexOf(item)
                 this.editedItem = Object.assign({}, item)
                 this.dialog = true
             },
 
-            async reload (model) {
+            async reload(model) {
 
                 model = model || this.model
                 this.loading = true

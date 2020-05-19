@@ -187,23 +187,28 @@ function generateEntity(_entity, key) {
         _entity.formConfig = Utils.extend(BooleanFormConfig, _entity.formConfig)
     }
     if (_entity.type === Types.Time) {
-        if (_entity.formConfig.type) {
-            _entity.formConfig.type = Utils.extend(TimeFormConfig.type, _entity.formConfig.type)
+        if (_entity.formConfig) {
+            if (_entity.formConfig.type) {
+                _entity.formConfig.type = Utils.extend(TimeFormConfig.type, _entity.formConfig.type)
+            }
         }
         _entity.formConfig = Utils.extend(TimeFormConfig, _entity.formConfig)
     }
     if (_entity.type === Types.Image) {
-        if (_entity.formConfig.type) {
-            _entity.formConfig.type = Utils.extend(ImageFormConfig.type, _entity.formConfig.type)
+        if (_entity.formConfig) {
+            if (_entity.formConfig.type) {
+                _entity.formConfig.type = Utils.extend(ImageFormConfig.type, _entity.formConfig.type)
+            }
         }
         _entity.formConfig = Utils.extend(ImageFormConfig, _entity.formConfig)
     }
     if (_entity.type === Types.Option) {
-        if (_entity.formConfig.type) {
-            _entity.formConfig.type = Utils.extend(OptionFormConfig.type, _entity.formConfig.type)
-        } else {
-            _entity.formConfig = Utils.extend(OptionFormConfig, _entity.formConfig)
+        if (_entity.formConfig) {
+            if (_entity.formConfig.type) {
+                _entity.formConfig.type = Utils.extend(OptionFormConfig.type, _entity.formConfig.type)
+            }
         }
+        _entity.formConfig = Utils.extend(OptionFormConfig, _entity.formConfig)
     }
     _entity.formConfig = Utils.extend(DefaultEntity.formConfig, _entity.formConfig)
     const entity = Utils.extend(DefaultEntity, _entity)

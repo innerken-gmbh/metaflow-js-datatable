@@ -17,9 +17,7 @@
             <v-select
                     v-model="editedItem[value]"
                     :disabled="shouldDisable"
-                    :items="typeof type.selectItems==='function'?
-          type.selectItems()
-          :type.selectItems"
+                    :items="selectItems"
                     :item-text="type.itemText"
                     :item-value="type.itemValue"
                     :label="text"
@@ -120,7 +118,7 @@
 
     export default {
         name: 'FormField',
-        components: {ImgWithLoading},
+        components: { ImgWithLoading },
         props: {
             field: {
                 type: Object,
@@ -145,6 +143,21 @@
             }
         },
         computed: {
+            selectItems: function () {
+                let selectItems = []
+                if (typeof this.type.selectItems === 'function') {
+                    if (this.type.selectItems().then) {
+                        this.type.selectItems().then(res => {
+                            this.type.selectItems = res
+                        })
+                    } else {
+                        selectItems = this.type.selectItems()
+                    }
+                } else {
+                    selectItems = this.type.selectItems
+                }
+                return selectItems
+            },
             uploadUrl: function () {
                 return URL.createObjectURL(this.editedItem[this.type.fileStorage])
             },

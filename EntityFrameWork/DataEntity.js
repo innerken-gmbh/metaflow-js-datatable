@@ -166,7 +166,7 @@ const OptionFormConfig = {
 const ImageFormConfig = {
     type: {
         name: 'image',
-        root: '/',
+        root: ()=>'/',
         fileStorage: 'file',
     },
 }

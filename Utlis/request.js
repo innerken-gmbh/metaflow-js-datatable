@@ -1,4 +1,4 @@
-import {http} from "./http.js";
+import { http } from "./http.js";
 import Swal from "sweetalert2";
 
 const uploadConfig = {
@@ -9,7 +9,7 @@ const uploadConfig = {
     },
 }
 
-function postWithUploadFile(url, data, config) {
+function postWithUploadFile (url, data, config) {
     let formData = new FormData();
     for (const i of Object.keys(data)) {
         formData.append(i, data[i])
@@ -18,17 +18,25 @@ function postWithUploadFile(url, data, config) {
 
 }
 
-function post(url, data, config = null) {
+function post (url, data = null, config = null) {
     return http.post(url, data, config)
 }
 
-function get(url, dataInParams, config = null) {
-    let generatedConfig = {params: dataInParams}
+function put (url, data = null, config = null) {
+    return http.put(url, data, config)
+}
+
+function remove (url, data = null, config = null) {
+    return http.delete(url, data, config)
+}
+
+function get (url, dataInParams, config = null) {
+    let generatedConfig = { params: dataInParams }
     config = Object.assign({}, config, generatedConfig)
     return http.get(url, config)
 }
 
-function fastSweetAlertRequest(title, input, url, dataName, dataObj, callback = false) {
+function fastSweetAlertRequest (title, input, url, dataName, dataObj, callback = false) {
     dataObj[dataName] = '';
     Swal.fire({
         title: title,
@@ -55,5 +63,5 @@ function fastSweetAlertRequest(title, input, url, dataName, dataObj, callback = 
 }
 
 export default {
-    post, fastSweetAlertRequest,get,postWithUploadFile
+    post, fastSweetAlertRequest, get, postWithUploadFile, put, remove
 }

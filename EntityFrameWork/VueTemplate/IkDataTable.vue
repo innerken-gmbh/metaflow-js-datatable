@@ -322,9 +322,8 @@
                 this.dialog = true
             },
 
-            async reload (model) {
-
-                model = model || this.model
+            async reload () {
+                const model = this.model
                 this.loading = true
                 this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.filter)
                 this.loading = false

@@ -69,7 +69,7 @@
     // todo: use input group and extract form field
     export default {
         name: 'GeneralForm',
-        components: {FormField},
+        components: { FormField },
         props: {
             addText: {
                 type: String,
@@ -110,24 +110,26 @@
             }
         },
         watch: {
-            realDialog(val) {
+            realDialog (val) {
                 val || this.close()
             },
-            dialog(val) {
-                this.realDialog = val
+            dialog: {
+                immediate: true,
+                handler: function (val) {
+                    this.realDialog = val
+                }
             },
-        },
-        methods: {
-            close() {
-                this.realDialog = false
-                this.$emit('change-general-form', false)
-            },
+            methods: {
+                close () {
+                    this.realDialog = false
+                    this.$emit('change-general-form', false)
+                },
 
-            save() {
-                this.$emit('change-general-form', true)
+                save () {
+                    this.$emit('change-general-form', true)
+                },
             },
-        },
-    }
+        }
 </script>
 
 <style scoped>

@@ -83,7 +83,7 @@
                             class="mx-2"
                             label
                     >
-                        {{ item[adItem.value] }}
+                        {{ item['opt'+adItem.value] }}
                     </v-chip>
                 </template>
             </template>
@@ -265,7 +265,7 @@
                 const options = this.advancedItems.filter(item => item.dataType === IKDataEntity.Types.Option)
                 for (const opt of options) {
                     for (const item of this.items) {
-                        item[opt.value] = await this.adItemList(opt, IKUtils.deepCopy(item))
+                        item['opt' + opt.value] = await this.adItemList(opt, IKUtils.deepCopy(item))
                     }
                 }
                 this.tableItem = this.items

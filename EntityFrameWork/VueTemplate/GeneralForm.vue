@@ -119,17 +119,18 @@
                     this.realDialog = val
                 }
             },
-            methods: {
-                close () {
-                    this.realDialog = false
-                    this.$emit('change-general-form', false)
-                },
-
-                save () {
-                    this.$emit('change-general-form', true)
-                },
+        },
+        methods: {
+            close () {
+                this.realDialog = false
+                this.$emit('change-general-form', false)
             },
-        }
+
+            save () {
+                this.$emit('change-general-form', true)
+            },
+        },
+    }
 </script>
 
 <style scoped>

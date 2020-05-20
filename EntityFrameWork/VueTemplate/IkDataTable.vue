@@ -273,7 +273,6 @@
             },
 
             adItemList: async function (adItem, item) {
-
                 const list = typeof adItem.type.selectItems === 'function' ?
                     await IKUtils.safeCallFunction(this.model, adItem.type.selectItems) :
                     adItem.type.selectItems

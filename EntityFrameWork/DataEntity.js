@@ -60,7 +60,7 @@ export async function generalLoad (url, data, entity) {
  * @param {function(*=, ...[*]=): null} asyncListFunc
  * @param {*} conditionFunc
  */
-const generalGetOne = async function (asyncListFunc, conditionFunc) {
+export async function generalGetOne (asyncListFunc, conditionFunc) {
     const _list = await asyncListFunc()
     return _list.find(item => conditionFunc(item))
 }
@@ -166,7 +166,7 @@ const OptionFormConfig = {
 const ImageFormConfig = {
     type: {
         name: 'image',
-        root: ()=>'/',
+        root: () => '/',
         fileStorage: 'file',
     },
 }

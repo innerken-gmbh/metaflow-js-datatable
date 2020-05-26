@@ -1,7 +1,7 @@
 <template>
     <material-card
             class="px-5 py-3 "
-            color="indigo"
+            :color="color"
             :icon="icon"
             inline
     >
@@ -203,6 +203,10 @@
                 default: () => {
                 },
             },
+            color: {
+                type: String,
+                default: 'indigo'
+            }
         },
         watch: {
             filter: {

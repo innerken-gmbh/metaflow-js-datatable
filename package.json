@@ -4,7 +4,8 @@
   "description": "Utils for innerken GmbH",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "lint": "eslint"
   },
   "repository": {
     "type": "git",
@@ -32,5 +33,14 @@
     "vuetify": "^2.2.27"
   },
   "type": "module",
-  "homepage": "https://github.com/innerken-gmbh/InnerKenUtils#readme"
+  "homepage": "https://github.com/innerken-gmbh/InnerKenUtils#readme",
+  "devDependencies": {
+    "eslint": "^7.1.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-vue": "^6.2.2"
+  }
 }

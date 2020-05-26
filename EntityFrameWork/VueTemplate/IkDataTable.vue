@@ -31,6 +31,8 @@
 
         <v-divider class="mt-3"/>
         <v-data-table
+                v-model="selectedItems"
+                :show-select="useSelect"
                 :fixed-header="true"
                 :headers="realHeaders"
                 :items="tableItem"
@@ -89,14 +91,33 @@
             </template>
             <template v-slot:footer>
                 <slot name="footer">
-                    <general-form
-                            :title="entityName"
-                            :dialog="dialog"
-                            :edited-item="editedItem"
-                            :edited-index="editedIndex"
-                            :form-field="formField"
-                            @change-general-form="dialogChange"
-                    />
+                    <v-toolbar
+                            class="mt-2"
+                            flat
+                            color="white"
+                    >
+                        <template v-if="selectedItems.length>0">
+                            <template v-for="field in mergableFields">
+                                <form-field
+                                        :key="field.id"
+                                        :field="field"
+                                        :edited-item="mergeItem"
+                                />
+                            </template>
+                            <v-btn @click="updateAll(mergeItem,false)" color="green">更新选中</v-btn>
+                            <v-btn @click="updateAll(null,true)" color="red">删除选中</v-btn>
+                        </template>
+
+                        <v-spacer/>
+                        <general-form
+                                :title="entityName"
+                                :dialog="dialog"
+                                :edited-item="editedItem"
+                                :edited-index="editedIndex"
+                                :form-field="formField"
+                                @change-general-form="dialogChange"
+                        />
+                    </v-toolbar>
                 </slot>
             </template>
             <template v-slot:no-data>
@@ -141,6 +162,7 @@
     import { IKDataEntity, IKUtils } from 'innerken-utils'
     import ImgTemplate from './ImgTemplate'
     import MaterialCard from './MaterialCard'
+    import FormField from 'innerken-utils/EntityFrameWork/VueTemplate/FormField'
 
     export default {
         name: 'IkDataTable',
@@ -148,6 +170,7 @@
             ImgTemplate,
             GeneralForm,
             MaterialCard,
+            FormField,
         },
         props: {
             entityName: {
@@ -164,6 +187,10 @@
                 default: '',
             },
             useAction: {
+                type: Boolean,
+                default: true,
+            },
+            useSelect: {
                 type: Boolean,
                 default: true,
             },
@@ -192,6 +219,8 @@
         },
         data: function () {
             return {
+                mergeItem: {},
+                selectedItems: [],
                 Types: IKDataEntity.Types,
                 search: '',
                 loading: false,
@@ -217,6 +246,16 @@
             advancedItems: function () {
                 return this.headers
                     .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+                    .map(item => {
+                        return {
+                            ...item,
+                            name: 'item.' + item.value,
+                        }
+                    })
+            },
+            mergableFields: function () {
+                return this.formField
+                    .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
                     .map(item => {
                         return {
                             ...item,
@@ -260,7 +299,12 @@
                     this.closeDialog()
                 }
             },
+            updateAll (newItem = null, remove = false) {
+                if (remove) {
+                    this.selectedItems.forEach(item => this.deleteItem(item, false))
+                }
 
+            },
             async renderTableItems () {
                 const options = this.advancedItems.filter(item => item.dataType === IKDataEntity.Types.Option)
                 for (const opt of options) {
@@ -273,6 +317,7 @@
             },
 
             adItemList: async function (adItem, item) {
+
                 const list = typeof adItem.type.selectItems === 'function' ?
                     await IKUtils.safeCallFunction(this.model, adItem.type.selectItems) :
                     adItem.type.selectItems
@@ -301,17 +346,26 @@
                 }
             },
 
-            deleteItem (item) {
-                IKUtils.showConfirm(
-                    this.$i18n.t('Are you sure?'),
-                    this.$i18n.t('you want to delete this item?'), () => {
-                        IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-                            .then(() => {
-                                IKUtils.toast(this.$i18n.t('删除成功'))
-                                this.reload()
-                            })
-                    },
-                )
+            deleteItem (item, promt = true) {
+                if (promt) {
+                    IKUtils.showConfirm(
+                        this.$i18n.t('Are you sure?'),
+                        this.$i18n.t('you want to delete this item?'), () => {
+                            IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+                                .then(() => {
+                                    IKUtils.toast(this.$i18n.t('删除成功'))
+                                    this.reload()
+                                })
+                        },
+                    )
+                } else {
+                    IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+                        .then(() => {
+                            IKUtils.toast(this.$i18n.t('删除成功'))
+                            this.reload()
+                        })
+                }
+
             },
 
             editItem (item) {

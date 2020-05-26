@@ -1,7 +1,7 @@
 <template>
     <material-card
             class="px-5 py-3 "
-            :color="color"
+            color="indigo"
             :icon="icon"
             inline
     >
@@ -97,17 +97,22 @@
                             color="white"
                     >
                         <template v-if="selectedItems.length>0">
-                            <template v-for="field in mergableFields">
-                                <form-field
-                                        :key="field.id"
-                                        :field="field"
-                                        :edited-item="mergeItem"
-                                />
-                            </template>
-                            <v-btn @click="updateAll(mergeItem,false)" color="green">更新选中</v-btn>
-                            <v-btn @click="updateAll(null,true)" color="red">删除选中</v-btn>
+                            <v-row>
+                                <template v-for="field in mergableFields">
+                                    <form-field
+                                            :key="field.id"
+                                            :field="field"
+                                            :edited-item="mergeItem"
+                                    />
+                                </template>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-btn @click="updateAll(mergeItem,false)" color="green">更新选中</v-btn>
+                                    <v-btn @click="updateAll(null,true)" color="red">删除选中</v-btn>
+                                </v-col>
+                            </v-row>
                         </template>
-
                         <v-spacer/>
                         <general-form
                                 :title="entityName"
@@ -203,10 +208,6 @@
                 default: () => {
                 },
             },
-            color: {
-                type: String,
-                default: 'indigo'
-            }
         },
         watch: {
             filter: {

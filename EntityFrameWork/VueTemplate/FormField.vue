@@ -20,6 +20,7 @@
                     :items="selectItems"
                     :item-text="type.itemText"
                     :item-value="type.itemValue"
+                    :multiple="type.multiple"
                     :label="text"
                     :rules="rules"
             />

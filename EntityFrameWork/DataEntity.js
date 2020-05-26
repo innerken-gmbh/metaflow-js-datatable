@@ -41,7 +41,7 @@ export const Types = {
             return parseFloat(value)
         } else if (type === Types.Boolean) {
             return parseInt(value)
-        }else if (type === Types.Option) {
+        } else if (type === Types.Option) {
             return parseInt(value)
         } else {
             return value
@@ -162,6 +162,7 @@ const OptionFormConfig = {
         itemText: 'name',
         itemValue: 'id',
         selectItems: [],
+        multiple: false,
     },
 }
 

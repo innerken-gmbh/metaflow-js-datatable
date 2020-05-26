@@ -300,8 +300,17 @@
                 }
             },
             updateAll (newItem = null, remove = false) {
+
                 if (remove) {
                     this.selectedItems.forEach(item => this.deleteItem(item, false))
+                    return
+                }
+                if (newItem) {
+                    this.selectedItems.forEach(item => {
+                        const _i = IKUtils.extend(item, newItem)
+                        this.updateItem(_i)
+                    })
+                    newItem = Object.assign({})
                 }
 
             },
@@ -309,7 +318,7 @@
                 const options = this.advancedItems.filter(item => item.dataType === IKDataEntity.Types.Option)
                 for (const opt of options) {
                     for (const item of this.items) {
-                        item['opt' + opt.value] = await this.adItemList(opt, IKUtils.deepCopy(item))
+                        this.$set(item, 'opt' + opt.value, await this.adItemList(opt, IKUtils.deepCopy(item)))
                     }
                 }
                 this.tableItem = this.items
@@ -331,13 +340,16 @@
                 this.dialog = false
                 this.reload()
             },
+            async updateItem (item) {
+                return IKUtils.safeCallFunction(this.model, this.model.edit, item).then(() => {
+                    IKUtils.toast(this.$i18n.t('编辑成功'))
+                    this.closeDialog()
+                })
+            },
 
             save () {
                 if (this.editedIndex > -1) {
-                    IKUtils.safeCallFunction(this.model, this.model.edit, this.editedItem).then(() => {
-                        IKUtils.toast(this.$i18n.t('编辑成功'))
-                        this.closeDialog()
-                    })
+                    this.updateItem(this.editedItem)
                 } else {
                     IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem).then(() => {
                         IKUtils.toast(this.$i18n.t('添加成功'))

@@ -42,6 +42,9 @@ export const Types = {
         } else if (type === Types.Boolean) {
             return parseInt(value)
         } else if (type === Types.Option) {
+            if (value.contains(',')) {
+                return value.split(',')
+            }
             return parseInt(value)
         } else {
             return value

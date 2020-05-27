@@ -81,11 +81,13 @@
             adItem.dataType===Types.Option"
                 >
                     <v-chip
-                            :key="adItem.name"
-                            class="mx-2"
+                            v-for="(l,index) of item['opt'+adItem.value]"
+                            :key="adItem.name+index"
+                            class="mx-1"
                             label
+                            v-if="item['opt'+adItem.value]"
                     >
-                        {{ item['opt'+adItem.value] }}
+                        {{ l }}
                     </v-chip>
                 </template>
             </template>
@@ -331,11 +333,19 @@
             },
 
             adItemList: async function (adItem, item) {
-
+                const resArr = []
                 const list = typeof adItem.type.selectItems === 'function' ?
                     await IKUtils.safeCallFunction(this.model, adItem.type.selectItems) :
                     adItem.type.selectItems
-                return list.find(t => t[adItem.type.itemValue] == item[adItem.value])[adItem.type.itemText]
+                const findArr = [item[adItem.value]].flat()
+                for (const _i of findArr) {
+                    const target = list.find(t => t[adItem.type.itemValue] == _i)
+                    if (target) {
+                        resArr.push(target[adItem.type.itemText])
+                    }
+                }
+
+                return resArr
             },
 
             closeDialog () {

@@ -42,7 +42,8 @@ export const Types = {
         } else if (type === Types.Boolean) {
             return parseInt(value)
         } else if (type === Types.Option) {
-            if (value.contains(',')) {
+            console.log(value)
+            if (value.includes(',')) {
                 return value.split(',')
             }
             return parseInt(value)
@@ -225,7 +226,7 @@ function generateEntity (_entity, key) {
         ...entity.tableConfig,
         ...entity.formConfig,
         header: entity.header,
-        form: entity.form
+        form: entity.form,
     }
 }
 
@@ -293,5 +294,5 @@ export default {
     Types,
     getFieldFromModel,
     ModelFactory,
-    generalLoad
+    generalLoad,
 }

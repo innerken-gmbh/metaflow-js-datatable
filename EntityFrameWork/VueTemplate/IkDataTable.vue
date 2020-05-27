@@ -32,6 +32,8 @@
         <v-divider class="mt-3"/>
         <v-data-table
                 v-model="selectedItems"
+                :show-expand="showExpand"
+                :single-expand="singleExpand"
                 :show-select="useSelect"
                 :fixed-header="true"
                 :headers="realHeaders"
@@ -159,6 +161,12 @@
                 </template>
 
             </template>
+            <template v-slot:expanded-item="{ item }">
+                <td :colspan="headers.length">
+                    <slot name="expanded-item"
+                          :item="item"></slot>
+                </td>
+            </template>
         </v-data-table>
     </material-card>
 </template>
@@ -192,6 +200,14 @@
             icon: {
                 type: String,
                 default: '',
+            },
+            showExpand: {
+                type: Boolean,
+                default: false,
+            },
+            singleExpand: {
+                type: Boolean,
+                default: false,
             },
             useAction: {
                 type: Boolean,

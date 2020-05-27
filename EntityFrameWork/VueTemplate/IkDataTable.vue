@@ -240,13 +240,6 @@
                     this.reload()
                 },
             },
-            items: {
-                handler: function () {
-
-                    this.renderTableItems()
-
-                },
-            },
         },
         data: function () {
             return {
@@ -266,14 +259,12 @@
             }
         },
         computed: {
-
             realHeaders: function () {
                 return this.headers.map(item => {
                     item.text = this.$i18n.t(item.text)
                     return item
                 })
             },
-
             advancedItems: function () {
                 return this.headers
                     .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
@@ -296,7 +287,6 @@
                         }
                     })
             },
-
             slottedItems: function () {
                 return this.headers
                     .filter(item => item.overwrite)
@@ -324,7 +314,6 @@
 
         },
         methods: {
-
             dialogChange (save) {
                 if (save) {
                     this.save()
@@ -333,7 +322,6 @@
                 }
             },
             updateAll (newItem = null, remove = false) {
-
                 if (remove) {
                     this.selectedItems.forEach(item => this.deleteItem(item, false))
                     return
@@ -348,14 +336,15 @@
 
             },
             async renderTableItems () {
+                console.log(this.items)
                 const options = this.advancedItems.filter(item => item.dataType === IKDataEntity.Types.Option)
+                this.tableItem = this.items
                 for (const opt of options) {
-                    for (const item of this.items) {
+                    for (const item of this.tableItem) {
                         this.$set(item, 'opt' + opt.value, await this.adItemList(opt, IKUtils.deepCopy(item)))
                     }
                 }
-                this.tableItem = this.items
-                return this.items
+                return this.tableItem
             },
 
             adItemList: async function (adItem, item) {
@@ -433,7 +422,7 @@
                 this.loading = true
                 this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.filter)
                 this.loading = false
-                // console.log(this.items)
+                this.renderTableItems()
             },
         },
     }

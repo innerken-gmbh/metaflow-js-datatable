@@ -244,7 +244,6 @@
         data: function () {
             return {
                 mergeItem: {},
-                selectedItems: [],
                 Types: IKDataEntity.Types,
                 search: '',
                 loading: false,
@@ -255,16 +254,45 @@
                 editedIndex: -1,
                 editedItem: null,
                 defaultItem: null,
+                selectedItems: [],
                 tableItem: [],
+                realHeaders: [],
+                advancedItems: [],
+                slottedItems: [],
             }
         },
         computed: {
-            realHeaders: function () {
-                return this.headers.map(item => {
-                    item.text = this.$i18n.t(item.text)
-                    return item
-                })
+            mergableFields: function () {
+                return this.formField
+                    .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+                    .map(item => {
+                        return {
+                            ...item,
+                            name: 'item.' + item.value,
+                        }
+                    })
             },
+
+        },
+        created () {
+            [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
+            if (this.useAction) {
+                this.headers.push({
+                    text: 'action',
+                    value: 'action',
+                })
+            }
+            this.realHeaders = this.realHeaders()
+            this.advancedItems = this.advancedItems()
+            this.slottedItems = this.slottedItems()
+            this.editedItem = IKUtils.deepCopy(this.defaultItem)
+            this.reload().catch(() => {
+                this.loading = false
+                this.items = []
+            })
+
+        },
+        methods: {
             advancedItems: function () {
                 return this.headers
                     .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
@@ -277,15 +305,11 @@
                         }
                     })
             },
-            mergableFields: function () {
-                return this.formField
-                    .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
-                    .map(item => {
-                        return {
-                            ...item,
-                            name: 'item.' + item.value,
-                        }
-                    })
+            realHeaders: function () {
+                return this.headers.map(item => {
+                    item.text = this.$i18n.t(item.text)
+                    return item
+                })
             },
             slottedItems: function () {
                 return this.headers
@@ -297,23 +321,6 @@
                         }
                     })
             },
-        },
-        created () {
-            [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
-            if (this.useAction) {
-                this.headers.push({
-                    text: 'action',
-                    value: 'action',
-                })
-            }
-            this.editedItem = IKUtils.deepCopy(this.defaultItem)
-            this.reload().catch(() => {
-                this.loading = false
-                this.items = []
-            })
-
-        },
-        methods: {
             dialogChange (save) {
                 if (save) {
                     this.save()
@@ -336,7 +343,6 @@
 
             },
             async renderTableItems () {
-                console.log(this.items)
                 const options = this.advancedItems.filter(item => item.dataType === IKDataEntity.Types.Option)
                 this.tableItem = this.items
                 for (const opt of options) {

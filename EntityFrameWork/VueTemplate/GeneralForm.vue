@@ -25,13 +25,34 @@
                 >
                     <v-container>
                         <v-row>
+
                             <template v-for="field in realFormField">
-                                <form-field
-                                        :key="field.id"
-                                        :field="field"
-                                        :current-state="editedIndex"
-                                        :edited-item="editedItem"
-                                />
+                                <template v-if="field.dataType===IKDataEntity.Types.Group">
+                                    <v-col
+                                            cols="12"
+                                    >
+                                        <div class="d-flex justify-space-between align-center">
+                                            <span class="subtitle-1 font-weight-bold">{{ $t('groupName') }}</span>
+                                        </div>
+                                    </v-col>
+                                    <template v-for="(child,i) in field.children">
+                                        <form-field
+                                                v-if="editedItem[field.value]"
+                                                :key="field.id+'c'+i"
+                                                :field="child"
+                                                :current-state="editedIndex"
+                                                :edited-item="editedItem[field.value][i]"
+                                        />
+                                    </template>
+                                </template>
+                                <template v-else>
+                                    <form-field
+                                            :key="field.id"
+                                            :field="field"
+                                            :current-state="editedIndex"
+                                            :edited-item="editedItem"
+                                    />
+                                </template>
                             </template>
                         </v-row>
                     </v-container>
@@ -62,6 +83,7 @@
 
 <script>
     import FormField from './FormField'
+    import { IKDataEntity } from 'innerken-utils'
     // todo: use input group and extract form field
     export default {
         name: 'GeneralForm',
@@ -97,6 +119,7 @@
             return {
                 realDialog: this.dialog,
                 valid: true,
+                IKDataEntity: IKDataEntity,
                 realFormField: this.formField.map((i, index) => {
                     return {
                         id: index,

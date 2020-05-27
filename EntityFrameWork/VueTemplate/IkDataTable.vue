@@ -69,6 +69,12 @@
                 </template>
                 <template
                         v-else-if="
+            adItem.dataType===Types.Group"
+                >
+                    {{item[adItem.value].find(i=>(adItem.displayCondition(i)))['name']}}
+                </template>
+                <template
+                        v-else-if="
             adItem.dataType===Types.Boolean"
                 >
                     <v-checkbox
@@ -230,15 +236,15 @@
         watch: {
             filter: {
                 immediate: true,
-                handler (val) {
+                handler () {
                     this.reload()
                 },
             },
             items: {
-                handler: function (val, newVal) {
-                    if (val.length !== newVal.length) {
-                        this.renderTableItems()
-                    }
+                handler: function () {
+
+                    this.renderTableItems()
+
                 },
             },
         },
@@ -270,7 +276,9 @@
 
             advancedItems: function () {
                 return this.headers
-                    .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+                    .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
+                        IKDataEntity.Types.Option, IKDataEntity.Types.Group,
+                    ].includes(item.dataType))
                     .map(item => {
                         return {
                             ...item,
@@ -415,7 +423,7 @@
 
             editItem (item) {
                 // console.log(item)
-                this.editedIndex = this.items.indexOf(item)
+                this.editedIndex = this.tableItem.indexOf(item)
                 this.editedItem = Object.assign({}, item)
                 this.dialog = true
             },

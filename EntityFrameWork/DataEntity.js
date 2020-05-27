@@ -1,5 +1,5 @@
 import Utils from '../Utlis/Utils.js'
-import { IKUtils } from '../index'
+import { IKDataEntity, IKUtils } from '../index'
 
 export const Types = {
     Integer: Symbol('Type:Integer'),
@@ -10,6 +10,7 @@ export const Types = {
     Image: Symbol('Type:Image'),
     Time: Symbol('Type:Time'),
     Option: Symbol('Type:Option'),
+    Group: Symbol('Type:Group'),
     getTypeDefault (type) {
         if (!type) {
             type = Types.String
@@ -29,7 +30,9 @@ export const Types = {
         } else if (type === Types.Time) {
             return ''
         } else if (type === Types.Option) {
-            return null
+            return []
+        } else if (type === Types.Group) {
+            return []
         } else {
             return undefined
         }
@@ -73,16 +76,16 @@ export async function generalGetOne (asyncListFunc, conditionFunc) {
 export function ModelFactory (entity, config) {
     let list = config.list || null
 
-    const load = config.load || async function (filter) {
+    const load = config.load || async function () {
         return []
     }
-    const add = function (item) {
+    const add = function () {
         return new Promise.reject('Add is not Definded')
     }
-    const edit = function (item) {
+    const edit = function () {
         return new Promise.reject('Add is not Definded')
     }
-    const remove = function (id) {
+    const remove = function () {
         return new Promise.reject('Add is not Definded')
     }
 
@@ -216,6 +219,21 @@ function generateEntity (_entity, key) {
         }
         _entity.formConfig = Utils.extend(OptionFormConfig, _entity.formConfig)
     }
+    let _children=[]
+    if (_entity.type === Types.Group) {
+        if (_entity.children) {
+            _children= _entity.children.map(item => getFieldFromModel(item))
+            const newChildren = []
+            console.log(_entity,_children, key)
+            _children.forEach(child => {
+                child = child.filter(i => {
+                    return i.value === _entity.childKey
+                })
+                newChildren.push(child)
+            })
+            _children = newChildren.flat()
+        }
+    }
     _entity.formConfig = Utils.extend(DefaultEntity.formConfig, _entity.formConfig)
     const entity = Utils.extend(DefaultEntity, _entity)
     return {
@@ -226,14 +244,20 @@ function generateEntity (_entity, key) {
         ...entity.formConfig,
         header: entity.header,
         form: entity.form,
+        children: _children,
+        orgin: _entity,
     }
 }
 
 export function getFieldFromModel (model) {
     const field = []
-    Object.keys(model.entity).forEach((key) => {
-        field.push(generateEntity(model.entity[key], key))
-    })
+    if (model.entity) {
+        Object.keys(model.entity).forEach((key) => {
+            field.push(generateEntity(model.entity[key], key))
+        })
+    } else {
+        return undefined
+    }
     return field
 }
 

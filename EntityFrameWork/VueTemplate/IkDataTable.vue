@@ -170,7 +170,7 @@
             <template v-slot:expanded-item="{ item }">
                 <td :colspan="headers.length">
                     <slot name="expanded-item"
-                          :item="item"></slot>
+                          :item="item"/>
                 </td>
             </template>
         </v-data-table>

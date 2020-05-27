@@ -235,8 +235,10 @@
                 },
             },
             items: {
-                handler: function (val) {
-                    this.renderTableItems()
+                handler: function (val, newVal) {
+                    if (val.length !== newVal.length) {
+                        this.renderTableItems()
+                    }
                 },
             },
         },

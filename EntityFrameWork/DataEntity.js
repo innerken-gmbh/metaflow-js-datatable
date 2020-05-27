@@ -219,12 +219,12 @@ function generateEntity (_entity, key) {
         }
         _entity.formConfig = Utils.extend(OptionFormConfig, _entity.formConfig)
     }
-    let _children=[]
+    let _children = []
     if (_entity.type === Types.Group) {
         if (_entity.children) {
-            _children= _entity.children.map(item => getFieldFromModel(item))
+            _children = _entity.children.map(item => getFieldFromModel(item))
             const newChildren = []
-            console.log(_entity,_children, key)
+            console.log(_entity, _children, key)
             _children.forEach(child => {
                 child = child.filter(i => {
                     return i.value === _entity.childKey
@@ -271,8 +271,15 @@ export function parseDataForEntity (item, structure) {
         const instruction = structure[key]
         // console.log(instruction, key)
         if (item[key]) {
-            // console.log(item[key], key)
             item[key] = Types.parseValue(instruction.type, item[key])
+            if(instruction.formConfig){
+                if(instruction.formConfig.type){
+                    if (instruction.formConfig.type.multiple) {
+                        item[key] = [item[key]].flat()
+                    }
+                }
+            }
+
         } else {
             item[key] = Types.getTypeDefault(instruction.type)
         }

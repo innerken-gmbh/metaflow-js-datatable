@@ -88,10 +88,25 @@ export function ModelFactory (entity, config) {
     const remove = function () {
         return new Promise.reject('Add is not Definded')
     }
-
+    let loading = false
     const getList = async function (force = false, ...filter) {
+        const wait = function (time) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve()
+                }, time * 1000)
+            })
+        }
+
         if (!list || force) {
-            list = await load(filter)
+            if (!loading) {
+                loading = true
+                list = await load(filter)
+                loading = false
+            } else {
+                await wait(0.2)
+                return await getList()
+            }
         }
         return list
     }
@@ -272,8 +287,8 @@ export function parseDataForEntity (item, structure) {
         // console.log(instruction, key)
         if (item[key]) {
             item[key] = Types.parseValue(instruction.type, item[key])
-            if(instruction.formConfig){
-                if(instruction.formConfig.type){
+            if (instruction.formConfig) {
+                if (instruction.formConfig.type) {
                     if (instruction.formConfig.type.multiple) {
                         item[key] = [item[key]].flat()
                     }

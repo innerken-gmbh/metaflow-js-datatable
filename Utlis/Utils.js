@@ -166,6 +166,13 @@ export function compose() {
         return result
     }
 }
+export async function wait(time) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve()
+        }, time * 1000)
+    })
+}
 
 export const ValidateRules = {
 
@@ -262,5 +269,6 @@ export default {
     toggleElement,
     removeElement,
     play,
-    getQueryString
+    getQueryString,
+    wait
 }

@@ -90,21 +90,13 @@ export function ModelFactory (entity, config) {
     }
     let loading = false
     const getList = async function (force = false, ...filter) {
-        const wait = function (time) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    resolve()
-                }, time * 1000)
-            })
-        }
-
         if (!list || force) {
             if (!loading) {
                 loading = true
                 list = await load(filter)
                 loading = false
             } else {
-                await wait(0.2)
+                await IKUtils.wait(0.2)
                 return await getList()
             }
         }

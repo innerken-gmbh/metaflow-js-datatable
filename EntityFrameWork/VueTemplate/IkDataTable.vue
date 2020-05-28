@@ -88,15 +88,15 @@
                         v-else-if="
             adItem.dataType===Types.Option"
                 >
-                    <v-chip
-                            v-for="(l,index) of item['opt'+adItem.value]"
-                            :key="adItem.name+index"
-                            class="mx-1"
-                            label
-                            v-if="item['opt'+adItem.value]"
-                    >
-                        {{ l }}
-                    </v-chip>
+                    <template v-for="(l,index) of item['opt'+adItem.value]">
+                        <v-chip
+                                :key="item+adItem.name+'c'+index"
+                                class="mx-1"
+                                label
+                        >
+                            {{ l }}
+                        </v-chip>
+                    </template>
                 </template>
             </template>
             <template v-slot:footer>
@@ -235,7 +235,6 @@
         },
         watch: {
             filter: {
-                immediate: true,
                 handler () {
                     this.reload()
                 },
@@ -347,7 +346,12 @@
                 this.tableItem = this.items
                 for (const opt of options) {
                     for (const item of this.tableItem) {
-                        this.$set(item, 'opt' + opt.value, await this.adItemList(opt, IKUtils.deepCopy(item)))
+                        if (!item['opt' + opt.value]) {
+                            this.$set(item, 'opt' + opt.value, await this.adItemList(opt, IKUtils.deepCopy(item)))
+                        } else {
+                            item['opt' + opt.value] = await this.adItemList(opt, IKUtils.deepCopy(item))
+                        }
+
                     }
                 }
                 return this.tableItem
@@ -355,6 +359,8 @@
 
             adItemList: async function (adItem, item) {
                 const resArr = []
+                const waitTime = Math.random() * 0.000001
+                await IKUtils.wait(waitTime)
                 const list = typeof adItem.type.selectItems === 'function' ?
                     await IKUtils.safeCallFunction(this.model, adItem.type.selectItems) :
                     adItem.type.selectItems
@@ -365,7 +371,6 @@
                         resArr.push(target[adItem.type.itemText])
                     }
                 }
-
                 return resArr
             },
 
@@ -427,8 +432,8 @@
                 const model = this.model
                 this.loading = true
                 this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.filter)
-                this.loading = false
                 this.renderTableItems()
+                this.loading = false
             },
         },
     }

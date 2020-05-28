@@ -49,6 +49,8 @@ export const Types = {
                 return value.split(',').map(item => parseInt(item))
             }
             return parseInt(value)
+        } else if (type === Types.Group) {
+            return value
         } else {
             return value
         }
@@ -252,6 +254,8 @@ function generateEntity (_entity, key) {
         header: entity.header,
         form: entity.form,
         children: _children,
+        childKey: _entity.childKey,
+        labelKey:_entity.labelKey,
         orgin: _entity,
     }
 }
@@ -278,6 +282,15 @@ export function parseDataForEntity (item, structure) {
         const instruction = structure[key]
         // console.log(instruction, key)
         if (item[key]) {
+            if (instruction.type === Types.Group) {
+                if (!instruction.tableConfig) {
+                    throw new Error('Parse Failed for group' + item + instruction)
+                }
+                if (!instruction.tableConfig.displayCondition) {
+                    throw new Error('Parse Failed for group' + item + instruction)
+                }
+                item['_' + key] = item[key].find(i => (instruction.tableConfig.displayCondition(i)))[instruction.childKey]
+            }
             item[key] = Types.parseValue(instruction.type, item[key])
             if (instruction.formConfig) {
                 if (instruction.formConfig.type) {

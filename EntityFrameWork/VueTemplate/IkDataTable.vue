@@ -71,7 +71,7 @@
                         v-else-if="
             adItem.dataType===Types.Group"
                 >
-                    {{item[adItem.value].find(i=>(adItem.displayCondition(i)))['name']}}
+                    {{item['_'+adItem.value]}}
                 </template>
                 <template
                         v-else-if="

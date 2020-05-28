@@ -282,9 +282,9 @@
                     value: 'action',
                 })
             }
-            this.realHeaders = this.realHeaders()
-            this.advancedItems = this.advancedItems()
-            this.slottedItems = this.slottedItems()
+            this.realHeaders = this.getRealHeaders()
+            this.advancedItems = this.getAdvancedItems()
+            this.slottedItems = this.getSlottedItems()
             this.editedItem = IKUtils.deepCopy(this.defaultItem)
             this.reload().catch(() => {
                 this.loading = false
@@ -293,7 +293,7 @@
 
         },
         methods: {
-            advancedItems: function () {
+            getAdvancedItems: function () {
                 return this.headers
                     .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
                         IKDataEntity.Types.Option, IKDataEntity.Types.Group,
@@ -305,13 +305,13 @@
                         }
                     })
             },
-            realHeaders: function () {
+            getRealHeaders: function () {
                 return this.headers.map(item => {
                     item.text = this.$i18n.t(item.text)
                     return item
                 })
             },
-            slottedItems: function () {
+            getSlottedItems: function () {
                 return this.headers
                     .filter(item => item.overwrite)
                     .map(item => {

@@ -1,5 +1,5 @@
 import Utils from '../Utlis/Utils.js'
-import { IKDataEntity, IKUtils } from '../index'
+import { IKUtils } from '../index'
 
 export const Types = {
     Integer: Symbol('Type:Integer'),
@@ -59,11 +59,9 @@ export const Types = {
 
 Object.freeze(Types)
 
-export async function generalLoad (url, data, entity) {
-    return (await hillo.get(url, data))
-        .content.map(function (item) {
-            return IKDataEntity.parseDataForEntity(item, entity)
-        })
+export async function generalLoad (url, data) {
+    return (await hillo.get(url, { ...data }))
+
 }
 
 /**

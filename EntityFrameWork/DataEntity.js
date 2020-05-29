@@ -1,5 +1,5 @@
 import Utils from '../Utlis/Utils.js'
-import { IKUtils } from '../index'
+import { IKUtils,hillo } from '../index'
 
 export const Types = {
     Integer: Symbol('Type:Integer'),
@@ -90,6 +90,7 @@ export function ModelFactory (entity, config) {
     }
     let loading = false
     const getList = async function (force = false, ...filter) {
+
         if (!list || force) {
             if (!loading) {
                 loading = true
@@ -98,12 +99,14 @@ export function ModelFactory (entity, config) {
                 list.filter(i => !i['__parsed']).forEach(i => {
                     i = parseDataForEntity(i, entity, cache)
                 })
+
                 loading = false
             } else {
                 await IKUtils.wait(0.2)
                 return await getList()
             }
         }
+
         return list
     }
     const getOne = async function (conditionFunc) {
@@ -197,6 +200,10 @@ const BooleanFormConfig = {
     },
 }
 
+/**
+ * @param {*} _field
+ * @param {string} key
+ */
 function generateField (_field, key) {
     if (_field.type === Types.Boolean) {
         if (_field.formConfig) {
@@ -233,9 +240,10 @@ function generateField (_field, key) {
     let _children = []
     if (_field.type === Types.Group) {
         if (_field.children) {
+
             _children = _field.children.map(item => getFieldFromModel(item))
             const newChildren = []
-            console.log(_field, _children, key)
+            //console.log(_field, _children, key)
             _children.forEach(child => {
                 child = child.filter(i => {
                     return i.value === _field.childKey
@@ -243,6 +251,7 @@ function generateField (_field, key) {
                 newChildren.push(child)
             })
             _children = newChildren.flat()
+            //console.log(_children,'child')
         }
     }
     _field.formConfig = Utils.extend(DefaultEntity.formConfig, _field.formConfig)
@@ -274,6 +283,11 @@ export function getFieldFromModel (model) {
     return field
 }
 
+/**
+ * @param {*} option
+ * @param {*} item
+ * @param {{}} cache
+ */
 async function getActualOptionValue (option, item, cache) {
     const key = option.value
     const searchKey = option.type.itemValue
@@ -303,6 +317,7 @@ async function getActualOptionValue (option, item, cache) {
 /**
  * @param {*} item
  * @param {{}} entity
+ * @param cache
  */
 export function parseDataForEntity (item, entity, cache = {}) {
     for (const key of Object.keys(entity)) {

@@ -32,18 +32,21 @@
                                             cols="12"
                                     >
                                         <div class="d-flex justify-space-between align-center">
-                                            <span class="subtitle-1 font-weight-bold">{{ $t('groupName') }}</span>
+                                            <span class="subtitle-1 font-weight-bold">{{ $t(''+field.groupName) }}</span>
                                         </div>
+                                        <v-row>
+                                            <template v-for="(child,i) in field.children">
+                                                <form-field
+                                                        v-if="editedItem[field.value]"
+                                                        :key="field.id+'c'+i"
+                                                        :field="child"
+                                                        :current-state="editedIndex"
+                                                        :edited-item="editedItem[field.value][i]"
+                                                />
+                                            </template>
+                                        </v-row>
                                     </v-col>
-                                    <template v-for="(child,i) in field.children">
-                                        <form-field
-                                                v-if="editedItem[field.value]"
-                                                :key="field.id+'c'+i"
-                                                :field="child"
-                                                :current-state="editedIndex"
-                                                :edited-item="editedItem[field.value][i]"
-                                        />
-                                    </template>
+
                                 </template>
                                 <template v-else>
                                     <form-field
@@ -84,7 +87,7 @@
 <script>
     import FormField from './FormField'
     import { IKDataEntity } from 'innerken-utils'
-    // todo: use input group and extract form field
+
     export default {
         name: 'GeneralForm',
         components: { FormField },

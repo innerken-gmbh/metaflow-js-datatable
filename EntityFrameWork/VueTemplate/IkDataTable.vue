@@ -343,49 +343,9 @@
 
             },
             async renderTableItems () {
-                const options = this.advancedItems.filter(item => item.dataType === IKDataEntity.Types.Option)
                 this.tableItem = this.items
-                for (const item of this.tableItem) {
-                    for (const opt of options) {
-                        if (!item['opt' + opt.value]) {
-                            this.$set(item, 'opt' + opt.value, await this.getActualOptionValue(opt, item))
-                        } else {
-                            item['opt' + opt.value] = await this.getActualOptionValue(opt, item)
-                        }
-                    }
-                }
                 return this.tableItem
             },
-
-            getActualOptionValue: async function (option, item) {
-                const waitTime = Math.random() * 0.000000001
-                await IKUtils.wait(waitTime)
-
-                const key = option.value
-                const searchKey = option.type.itemValue
-                const resultKey = option.type.itemText
-                const selectedOpts = [item[key]].flat()
-                const listFunction = option.type.selectItems
-                if (!this.optionCache[key]) {
-                    this.optionCache[key] = {}
-                    this.optionCache[key].list = typeof listFunction === 'function' ?
-                        await IKUtils.safeCallFunction(this.model, listFunction) : listFunction
-                }
-                const actualValues = []
-                for (const v of selectedOpts) {
-                    if (!this.optionCache[key][v]) {
-                        console.log('startSearch')
-                        this.optionCache[key][v] = this.optionCache[key].list.find(opt => opt[searchKey] == v)
-                    }
-                    if (this.optionCache[key][v] && this.optionCache[key][v][resultKey]) {
-                        actualValues.push(this.optionCache[key][v][resultKey])
-                    }
-                }
-                // console.log(this.optionCache)
-                return actualValues
-
-            },
-
             closeDialog () {
                 console.log('should close dialog')
                 this.editedItem = IKUtils.deepCopy(this.defaultItem)

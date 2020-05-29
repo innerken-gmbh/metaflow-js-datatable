@@ -96,6 +96,10 @@ export function ModelFactory (entity, config) {
             if (!loading) {
                 loading = true
                 list = await load(filter)
+                const cache = {}
+                list.filter(i => !i['__parsed']).forEach(i => {
+                    i = parseDataForEntity(i, entity, cache)
+                })
                 loading = false
             } else {
                 await IKUtils.wait(0.2)
@@ -195,68 +199,68 @@ const BooleanFormConfig = {
     },
 }
 
-function generateEntity (_entity, key) {
-    if (_entity.type === Types.Boolean) {
-        if (_entity.formConfig) {
-            if (_entity.formConfig.type) {
-                _entity.formConfig.type = Utils.extend(BooleanFormConfig.type, _entity.formConfig.type)
+function generateField (_field, key) {
+    if (_field.type === Types.Boolean) {
+        if (_field.formConfig) {
+            if (_field.formConfig.type) {
+                _field.formConfig.type = Utils.extend(BooleanFormConfig.type, _field.formConfig.type)
             }
         }
-        _entity.formConfig = Utils.extend(BooleanFormConfig, _entity.formConfig)
+        _field.formConfig = Utils.extend(BooleanFormConfig, _field.formConfig)
     }
-    if (_entity.type === Types.Time) {
-        if (_entity.formConfig) {
-            if (_entity.formConfig.type) {
-                _entity.formConfig.type = Utils.extend(TimeFormConfig.type, _entity.formConfig.type)
+    if (_field.type === Types.Time) {
+        if (_field.formConfig) {
+            if (_field.formConfig.type) {
+                _field.formConfig.type = Utils.extend(TimeFormConfig.type, _field.formConfig.type)
             }
         }
-        _entity.formConfig = Utils.extend(TimeFormConfig, _entity.formConfig)
+        _field.formConfig = Utils.extend(TimeFormConfig, _field.formConfig)
     }
-    if (_entity.type === Types.Image) {
-        if (_entity.formConfig) {
-            if (_entity.formConfig.type) {
-                _entity.formConfig.type = Utils.extend(ImageFormConfig.type, _entity.formConfig.type)
+    if (_field.type === Types.Image) {
+        if (_field.formConfig) {
+            if (_field.formConfig.type) {
+                _field.formConfig.type = Utils.extend(ImageFormConfig.type, _field.formConfig.type)
             }
         }
-        _entity.formConfig = Utils.extend(ImageFormConfig, _entity.formConfig)
+        _field.formConfig = Utils.extend(ImageFormConfig, _field.formConfig)
     }
-    if (_entity.type === Types.Option) {
-        if (_entity.formConfig) {
-            if (_entity.formConfig.type) {
-                _entity.formConfig.type = Utils.extend(OptionFormConfig.type, _entity.formConfig.type)
+    if (_field.type === Types.Option) {
+        if (_field.formConfig) {
+            if (_field.formConfig.type) {
+                _field.formConfig.type = Utils.extend(OptionFormConfig.type, _field.formConfig.type)
             }
         }
-        _entity.formConfig = Utils.extend(OptionFormConfig, _entity.formConfig)
+        _field.formConfig = Utils.extend(OptionFormConfig, _field.formConfig)
     }
     let _children = []
-    if (_entity.type === Types.Group) {
-        if (_entity.children) {
-            _children = _entity.children.map(item => getFieldFromModel(item))
+    if (_field.type === Types.Group) {
+        if (_field.children) {
+            _children = _field.children.map(item => getFieldFromModel(item))
             const newChildren = []
-            console.log(_entity, _children, key)
+            console.log(_field, _children, key)
             _children.forEach(child => {
                 child = child.filter(i => {
-                    return i.value === _entity.childKey
+                    return i.value === _field.childKey
                 })
                 newChildren.push(child)
             })
             _children = newChildren.flat()
         }
     }
-    _entity.formConfig = Utils.extend(DefaultEntity.formConfig, _entity.formConfig)
-    const entity = Utils.extend(DefaultEntity, _entity)
+    _field.formConfig = Utils.extend(DefaultEntity.formConfig, _field.formConfig)
+    const field = Utils.extend(DefaultEntity, _field)
     return {
         value: key,
-        text: entity.displayName ? entity.displayName : key,
-        dataType: entity.type,
-        ...entity.tableConfig,
-        ...entity.formConfig,
-        header: entity.header,
-        form: entity.form,
+        text: field.displayName ? field.displayName : key,
+        dataType: field.type,
+        ...field.tableConfig,
+        ...field.formConfig,
+        header: field.header,
+        form: field.form,
         children: _children,
-        childKey: _entity.childKey,
-        labelKey:_entity.labelKey,
-        orgin: _entity,
+        childKey: _field.childKey,
+        labelKey: _field.labelKey,
+        orgin: _field,
     }
 }
 
@@ -264,7 +268,7 @@ export function getFieldFromModel (model) {
     const field = []
     if (model.entity) {
         Object.keys(model.entity).forEach((key) => {
-            field.push(generateEntity(model.entity[key], key))
+            field.push(generateField(model.entity[key], key))
         })
     } else {
         return undefined
@@ -272,15 +276,40 @@ export function getFieldFromModel (model) {
     return field
 }
 
+async function getActualOptionValue (option, item, cache) {
+    const key = option.value
+    const searchKey = option.type.itemValue
+    const resultKey = option.type.itemText
+    const selectedOpts = [item[key]].flat()
+    const listFunction = option.type.selectItems
+    if (!cache[key]) {
+        cache[key] = {}
+    }
+    if (!cache[key].list) {
+        cache[key].list = typeof listFunction === 'function' ?
+            await IKUtils.safeCallFunction(this, listFunction) : listFunction
+    }
+    const actualValues = []
+    for (const v of selectedOpts) {
+        if (!cache[key][v]) {
+            cache[key][v] = cache[key].list.find(opt => opt[searchKey] == v)
+        }
+        if (cache[key][v] && cache[key][v][resultKey]) {
+            actualValues.push(cache[key][v][resultKey])
+        }
+    }
+    return actualValues
+
+}
+
 /**
  * @param {*} item
- * @param {{}} structure
+ * @param {{}} entity
  */
-export function parseDataForEntity (item, structure) {
-    // console.log(structure)
-    for (const key of Object.keys(structure)) {
-        const instruction = structure[key]
-        // console.log(instruction, key)
+export function parseDataForEntity (item, entity, cache = {}) {
+    for (const key of Object.keys(entity)) {
+        const instruction = entity[key]
+
         if (item[key]) {
             if (instruction.type === Types.Group) {
                 if (!instruction.tableConfig) {
@@ -299,11 +328,20 @@ export function parseDataForEntity (item, structure) {
                     }
                 }
             }
+            if (instruction.type === Types.Option) {
+                const opt = generateField(instruction, key)
+                item['opt' + key] = []
+                getActualOptionValue(opt, item, cache).then(res => {
+                    item['opt' + key] = res
+                })
+
+            }
 
         } else {
             item[key] = Types.getTypeDefault(instruction.type)
         }
     }
+    item['__parsed'] = true
     return item
 }
 

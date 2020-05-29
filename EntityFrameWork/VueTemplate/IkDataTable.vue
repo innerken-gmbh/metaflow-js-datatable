@@ -246,6 +246,7 @@
                 Types: IKDataEntity.Types,
                 search: '',
                 loading: false,
+                optionCache: {},
                 items: [],
                 dialog: false,
                 headers: [],
@@ -344,34 +345,45 @@
             async renderTableItems () {
                 const options = this.advancedItems.filter(item => item.dataType === IKDataEntity.Types.Option)
                 this.tableItem = this.items
-                for (const opt of options) {
-                    for (const item of this.tableItem) {
+                for (const item of this.tableItem) {
+                    for (const opt of options) {
                         if (!item['opt' + opt.value]) {
-                            this.$set(item, 'opt' + opt.value, await this.adItemList(opt, IKUtils.deepCopy(item)))
+                            this.$set(item, 'opt' + opt.value, await this.getActualOptionValue(opt, item))
                         } else {
-                            item['opt' + opt.value] = await this.adItemList(opt, IKUtils.deepCopy(item))
+                            item['opt' + opt.value] = await this.getActualOptionValue(opt, item)
                         }
-
                     }
                 }
                 return this.tableItem
             },
 
-            adItemList: async function (adItem, item) {
-                const resArr = []
-                const waitTime = Math.random() * 0.000001
+            getActualOptionValue: async function (option, item) {
+                const waitTime = Math.random() * 0.000000001
                 await IKUtils.wait(waitTime)
-                const list = typeof adItem.type.selectItems === 'function' ?
-                    await IKUtils.safeCallFunction(this.model, adItem.type.selectItems) :
-                    adItem.type.selectItems
-                const findArr = [item[adItem.value]].flat()
-                for (const _i of findArr) {
-                    const target = list.find(t => t[adItem.type.itemValue] == _i)
-                    if (target) {
-                        resArr.push(target[adItem.type.itemText])
+
+                const key = option.value
+                const searchKey = option.type.itemValue
+                const resultKey = option.type.itemText
+                const selectedOpts = [item[key]].flat()
+                const listFunction = option.type.selectItems
+                if (!this.optionCache[key]) {
+                    this.optionCache[key] = {}
+                    this.optionCache[key].list = typeof listFunction === 'function' ?
+                        await IKUtils.safeCallFunction(this.model, listFunction) : listFunction
+                }
+                const actualValues = []
+                for (const v of selectedOpts) {
+                    if (!this.optionCache[key][v]) {
+                        console.log('startSearch')
+                        this.optionCache[key][v] = this.optionCache[key].list.find(opt => opt[searchKey] == v)
+                    }
+                    if (this.optionCache[key][v] && this.optionCache[key][v][resultKey]) {
+                        actualValues.push(this.optionCache[key][v][resultKey])
                     }
                 }
-                return resArr
+                // console.log(this.optionCache)
+                return actualValues
+
             },
 
             closeDialog () {

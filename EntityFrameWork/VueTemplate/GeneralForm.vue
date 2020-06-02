@@ -35,14 +35,24 @@
                                             <span class="subtitle-1 font-weight-bold">{{ $t(''+field.groupName) }}</span>
                                         </div>
                                         <v-row>
+
                                             <template v-for="(child,i) in field.children">
-                                                <form-field
-                                                        v-if="editedItem[field.value]"
-                                                        :key="field.id+'c'+i"
-                                                        :field="child"
-                                                        :current-state="editedIndex"
-                                                        :edited-item="editedItem[field.value][i]"
-                                                />
+                                                <div v-if="field" class="d-flex justify-space-between align-center">
+                          <span
+                                  class="subtitle-1 font-weight-bold"
+                          >
+                            {{ editedItem[field.value][field.childLabelKey] }}
+                          </span>
+                                                </div>
+                                                <template v-for="(c,t) in child">
+                                                    <form-field
+                                                            v-if="editedItem[field.value]"
+                                                            :key="field.id+'t'+t+'c'+i"
+                                                            :field="c"
+                                                            :current-state="editedIndex"
+                                                            :edited-item="editedItem[field.value][i]"
+                                                    />
+                                                </template>
                                             </template>
                                         </v-row>
                                     </v-col>

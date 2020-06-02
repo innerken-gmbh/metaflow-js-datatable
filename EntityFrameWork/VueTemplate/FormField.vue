@@ -146,9 +146,22 @@
         computed: {
             selectItems: function () {
                 let selectItems = []
+                const post = (items) => {
+                    let result = []
+                    if (typeof this.type.disabledItem === 'function') {
+                        result = items.map((item) => this.type.disabledItem(item, this.editedItem))
+                    } else {
+                        result = items.map(item => ({
+                            ...item,
+                            disabled: false,
+                        }))
+                    }
+                    return result
+                }
                 if (typeof this.type.selectItems === 'function') {
                     if (this.type.selectItems().then) {
                         this.type.selectItems().then(res => {
+                            res = post(res)
                             this.type.selectItems = res
                         })
                     } else {
@@ -157,6 +170,7 @@
                 } else {
                     selectItems = this.type.selectItems
                 }
+                selectItems = post(selectItems)
                 return selectItems
             },
             uploadUrl: function () {

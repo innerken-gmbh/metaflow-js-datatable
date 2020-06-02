@@ -71,7 +71,9 @@
                         v-else-if="
             adItem.dataType===Types.Group"
                 >
-                    {{item['_'+adItem.value]}}
+                    <v-chip v-bind:key="'_'+adItem.value+c" v-for="(c,index) in adItem.childKey.filter(adItem.displayChild)">
+                        {{item['_'+adItem.value+c]}}
+                    </v-chip>
                 </template>
                 <template
                         v-else-if="

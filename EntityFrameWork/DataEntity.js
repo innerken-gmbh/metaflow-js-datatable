@@ -1,5 +1,5 @@
 import Utils from '../Utlis/Utils.js'
-import { IKUtils,hillo } from '../index'
+import { hillo, IKUtils } from '../index'
 
 export const Types = {
     Integer: Symbol('Type:Integer'),
@@ -96,8 +96,14 @@ export function ModelFactory (entity, config) {
                 loading = true
                 list = await load(filter)
                 const cache = {}
+
                 list.filter(i => !i['__parsed']).forEach(i => {
-                    i = parseDataForEntity(i, entity, cache)
+                    try {
+                        i = parseDataForEntity(i, entity, cache)
+                    } catch (e) {
+                        console.error(e)
+                    }
+
                 })
 
                 loading = false
@@ -169,9 +175,14 @@ const DefaultEntity = {
         requiredEdit: true,
         requiredNew: true,
     },
-    tableConfig: { overwrite: false },
+    tableConfig: {
+        overwrite: false,
+        displayChild: () => true,
+    },
 }
-
+const GroupTableConfig = {
+    displayChild: () => true,
+}
 const TimeFormConfig = {
     type: { name: 'time' },
 }
@@ -240,18 +251,19 @@ function generateField (_field, key) {
     let _children = []
     if (_field.type === Types.Group) {
         if (_field.children) {
-
+            _field.childKey = [_field.childKey].flat()
             _children = _field.children.map(item => getFieldFromModel(item))
             const newChildren = []
-            //console.log(_field, _children, key)
             _children.forEach(child => {
                 child = child.filter(i => {
-                    return i.value === _field.childKey
+                    return _field.childKey.includes(i.value)
                 })
                 newChildren.push(child)
             })
-            _children = newChildren.flat()
-            //console.log(_children,'child')
+            _children = newChildren
+        }
+        if (!_field.tableConfig.displayChild) {
+            _field.tableConfig.displayChild = GroupTableConfig.displayChild
         }
     }
     _field.formConfig = Utils.extend(DefaultEntity.formConfig, _field.formConfig)
@@ -331,7 +343,13 @@ export function parseDataForEntity (item, entity, cache = {}) {
                 if (!instruction.tableConfig.displayCondition) {
                     throw new Error('Parse Failed for group' + item + instruction)
                 }
-                item['_' + key] = item[key].find(i => (instruction.tableConfig.displayCondition(i)))[instruction.childKey]
+                if (!instruction.childKey) {
+                    throw new Error('Parse Failed for group' + item + instruction)
+                }
+                instruction.childKey = [instruction.childKey].flat()
+                instruction.childKey.forEach(childKey => {
+                    item['_' + key + childKey] = item[key].find(i => (instruction.tableConfig.displayCondition(i)))[childKey]
+                })
             }
             item[key] = Types.parseValue(instruction.type, item[key])
             if (instruction.formConfig) {

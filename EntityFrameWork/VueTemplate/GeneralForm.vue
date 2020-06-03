@@ -37,13 +37,9 @@
                                         <v-row>
 
                                             <template v-for="(child,i) in field.children">
-                                                <div v-if="field" class="d-flex justify-space-between align-center">
-                          <span
-                                  class="subtitle-1 font-weight-bold"
-                          >
-                            {{ editedItem[field.value][field.childLabelKey] }}
-                          </span>
-                                                </div>
+                                                <v-col cols="12">
+                                                    <span class="subtitle-1 font-weight-bold">{{ $t(editedItem[field.value][i][field.childLabelKey]) }}</span>
+                                                </v-col>
                                                 <template v-for="(c,t) in child">
                                                     <form-field
                                                             v-if="editedItem[field.value]"

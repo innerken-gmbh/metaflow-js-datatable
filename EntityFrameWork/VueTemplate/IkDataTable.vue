@@ -268,6 +268,7 @@
             mergableFields: function () {
                 return this.formField
                     .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+                    .filter(item=>item.merge)
                     .map(item => {
                         return {
                             ...item,

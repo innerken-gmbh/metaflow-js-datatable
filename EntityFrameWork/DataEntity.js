@@ -146,6 +146,7 @@ const DefaultEntity = {
         default: '',
         cols: 12,
         md: 6,
+        merge: true,
         sm: 12,
         type: { name: 'text' },
         // PossibleValue of types

@@ -71,7 +71,8 @@
                         v-else-if="
             adItem.dataType===Types.Group"
                 >
-                    <v-chip v-bind:key="'_'+adItem.value+c" v-for="(c,index) in adItem.childKey.filter(adItem.displayChild)">
+                    <v-chip v-bind:key="'_'+adItem.value+c"
+                            v-for="(c,index) in adItem.childKey.filter(adItem.displayChild)">
                         {{item['_'+adItem.value+c]}}
                     </v-chip>
                 </template>
@@ -110,7 +111,7 @@
                     >
                         <template v-if="selectedItems.length>0">
                             <v-row>
-                                <template v-for="field in mergableFields">
+                                <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
                                     <form-field
                                             :key="field.id"
                                             :field="field"
@@ -340,7 +341,8 @@
                         const _i = IKUtils.extend(item, newItem)
                         this.updateItem(_i)
                     })
-                    newItem = Object.assign({})
+                    this.mergeItem = {}
+                    newItem = {}
                 }
 
             },

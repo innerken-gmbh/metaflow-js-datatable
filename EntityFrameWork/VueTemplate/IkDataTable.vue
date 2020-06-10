@@ -128,6 +128,7 @@
                         </template>
                         <v-spacer/>
                         <general-form
+                                ref="gf"
                                 :title="entityName"
                                 :dialog="dialog"
                                 :edited-item="editedItem"
@@ -268,7 +269,7 @@
             mergableFields: function () {
                 return this.formField
                     .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
-                    .filter(item=>item.merge)
+                    .filter(item => item.merge)
                     .map(item => {
                         return {
                             ...item,
@@ -356,6 +357,7 @@
                 this.editedItem = IKUtils.deepCopy(this.defaultItem)
                 this.editedIndex = -1
                 this.dialog = false
+                this.$refs.gf.realDialog = false
                 this.reload()
             },
             async updateItem (item) {

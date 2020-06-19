@@ -94,14 +94,14 @@
                             color="primary"
                             @click="timePickerShow = false"
                     >
-                        Cancel
+                        {{ $t('Cancel') }}
                     </v-btn>
                     <v-btn
                             text
                             color="primary"
                             @click="$refs.dialog.save(editedItem[value])"
                     >
-                        OK
+                        {{ $t('OK') }}
                     </v-btn>
                 </v-time-picker>
             </v-dialog>

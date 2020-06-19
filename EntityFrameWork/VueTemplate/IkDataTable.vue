@@ -23,7 +23,7 @@
                     append-icon="mdi-magnify"
                     class="ml-auto"
                     hide-details
-                    label="Search"
+                    :label="$t('Search')"
                     single-line
                     style="max-width: 250px;"
             />
@@ -121,8 +121,8 @@
                             </v-row>
                             <v-row>
                                 <v-col cols="12">
-                                    <v-btn @click="updateAll(mergeItem,false)" color="green">更新选中</v-btn>
-                                    <v-btn @click="updateAll(null,true)" color="red">删除选中</v-btn>
+                                    <v-btn @click="updateAll(mergeItem,false)" color="green">{{ $t('更新选中') }}</v-btn>
+                                    <v-btn @click="updateAll(null,true)" color="red">{{ $t('删除选中') }}</v-btn>
                                 </v-col>
                             </v-row>
                         </template>

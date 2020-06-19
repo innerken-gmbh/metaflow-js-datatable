@@ -16,7 +16,7 @@ const Toast = Swal.mixin({
  * @param {string|HTMLElement|JQuery} title
  * @param {string} content
  */
-export function showConfirm(title = 'Are you sure?', content = 'You won\'t be able to revert this!', callback, failCallback) {
+export function showConfirm(title = this.$i18n.t('Are you sure?'), content = this.$i18n.t('You are not allowed revert this again!'), callback, failCallback) {
     Swal.fire({
         title: title,
         text: content,
@@ -24,7 +24,7 @@ export function showConfirm(title = 'Are you sure?', content = 'You won\'t be ab
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'OK',
+        confirmButtonText: this.$i18n.t('OK'),
     }).then((result) => {
         if (result.value) {
             if (callback) {
@@ -50,12 +50,12 @@ export function toast(title = 'Successful!', type = 'success') {
  * @param {string} content
  * @param {string|HTMLElement|JQuery} title
  */
-export function showError(content = ' Something went wrong!', title = 'Oops...') {
+export function showError(content = 'Etwas ist schief gelaufen!', title = 'Oops...') {
     Swal.fire({
         icon: 'error',
         title: title,
         text: content,
-        footer: '<a href="https://innerken.com">联系技术人员</a>',
+        footer: '<a href="https://innerken.com">Wenden Sie sich an den Techniker</a>',
     })
 }
 
@@ -64,7 +64,7 @@ export function showError(content = ' Something went wrong!', title = 'Oops...')
  */
 export function showLoading(canCancel = false) {
     Swal.fire({
-        title: '正在加载',
+        title: this.$i18n.t('正在加载'),
         allowOutsideClick: () => !Swal.isLoading(),
         allowEscapeKey: canCancel,
     })

@@ -74,7 +74,7 @@
                         text
                         @click="close"
                 >
-                    Cancel
+                    {{ $t('Cancel') }}
                 </v-btn>
                 <v-btn
                         :disabled="!valid"

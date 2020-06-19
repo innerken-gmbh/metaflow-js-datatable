@@ -24,7 +24,8 @@ export function showConfirm(title = this.$i18n.t('Are you sure?'), content = thi
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: this.$i18n.t('OK'),
+        cancelButtonText: 'Stornieren',
+        confirmButtonText: 'OK',
     }).then((result) => {
         if (result.value) {
             if (callback) {
@@ -39,7 +40,7 @@ export function showConfirm(title = this.$i18n.t('Are you sure?'), content = thi
     })
 }
 
-export function toast(title = 'Successful!', type = 'success') {
+export function toast(title = 'Erfolgreich!', type = 'success') {
     Toast.fire({
         icon: type,
         title: title,

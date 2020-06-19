@@ -11,7 +11,7 @@
                     dark
                     v-on="on"
             >
-                {{ addText }}
+                {{ $t(addText) }}
             </v-btn>
         </template>
         <v-card>
@@ -82,7 +82,7 @@
                         text
                         @click="save"
                 >
-                    Save
+                    {{ $t('Save') }}
                 </v-btn>
             </v-card-actions>
         </v-card>

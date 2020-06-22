@@ -16,7 +16,7 @@ const Toast = Swal.mixin({
  * @param {string|HTMLElement|JQuery} title
  * @param {string} content
  */
-export function showConfirm(title = this.$i18n.t('Are you sure?'), content = this.$i18n.t('You are not allowed revert this again!'), callback, failCallback) {
+export function showConfirm(title = 'Bist du sicher?', content = 'Sie dürfen dies nicht wieder rückgängig machen!', callback, failCallback) {
     Swal.fire({
         title: title,
         text: content,
@@ -65,7 +65,7 @@ export function showError(content = 'Etwas ist schief gelaufen!', title = 'Oops.
  */
 export function showLoading(canCancel = false) {
     Swal.fire({
-        title: this.$i18n.t('正在加载'),
+        title: 'Geladen',
         allowOutsideClick: () => !Swal.isLoading(),
         allowEscapeKey: canCancel,
     })

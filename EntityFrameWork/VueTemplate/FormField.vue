@@ -106,6 +106,46 @@
                 </v-time-picker>
             </v-dialog>
         </template>
+        <template v-else-if="type.name==='date'">
+            <v-dialog
+                    ref="dialog"
+                    v-model="datePickerShow"
+                    :return-value.sync="editedItem[value]"
+                    persistent
+                    width="290px"
+            >
+                <template v-slot:activator="{ on }">
+                    <v-text-field
+                            v-model="editedItem[value]"
+                            :label="text"
+                            prepend-icon="mdi-clock-outline"
+                            readonly
+                            v-on="on"
+                    />
+                </template>
+                <v-date-picker
+                        v-if="datePickerShow"
+                        v-model="editedItem[value]"
+                        full-width
+                >
+                    <v-spacer/>
+                    <v-btn
+                            text
+                            color="primary"
+                            @click="datePickerShow = false"
+                    >
+                        {{ $t('Cancel') }}
+                    </v-btn>
+                    <v-btn
+                            text
+                            color="primary"
+                            @click="$refs.dialog.save(editedItem[value])"
+                    >
+                        {{ $t('OK') }}
+                    </v-btn>
+                </v-date-picker>
+            </v-dialog>
+        </template>
         <template v-else>
             <slot/>
         </template>
@@ -140,6 +180,7 @@
             // console.log(this.field)
             return {
                 timePickerShow: false,
+                datePickerShow: false,
                 ...this.field,
             }
         },

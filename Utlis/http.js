@@ -4,14 +4,14 @@ import Utils from "./Utils.js";
 
 
 const httpCode = { // 这里我简单列出一些常见的http状态码信息，可以自己去调整配置
-    400: '请求参数错误',
-    401: '权限不足, 请重新登录',
-    403: '服务器拒绝本次访问',
-    404: '请求资源未找到',
-    500: '内部服务器错误',
-    501: '服务器不支持该请求中使用的方法',
-    502: '网关错误',
-    504: '网关超时',
+    400: 'Parameterfehler anfordern', // 请求参数错误
+    401: 'Unzureichende Berechtigungen, bitte melden Sie sich erneut an', // 权限不足, 请重新登录
+    403: 'Der Server verweigert diesen Zugriff', // 服务器拒绝本次访问
+    404: 'Angeforderte Ressource nicht gefunden', // 请求资源未找到
+    500: 'Interner Serverfehler', // 内部服务器错误
+    501: 'Der Server unterstützt die in der Anforderung verwendete Methode nicht', // 服务器不支持该请求中使用的方法
+    502: 'Gateway-Fehler', // 网关错误
+    504: 'Gateway-Zeitüberschreitung', // 网关超时
 }
 
 const RqConfig = {

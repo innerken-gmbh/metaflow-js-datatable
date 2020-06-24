@@ -9,6 +9,7 @@ export const Types = {
     Object: Symbol('Type:Object'),
     Image: Symbol('Type:Image'),
     Time: Symbol('Type:Time'),
+    Date: Symbol('Type:Date'),
     Option: Symbol('Type:Option'),
     Group: Symbol('Type:Group'),
     getTypeDefault (type) {
@@ -26,6 +27,8 @@ export const Types = {
         } else if (type === Types.Object) {
             return null
         } else if (type === Types.Image) {
+            return ''
+        } else if (type === Types.Date) {
             return ''
         } else if (type === Types.Time) {
             return ''
@@ -188,6 +191,10 @@ const TimeFormConfig = {
     type: { name: 'time' },
 }
 
+const DateFormConfig = {
+    type: { name: 'date' },
+}
+
 const OptionFormConfig = {
     type: {
         name: 'select',
@@ -224,6 +231,14 @@ function generateField (_field, key) {
             }
         }
         _field.formConfig = Utils.extend(BooleanFormConfig, _field.formConfig)
+    }
+    if (_field.type === Types.Date) {
+        if (_field.formConfig) {
+            if (_field.formConfig.type) {
+                _field.formConfig.type = Utils.extend(DateFormConfig.type, _field.formConfig.type)
+            }
+        }
+        _field.formConfig = Utils.extend(DateFormConfig, _field.formConfig)
     }
     if (_field.type === Types.Time) {
         if (_field.formConfig) {

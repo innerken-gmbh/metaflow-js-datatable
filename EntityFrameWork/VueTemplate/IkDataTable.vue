@@ -155,19 +155,23 @@
                         :item="item"
                 />
                 <template v-if="useDefaultAction">
-                    <v-icon
-                            class="mr-2"
-                            small
-                            @click="editItem(item)"
-                    >
-                        mdi-pencil
-                    </v-icon>
-                    <v-icon
-                            small
-                            @click="deleteItem(item)"
-                    >
-                        mdi-delete
-                    </v-icon>
+                    <template v-if="useEditAction">
+                        <v-icon
+                                class="mr-2"
+                                small
+                                @click="editItem(item)"
+                        >
+                            mdi-pencil
+                        </v-icon>
+                    </template>
+                    <template v-if="useDeleteAction">
+                        <v-icon
+                                small
+                                @click="deleteItem(item)"
+                        >
+                            mdi-delete
+                        </v-icon>
+                    </template>
                 </template>
 
             </template>
@@ -228,6 +232,14 @@
                 default: true,
             },
             useDefaultAction: {
+                type: Boolean,
+                default: true,
+            },
+            useEditAction: {
+                type: Boolean,
+                default: true,
+            },
+            useDeleteAction: {
                 type: Boolean,
                 default: true,
             },

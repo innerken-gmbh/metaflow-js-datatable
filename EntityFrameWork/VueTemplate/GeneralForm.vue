@@ -15,7 +15,6 @@
                 >
                     <v-container>
                         <v-row>
-
                             <template v-for="field in realFormField">
                                 <template v-if="field.dataType===IKDataEntity.Types.Group">
                                     <v-col

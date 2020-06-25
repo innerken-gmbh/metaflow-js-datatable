@@ -103,6 +103,15 @@
                 </template>
             </template>
             <template v-slot:footer>
+                <general-form
+                        ref="gf"
+                        :title="entityName"
+                        :dialog="dialog"
+                        :edited-item="editedItem"
+                        :edited-index="editedIndex"
+                        :form-field="formField"
+                        @change-general-form="dialogChange"
+                />
                 <slot name="footer">
                     <v-toolbar
                             class="mt-2"
@@ -127,15 +136,14 @@
                             </v-row>
                         </template>
                         <v-spacer/>
-                        <general-form
-                                ref="gf"
-                                :title="entityName"
-                                :dialog="dialog"
-                                :edited-item="editedItem"
-                                :edited-index="editedIndex"
-                                :form-field="formField"
-                                @change-general-form="dialogChange"
-                        />
+                        <v-btn
+                                class="mb-2"
+                                color="primary"
+                                dark
+                                @click="$refs.gf.realDialog=true"
+                        >
+                            {{ $t(addText) }}
+                        </v-btn>
                     </v-toolbar>
                 </slot>
             </template>
@@ -187,247 +195,251 @@
 
 <script>
 
-    import GeneralForm from './GeneralForm'
-    import { IKDataEntity, IKUtils } from 'innerken-utils'
-    import ImgTemplate from './ImgTemplate'
-    import MaterialCard from './MaterialCard'
-    import FormField from 'innerken-utils/EntityFrameWork/VueTemplate/FormField'
+import GeneralForm from './GeneralForm'
+import { IKDataEntity, IKUtils } from 'innerken-utils'
+import ImgTemplate from './ImgTemplate'
+import MaterialCard from './MaterialCard'
+import FormField from 'innerken-utils/EntityFrameWork/VueTemplate/FormField'
 
-    export default {
-        name: 'IkDataTable',
-        components: {
-            ImgTemplate,
-            GeneralForm,
-            MaterialCard,
-            FormField,
-        },
-        props: {
-            entityName: {
-                type: String,
-                default: '',
-            },
-            filter: {
-                type: Object,
-                default: () => {
-                },
-            },
-            icon: {
-                type: String,
-                default: '',
-            },
-            showExpand: {
-                type: Boolean,
-                default: false,
-            },
-            singleExpand: {
-                type: Boolean,
-                default: false,
-            },
-            useAction: {
-                type: Boolean,
-                default: true,
-            },
-            useSelect: {
-                type: Boolean,
-                default: true,
-            },
-            useDefaultAction: {
-                type: Boolean,
-                default: true,
-            },
-            useEditAction: {
-                type: Boolean,
-                default: true,
-            },
-            useDeleteAction: {
-                type: Boolean,
-                default: true,
-            },
-            model: {
-                type: Object,
-                default: () => {
-                },
-            },
-        },
-        watch: {
-            filter: {
-                handler () {
-                    this.reload()
-                },
-            },
-        },
-        data: function () {
-            return {
-                mergeItem: {},
-                Types: IKDataEntity.Types,
-                search: '',
-                loading: false,
-                optionCache: {},
-                items: [],
-                dialog: false,
-                headers: [],
-                formField: [],
-                editedIndex: -1,
-                editedItem: null,
-                defaultItem: null,
-                selectedItems: [],
-                tableItem: [],
-                realHeaders: [],
-                advancedItems: [],
-                slottedItems: [],
-            }
-        },
-        computed: {
-            mergableFields: function () {
-                return this.formField
-                    .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
-                    .filter(item => item.merge)
-                    .map(item => {
-                        return {
-                            ...item,
-                            name: 'item.' + item.value,
-                        }
-                    })
-            },
-
-        },
-        created () {
-            [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
-            if (this.useAction) {
-                this.headers.push({
-                    text: 'action',
-                    value: 'action',
-                })
-            }
-            this.realHeaders = this.getRealHeaders()
-            this.advancedItems = this.getAdvancedItems()
-            this.slottedItems = this.getSlottedItems()
-            this.editedItem = IKUtils.deepCopy(this.defaultItem)
-            this.reload().catch(() => {
-                this.loading = false
-                this.items = []
-            })
-
-        },
-        methods: {
-            getAdvancedItems: function () {
-                return this.headers
-                    .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
-                        IKDataEntity.Types.Option, IKDataEntity.Types.Group,
-                    ].includes(item.dataType))
-                    .map(item => {
-                        return {
-                            ...item,
-                            name: 'item.' + item.value,
-                        }
-                    })
-            },
-            getRealHeaders: function () {
-                return this.headers.map(item => {
-                    item.text = this.$i18n.t(item.text)
-                    return item
-                })
-            },
-            getSlottedItems: function () {
-                return this.headers
-                    .filter(item => item.overwrite)
-                    .map(item => {
-                        return {
-                            ...item,
-                            name: 'item.' + item.value,
-                        }
-                    })
-            },
-            dialogChange (save) {
-                if (save) {
-                    this.save()
-                } else {
-                    this.closeDialog()
-                }
-            },
-            updateAll (newItem = null, remove = false) {
-                if (remove) {
-                    this.selectedItems.forEach(item => this.deleteItem(item, false))
-                    return
-                }
-                if (newItem) {
-                    this.selectedItems.forEach(item => {
-                        const _i = IKUtils.extend(item, newItem)
-                        this.updateItem(_i)
-                    })
-                    this.mergeItem = {}
-                    newItem = {}
-                }
-
-            },
-            async renderTableItems () {
-                this.tableItem = this.items
-                return this.tableItem
-            },
-            closeDialog () {
-                console.log('should close dialog')
-                this.editedItem = IKUtils.deepCopy(this.defaultItem)
-                this.editedIndex = -1
-                this.dialog = false
-                this.$refs.gf.realDialog = false
-                this.reload()
-            },
-            async updateItem (item) {
-                return IKUtils.safeCallFunction(this.model, this.model.edit, item).then(() => {
-                    IKUtils.toast(this.$i18n.t('编辑成功'))
-                    this.closeDialog()
-                })
-            },
-
-            save () {
-                if (this.editedIndex > -1) {
-                    this.updateItem(this.editedItem)
-                } else {
-                    IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem).then(() => {
-                        IKUtils.toast(this.$i18n.t('添加成功'))
-                        this.closeDialog()
-                    })
-                }
-            },
-
-            deleteItem (item, promt = true) {
-                if (promt) {
-                    IKUtils.showConfirm(
-                        this.$i18n.t('Are you sure?'),
-                        this.$i18n.t('you want to delete this item?'), () => {
-                            IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-                                .then(() => {
-                                    IKUtils.toast(this.$i18n.t('删除成功'))
-                                    this.reload()
-                                })
-                        },
-                    )
-                } else {
-                    IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-                        .then(() => {
-                            IKUtils.toast(this.$i18n.t('删除成功'))
-                            this.reload()
-                        })
-                }
-
-            },
-
-            editItem (item) {
-                // console.log(item)
-                this.editedIndex = this.tableItem.indexOf(item)
-                this.editedItem = Object.assign({}, item)
-                this.dialog = true
-            },
-
-            async reload () {
-                const model = this.model
-                this.loading = true
-                this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.filter)
-                this.renderTableItems()
-                this.loading = false
-            },
-        },
+export default {
+  name: 'IkDataTable',
+  components: {
+    ImgTemplate,
+    GeneralForm,
+    MaterialCard,
+    FormField,
+  },
+  props: {
+    addText: {
+      type: String,
+      default: 'Add',
+    },
+    entityName: {
+      type: String,
+      default: '',
+    },
+    filter: {
+      type: Object,
+      default: () => {
+      },
+    },
+    icon: {
+      type: String,
+      default: '',
+    },
+    showExpand: {
+      type: Boolean,
+      default: false,
+    },
+    singleExpand: {
+      type: Boolean,
+      default: false,
+    },
+    useAction: {
+      type: Boolean,
+      default: true,
+    },
+    useSelect: {
+      type: Boolean,
+      default: true,
+    },
+    useDefaultAction: {
+      type: Boolean,
+      default: true,
+    },
+    useEditAction: {
+      type: Boolean,
+      default: true,
+    },
+    useDeleteAction: {
+      type: Boolean,
+      default: true,
+    },
+    model: {
+      type: Object,
+      default: () => {
+      },
+    },
+  },
+  watch: {
+    filter: {
+      handler () {
+        this.reload()
+      },
+    },
+  },
+  data: function () {
+    return {
+      mergeItem: {},
+      Types: IKDataEntity.Types,
+      search: '',
+      loading: false,
+      optionCache: {},
+      items: [],
+      dialog: false,
+      headers: [],
+      formField: [],
+      editedIndex: -1,
+      editedItem: null,
+      defaultItem: null,
+      selectedItems: [],
+      tableItem: [],
+      realHeaders: [],
+      advancedItems: [],
+      slottedItems: [],
     }
+  },
+  computed: {
+    mergableFields: function () {
+      return this.formField
+        .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+        .filter(item => item.merge)
+        .map(item => {
+          return {
+            ...item,
+            name: 'item.' + item.value,
+          }
+        })
+    },
+
+  },
+  created () {
+    [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
+    if (this.useAction) {
+      this.headers.push({
+        text: 'action',
+        value: 'action',
+      })
+    }
+    this.realHeaders = this.getRealHeaders()
+    this.advancedItems = this.getAdvancedItems()
+    this.slottedItems = this.getSlottedItems()
+    this.editedItem = IKUtils.deepCopy(this.defaultItem)
+    this.reload().catch(() => {
+      this.loading = false
+      this.items = []
+    })
+
+  },
+  methods: {
+    getAdvancedItems: function () {
+      return this.headers
+        .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
+          IKDataEntity.Types.Option, IKDataEntity.Types.Group,
+        ].includes(item.dataType))
+        .map(item => {
+          return {
+            ...item,
+            name: 'item.' + item.value,
+          }
+        })
+    },
+    getRealHeaders: function () {
+      return this.headers.map(item => {
+        item.text = this.$i18n.t(item.text)
+        return item
+      })
+    },
+    getSlottedItems: function () {
+      return this.headers
+        .filter(item => item.overwrite)
+        .map(item => {
+          return {
+            ...item,
+            name: 'item.' + item.value,
+          }
+        })
+    },
+    dialogChange (save) {
+      if (save) {
+        this.save()
+      } else {
+        this.closeDialog()
+      }
+    },
+    updateAll (newItem = null, remove = false) {
+      if (remove) {
+        this.selectedItems.forEach(item => this.deleteItem(item, false))
+        return
+      }
+      if (newItem) {
+        this.selectedItems.forEach(item => {
+          const _i = IKUtils.extend(item, newItem)
+          this.updateItem(_i)
+        })
+        this.mergeItem = {}
+        newItem = {}
+      }
+
+    },
+    async renderTableItems () {
+      this.tableItem = this.items
+      return this.tableItem
+    },
+    closeDialog () {
+      console.log('should close dialog')
+      this.editedItem = IKUtils.deepCopy(this.defaultItem)
+      this.editedIndex = -1
+      this.dialog = false
+      this.$refs.gf.realDialog = false
+      this.reload()
+    },
+    async updateItem (item) {
+      return IKUtils.safeCallFunction(this.model, this.model.edit, item).then(() => {
+        IKUtils.toast(this.$i18n.t('编辑成功'))
+        this.closeDialog()
+      })
+    },
+
+    save () {
+      if (this.editedIndex > -1) {
+        this.updateItem(this.editedItem)
+      } else {
+        IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem).then(() => {
+          IKUtils.toast(this.$i18n.t('添加成功'))
+          this.closeDialog()
+        })
+      }
+    },
+
+    deleteItem (item, promt = true) {
+      if (promt) {
+        IKUtils.showConfirm(
+          this.$i18n.t('Are you sure?'),
+          this.$i18n.t('you want to delete this item?'), () => {
+            IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+              .then(() => {
+                IKUtils.toast(this.$i18n.t('删除成功'))
+                this.reload()
+              })
+          },
+        )
+      } else {
+        IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+          .then(() => {
+            IKUtils.toast(this.$i18n.t('删除成功'))
+            this.reload()
+          })
+      }
+
+    },
+
+    editItem (item) {
+      console.log(item)
+      this.editedIndex = this.tableItem.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.$refs.gf.realDialog = true
+    },
+
+    async reload () {
+      const model = this.model
+      this.loading = true
+      this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.filter)
+      this.renderTableItems()
+      this.loading = false
+    },
+  },
+}
 </script>
 
 <style scoped>

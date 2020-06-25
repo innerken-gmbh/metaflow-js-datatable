@@ -4,16 +4,6 @@
             v-model="realDialog"
             max-width="500px"
     >
-        <template v-slot:activator="{ on }">
-            <v-btn
-                    class="mb-2"
-                    color="primary"
-                    dark
-                    v-on="on"
-            >
-                {{ $t(addText) }}
-            </v-btn>
-        </template>
         <v-card>
             <v-card-title>
                 <span class="headline">{{ title }}</span>
@@ -91,74 +81,70 @@
 </template>
 
 <script>
-    import FormField from './FormField'
-    import { IKDataEntity } from 'innerken-utils'
+import FormField from './FormField'
+import { IKDataEntity } from 'innerken-utils'
 
-    export default {
-        name: 'GeneralForm',
-        components: { FormField },
-        props: {
-            addText: {
-                type: String,
-                default: 'Add',
-            },
-            title: {
-                type: String,
-                default: 'Form',
-            },
-            formField: {
-                type: Array,
-                default: () => [],
-            },
-            editedItem: {
-                type: Object,
-                default: () => {
-                },
-            },
-            editedIndex: {
-                type: Number,
-                default: -1,
-            },
-            dialog: {
-                type: Boolean,
-                default: false,
-            },
-        },
-        data: function () {
-            return {
-                realDialog: this.dialog,
-                valid: true,
-                IKDataEntity: IKDataEntity,
-                realFormField: this.formField.map((i, index) => {
-                    return {
-                        id: index,
-                        ...i,
-                    }
-                }),
-            }
-        },
-        watch: {
-            realDialog (val) {
-                val || this.close()
-            },
-            dialog: {
-                immediate: true,
-                handler: function (val) {
-                    this.realDialog = val
-                },
-            },
-        },
-        methods: {
-            close () {
-                this.realDialog = false
-                this.$emit('change-general-form', false)
-            },
-
-            save () {
-                this.$emit('change-general-form', true)
-            },
-        },
+export default {
+  name: 'GeneralForm',
+  components: { FormField },
+  props: {
+    title: {
+      type: String,
+      default: 'Form',
+    },
+    formField: {
+      type: Array,
+      default: () => [],
+    },
+    editedItem: {
+      type: Object,
+      default: () => {
+      },
+    },
+    editedIndex: {
+      type: Number,
+      default: -1,
+    },
+    dialog: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data: function () {
+    return {
+      realDialog: this.dialog,
+      valid: true,
+      IKDataEntity: IKDataEntity,
+      realFormField: this.formField.map((i, index) => {
+        return {
+          id: index,
+          ...i,
+        }
+      }),
     }
+  },
+  watch: {
+    realDialog (val) {
+      val || this.close()
+    },
+    dialog: {
+      immediate: true,
+      handler: function (val) {
+        this.realDialog = val
+      },
+    },
+  },
+  methods: {
+    close () {
+      this.realDialog = false
+      this.$emit('change-general-form', false)
+    },
+
+    save () {
+      this.$emit('change-general-form', true)
+    },
+  },
+}
 </script>
 
 <style scoped>

@@ -155,97 +155,97 @@
 
 <script>
 
-    import ImgWithLoading from './ImgWithLoading'
-    import Utils from '../../Utlis/Utils'
+import ImgWithLoading from './ImgWithLoading'
+import Utils from '../../Utlis/Utils'
 
-    export default {
-        name: 'FormField',
-        components: { ImgWithLoading },
-        props: {
-            field: {
-                type: Object,
-                default: () => {
-                },
-            },
-            editedItem: {
-                type: Object,
-                default: () => {
-                },
-            },
-            currentState: {
-                type: Number,
-                default: -1,
-            },
-        },
-        data: function () {
-            // console.log(this.field)
-            return {
-                timePickerShow: false,
-                datePickerShow: false,
-                ...this.field,
-            }
-        },
-        computed: {
-            selectItems: function () {
-                let selectItems = []
-                const post = (items) => {
-                    let result = []
-                    if (typeof this.type.disabledItem === 'function') {
-                        result = items.map((item) => this.type.disabledItem(item, this.editedItem))
-                    } else {
-                        result = items.map(item => ({
-                            ...item,
-                            disabled: false,
-                        }))
-                    }
-                    return result
-                }
-                if (typeof this.type.selectItems === 'function') {
-                    if (this.type.selectItems().then) {
-                        this.type.selectItems().then(res => {
-                            res = post(res)
-                            this.type.selectItems = res
-                        })
-                    } else {
-                        selectItems = this.type.selectItems()
-                    }
-                } else {
-                    selectItems = this.type.selectItems
-                }
-                selectItems = post(selectItems)
-                return selectItems
-            },
-            uploadUrl: function () {
-                return URL.createObjectURL(this.editedItem[this.type.fileStorage])
-            },
-            isNew: function () {
-                return this.currentState === -1
-            },
-            shouldDisable: function () {
-                return (this.disableNew && this.isNew) ||
-                    (this.disableEdit && !this.isNew)
-            },
-            rules: function () {
-
-                let rules = this.rule
-                if (this.required && this.type.name !== 'switch') {
-                    if (this.isNew && this.requiredNew) {
-                        rules = rules.concat(Utils.ValidateRules.NotEmpty)
-                    } else if (!this.isNew && this.requiredEdit) {
-                        rules = rules.concat(Utils.ValidateRules.NotEmpty)
-                    }
-                }
-                return rules
-            },
-            locale: function () {
-                let locale = this.dateLocale
-                return locale
-            },
-            root: function () {
-                return typeof this.type.root === 'function' ? this.type.root() : this.type.root
-            },
-        },
+export default {
+  name: 'FormField',
+  components: { ImgWithLoading },
+  props: {
+    field: {
+      type: Object,
+      default: () => {
+      },
+    },
+    editedItem: {
+      type: Object,
+      default: () => {
+      },
+    },
+    currentState: {
+      type: Number,
+      default: -1,
+    },
+  },
+  data: function () {
+    // console.log(this.field)
+    return {
+      timePickerShow: false,
+      datePickerShow: false,
+      ...this.field,
     }
+  },
+  computed: {
+    selectItems: function () {
+      let selectItems = []
+      const post = (items) => {
+        let result = []
+        if (typeof this.type.disabledItem === 'function') {
+          result = items.map((item) => this.type.disabledItem(item, this.editedItem))
+        } else {
+          result = items.map(item => ({
+            ...item,
+            disabled: false,
+          }))
+        }
+        return result
+      }
+      if (typeof this.type.selectItems === 'function') {
+        if (this.type.selectItems().then) {
+          this.type.selectItems().then(res => {
+            res = post(res)
+            this.type.selectItems = res
+          })
+        } else {
+          selectItems = this.type.selectItems()
+        }
+      } else {
+        selectItems = this.type.selectItems
+      }
+      selectItems = post(selectItems)
+      return selectItems
+    },
+    uploadUrl: function () {
+      return URL.createObjectURL(this.editedItem[this.type.fileStorage])
+    },
+    isNew: function () {
+      return this.currentState === -1
+    },
+    shouldDisable: function () {
+      return (this.disableNew && this.isNew) ||
+        (this.disableEdit && !this.isNew)
+    },
+    rules: function () {
+
+      let rules = this.rule
+      if (this.required && this.type.name !== 'switch') {
+        if (this.isNew && this.requiredNew) {
+          rules = rules.concat(Utils.ValidateRules.NotEmpty)
+        } else if (!this.isNew && this.requiredEdit) {
+          rules = rules.concat(Utils.ValidateRules.NotEmpty)
+        }
+      }
+      return rules
+    },
+    locale: function () {
+      let locale = this.dateLocale
+      return locale
+    },
+    root: function () {
+      return typeof this.type.root === 'function' ? this.type.root() : this.type.root
+    },
+  },
+}
 </script>
 
 <style scoped>

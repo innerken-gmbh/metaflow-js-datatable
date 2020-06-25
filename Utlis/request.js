@@ -46,6 +46,7 @@ function fastSweetAlertRequest (title, input, url, dataName, dataObj, callback =
         },
         showCancelButton: true,
         cancelButtonText: 'Stornieren',
+        confirmButtonText: 'Bestätigen',
         showLoaderOnConfirm: true,
         preConfirm: (data) => {
             dataObj[dataName] = data

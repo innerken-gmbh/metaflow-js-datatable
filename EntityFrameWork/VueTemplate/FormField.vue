@@ -127,6 +127,7 @@
                         v-if="datePickerShow"
                         v-model="editedItem[value]"
                         full-width
+                        :locale="locale"
                 >
                     <v-spacer/>
                     <v-btn
@@ -235,6 +236,10 @@
                     }
                 }
                 return rules
+            },
+            locale: function () {
+                let locale = this.dateLocale
+                return locale
             },
             root: function () {
                 return typeof this.type.root === 'function' ? this.type.root() : this.type.root

@@ -178,6 +178,7 @@ const DefaultEntity = {
         required: true,
         requiredEdit: true,
         requiredNew: true,
+        dateLocale:'',
     },
     tableConfig: {
         overwrite: false,

@@ -181,7 +181,7 @@ export const ValidateRules = {
         v => !!v || 'E-mail is required',
         v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
     ],
-    NotEmpty: [v => !!v || i18n.t('This Field is required')],
+    NotEmpty: [v => !!v || 'Dieses Feld wird benötigt'],
 }
 
 /**

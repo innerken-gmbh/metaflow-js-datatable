@@ -1,6 +1,6 @@
 {
   "name": "innerken-utils",
-  "version": "1.7.13",
+  "version": "1.7.14",
   "description": "Utils for innerken GmbH",
   "main": "index.js",
   "scripts": {

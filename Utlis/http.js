@@ -84,7 +84,7 @@ instance.interceptors.response.use(
     if (validateResponse(res)) {
       return Promise.resolve(res.data)
     } else {
-      if (res.data.info) {
+      if (res.data.info&&!res.request.slient) {
         RqConfig.LoadingUtils.showError(res.data.info)
       } else {
         RqConfig.LoadingUtils.showError()
@@ -94,7 +94,9 @@ instance.interceptors.response.use(
   },
 // 请求失败
   error => {
-    RqConfig.LoadingUtils.hideLoading()
+    if (res.request.showLoading) {
+      RqConfig.LoadingUtils.hideLoading()
+    }
     const { response } = error
     if (response) {
       errorHandle(error)

@@ -1,11 +1,12 @@
 {
   "name": "innerken-utils",
-  "version": "1.7.8",
+  "version": "1.7.9",
   "description": "Utils for innerken GmbH",
   "main": "index.js",
   "scripts": {
     "test": "node test.js",
-    "lint": "eslint"
+    "lint": "eslint",
+    "update": "dotenv -- release-it --ci"
   },
   "repository": {
     "type": "git",
@@ -42,6 +43,16 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^6.2.2",
-    "release-it": "^13.6.3"
+    "release-it": "^13.6.3",
+    "dotenv-cli": "^3.1.0"
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "update: release v${version}",
+      "requireCleanWorkingDir": false
+    },
+    "github": {
+      "release": true
+    }
   }
 }

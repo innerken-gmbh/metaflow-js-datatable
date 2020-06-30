@@ -18,4 +18,8 @@ export const IkDataTable = {
     ...InnerKenDataTable
 }
 
+export const widow = {
+    ...InnerKenDataTable
+}
+
 

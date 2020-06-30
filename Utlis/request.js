@@ -36,6 +36,30 @@ function get (url, dataInParams, config = null) {
     return http.get(url, config)
 }
 
+async function fastQuestion (title, input, url, dataName, dataObj) {
+    return await Swal.fire({
+        title: title,
+        input: input,
+        inputAttributes: {
+            autocapitalize: 'off',
+        },
+        showCancelButton: true,
+        cancelButtonText: 'Stornieren',
+        confirmButtonText: 'Bestätigen',
+        showLoaderOnConfirm: true,
+        preConfirm: (data) => {
+            dataObj[dataName] = data
+            return post(url, dataObj).then(
+              response => {
+                 return response
+              }
+            )
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+    })
+}
+
+
 function fastSweetAlertRequest (title, input, url, dataName, dataObj, callback = false) {
     dataObj[dataName] = '';
     Swal.fire({

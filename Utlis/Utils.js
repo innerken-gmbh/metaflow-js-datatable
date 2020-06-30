@@ -74,7 +74,11 @@ export function showLoading(canCancel = false) {
 
 export function hideLoading() {
     Swal.hideLoading()
-    Swal.close()
+    Swal.fire({
+        icon:'success',
+        title:'OK'
+    })
+
 }
 
 /**

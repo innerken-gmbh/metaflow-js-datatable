@@ -84,11 +84,14 @@ instance.interceptors.response.use(
     if (validateResponse(res)) {
       return Promise.resolve(res.data)
     } else {
-      if (res.data.info&&!res.request.slient) {
-        RqConfig.LoadingUtils.showError(res.data.info)
-      } else {
-        RqConfig.LoadingUtils.showError()
+      if(!res.request.silent){
+        if (res.data.info) {
+          RqConfig.LoadingUtils.showError(res.data.info)
+        } else {
+          RqConfig.LoadingUtils.showError()
+        }
       }
+
       return Promise.reject(res)
     }
   },

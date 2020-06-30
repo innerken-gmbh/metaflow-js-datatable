@@ -74,31 +74,32 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   // 请求成功
   res => {
-    if (res.request.showLoading) {
-      RqConfig.LoadingUtils.hideLoading()
-    }
+
 
     if (RqConfig.Debug) {
       console.log(res.data)
     }
     if (validateResponse(res)) {
+      if (res.config.showLoading) {
+        RqConfig.LoadingUtils.hideLoading()
+      }
       return Promise.resolve(res.data)
     } else {
-      if(!res.request.silent){
+      console.log(res.request)
+      if(!res.config.silent){
         if (res.data.info) {
           RqConfig.LoadingUtils.showError(res.data.info)
         } else {
           RqConfig.LoadingUtils.showError()
         }
       }
-
       return Promise.reject(res)
     }
   },
 // 请求失败
   error => {
-    if (res.request.showLoading) {
-      RqConfig.LoadingUtils.hideLoading()
+    if (res.config.showLoading) {
+      RqConfig.LoadingUtils.hideLoading(false)
     }
     const { response } = error
     if (response) {

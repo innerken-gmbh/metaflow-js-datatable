@@ -85,7 +85,6 @@ instance.interceptors.response.use(
       }
       return Promise.resolve(res.data)
     } else {
-      console.log(res.request)
       if(!res.config.silent){
         if (res.data.info) {
           RqConfig.LoadingUtils.showError(res.data.info)

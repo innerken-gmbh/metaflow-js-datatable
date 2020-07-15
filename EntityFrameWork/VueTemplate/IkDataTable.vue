@@ -219,7 +219,7 @@ export default {
       default: '',
     },
     filter: {
-      type: Object,
+      type: [Object, Function],
       default: () => {
       },
     },

@@ -25,6 +25,7 @@
                 type: String,
                 default: 'photo',
             },
+            
         },
     }
 </script>

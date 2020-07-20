@@ -76,7 +76,7 @@ instance.interceptors.response.use(
   res => {
 
 
-    if (RqConfig.Debug&&!req.nodebug) {
+    if (RqConfig.Debug&&!res.config.nodebug) {
       console.log(res.data)
     }
     if (validateResponse(res)) {

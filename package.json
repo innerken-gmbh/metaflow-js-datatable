@@ -1,12 +1,12 @@
 {
   "name": "innerken-utils",
-  "version": "1.7.18",
+  "version": "1.7.19",
   "description": "Utils for innerken GmbH",
   "main": "index.js",
   "scripts": {
     "test": "node test.js",
     "lint": "eslint",
-    "update": "dotenv -- release-it"
+    "update": "dotenv -- release-it --ci"
   },
   "repository": {
     "type": "git",

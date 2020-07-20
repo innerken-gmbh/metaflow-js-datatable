@@ -1,196 +1,205 @@
 <template>
-    <material-card
-            class="px-5 py-3 "
-            color="indigo"
-            :icon="icon"
-            inline
+  <material-card
+    class="px-5 py-3 "
+    color="indigo"
+    :icon="icon"
+    inline
+  >
+    <template v-slot:after-heading>
+      <div class="display-2 font-weight-light">
+        {{ entityName }}
+      </div>
+      <slot name="extra-heading"/>
+    </template>
+    <v-toolbar
+      color="white"
+      flat
     >
-        <template v-slot:after-heading>
-            <div class="display-2 font-weight-light">
-                {{ entityName }}
-            </div>
-            <slot name="extra-heading"/>
-        </template>
-        <v-toolbar
-                color="white"
-                flat
-        >
-            <slot :items="items" name="filterLeft"></slot>
-            <v-spacer/>
-            <slot :items="items" name="filterRight"></slot>
-            <v-text-field
-                    v-model="search"
-                    append-icon="mdi-magnify"
-                    class="ml-auto"
-                    hide-details
-                    :label="$t('Search')"
-                    single-line
-                    style="max-width: 250px;"
-            />
-        </v-toolbar>
+      <slot :items="items" name="filterLeft"></slot>
+      <v-spacer/>
+      <slot :items="items" name="filterRight"></slot>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        class="ml-auto"
+        hide-details
+        :label="$t('Search')"
+        single-line
+        style="max-width: 250px;"
+      />
+    </v-toolbar>
 
-        <v-divider class="mt-3"/>
-        <v-data-table
-                v-model="selectedItems"
-                :show-expand="showExpand"
-                :single-expand="singleExpand"
-                :show-select="useSelect"
-                :fixed-header="true"
-                :headers="realHeaders"
-                :items="tableItem"
-                :items-per-page="15"
-                :loading="loading"
-                :search.sync="search"
-                multi-sort
-        >
-            <template
-                    v-for="slottedItem in slottedItems"
-                    v-slot:[slottedItem.name]="{ item }"
-            >
-                <slot
-                        :name="slottedItem.name"
-                        :item="item"
-                />
-            </template>
-            <template
-                    v-for="adItem in advancedItems"
-                    v-slot:[adItem.name]="{ item }"
-            >
-                <template
-                        v-if="
+    <v-divider class="mt-3"/>
+    <v-data-table
+      dense
+      v-model="selectedItems"
+      :show-expand="showExpand"
+      :single-expand="singleExpand"
+      :show-select="useSelect"
+      :fixed-header="true"
+      :headers="realHeaders"
+      :items="tableItem"
+      :items-per-page="15"
+      :loading="loading"
+      :search.sync="search"
+      multi-sort
+    >
+      <template
+        v-for="slottedItem in slottedItems"
+        v-slot:[slottedItem.name]="{ item }"
+      >
+        <slot
+          :name="slottedItem.name"
+          :item="item"
+        />
+      </template>
+      <template
+        v-for="adItem in advancedItems"
+        v-slot:[adItem.name]="{ item }"
+      >
+        <template
+          v-if="
             adItem.dataType===Types.Image"
-                >
-                    <img-template
-                            :key="adItem.name"
-                            :model="adItem.value"
-                            :item="item"
-                            :root="adItem.type.root()"
-                    />
-                </template>
-                <template
-                        v-else-if="
+        >
+          <img-template
+            :key="adItem.name"
+            :model="adItem.value"
+            :item="item"
+            :root="adItem.type.root()"
+          />
+        </template>
+        <template
+          v-else-if="
             adItem.dataType===Types.Group"
-                >
-                    <v-chip v-bind:key="'_'+adItem.value+c"
-                            v-for="(c,index) in adItem.childKey.filter(adItem.displayChild)">
-                        {{item['_'+adItem.value+c]}}
-                    </v-chip>
-                </template>
-                <template
-                        v-else-if="
+        >
+          <v-chip
+            v-bind:key="'_'+adItem.value+c"
+            v-for="(c,index) in adItem.childKey.filter(adItem.displayChild)"
+          >
+            {{item['_'+adItem.value+c]}}
+          </v-chip>
+        </template>
+        <template
+          v-else-if="
             adItem.dataType===Types.Boolean"
-                >
-                    <v-checkbox
-                            :key="adItem.name"
-                            :readonly="true"
-                            :input-value="item[adItem.value]"
-                            disabled
-                    />
-                </template>
-                <template
-                        v-else-if="
+        >
+          <v-simple-checkbox
+            dense
+            :key="adItem.name"
+            :readonly="true"
+            v-model="item[adItem.value]"
+            disabled
+          />
+        </template>
+        <template
+          v-else-if="
             adItem.dataType===Types.Option"
-                >
-                    <template v-for="(l,index) of item['opt'+adItem.value]">
-                        <v-chip
-                                :key="item+adItem.name+'c'+index"
-                                class="mx-1"
-                                label
-                        >
-                            {{ l }}
-                        </v-chip>
-                    </template>
+        >
+          <template v-for="(l,index) of item['opt'+adItem.value]">
+            <v-chip
+              :key="item+adItem.name+'c'+index"
+              class="mx-1"
+              :color="adItem.type.color?
+                            adItem.type.color.find(c=>{
+                              return parseInt(item[adItem.value])===c.id}).color:''"
+              label
+            >
+              {{ l }}
+            </v-chip>
+          </template>
+        </template>
+      </template>
+      <template v-slot:footer>
+        <general-form
+          ref="gf"
+          :title="entityName"
+          :dialog="dialog"
+          :edited-item="editedItem"
+          :edited-index="editedIndex"
+          :form-field="formField"
+          @change-general-form="dialogChange"
+        />
+        <slot name="footer">
+          <v-toolbar
+            class="mt-2"
+            flat
+            color="white"
+          >
+            <template v-if="selectedItems.length>0">
+              <v-row>
+                <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
+                  <form-field
+                    :key="field.id"
+                    :field="field"
+                    :edited-item="mergeItem"
+                  />
                 </template>
+              </v-row>
+              <v-row>
+                <v-col cols="12">
+                  <v-btn @click="updateAll(mergeItem,false)" color="green">{{ $t('更新选中') }}</v-btn>
+                  <v-btn @click="updateAll(null,true)" color="red">{{ $t('删除选中') }}</v-btn>
+                </v-col>
+              </v-row>
             </template>
-            <template v-slot:footer>
-                <general-form
-                        ref="gf"
-                        :title="entityName"
-                        :dialog="dialog"
-                        :edited-item="editedItem"
-                        :edited-index="editedIndex"
-                        :form-field="formField"
-                        @change-general-form="dialogChange"
-                />
-                <slot name="footer">
-                    <v-toolbar
-                            class="mt-2"
-                            flat
-                            color="white"
-                    >
-                        <template v-if="selectedItems.length>0">
-                            <v-row>
-                                <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
-                                    <form-field
-                                            :key="field.id"
-                                            :field="field"
-                                            :edited-item="mergeItem"
-                                    />
-                                </template>
-                            </v-row>
-                            <v-row>
-                                <v-col cols="12">
-                                    <v-btn @click="updateAll(mergeItem,false)" color="green">{{ $t('更新选中') }}</v-btn>
-                                    <v-btn @click="updateAll(null,true)" color="red">{{ $t('删除选中') }}</v-btn>
-                                </v-col>
-                            </v-row>
-                        </template>
-                        <v-spacer/>
-                        <v-btn
-                                class="mb-2"
-                                color="primary"
-                                dark
-                                @click="$refs.gf.realDialog=true"
-                        >
-                            {{ $t(addText) }}
-                        </v-btn>
-                    </v-toolbar>
-                </slot>
-            </template>
-            <template v-slot:no-data>
-                <slot name="no-data">
-                    <v-btn
-                            color="primary"
-                            @click="reload"
-                    >
-                        {{ $t('重新加载') }}
-                    </v-btn>
-                </slot>
-            </template>
-            <template v-slot:item.action="{ item }">
-                <slot
-                        name="item.action"
-                        :item="item"
-                />
-                <template v-if="useDefaultAction">
-                    <template v-if="useEditAction">
-                        <v-icon
-                                class="mr-2"
-                                small
-                                @click="editItem(item)"
-                        >
-                            mdi-pencil
-                        </v-icon>
-                    </template>
-                    <template v-if="useDeleteAction">
-                        <v-icon
-                                small
-                                @click="deleteItem(item)"
-                        >
-                            mdi-delete
-                        </v-icon>
-                    </template>
-                </template>
+            <v-spacer/>
+            <v-btn
+              class="mb-2"
+              color="primary"
+              dark
+              @click="$refs.gf.realDialog=true"
+            >
+              {{ $t(addText) }}
+            </v-btn>
+          </v-toolbar>
+        </slot>
+      </template>
+      <template v-slot:no-data>
+        <slot name="no-data">
+          <v-btn
+            color="primary"
+            @click="reload"
+          >
+            {{ $t('重新加载') }}
+          </v-btn>
+        </slot>
+      </template>
+      <template v-slot:item.action="{ item }">
+        <slot
+          name="item.action"
+          :item="item"
+        />
+        <template v-if="useDefaultAction">
+          <template v-if="useEditAction">
+            <v-icon
+              class="mr-2"
+              small
+              @click="editItem(item)"
+            >
+              mdi-pencil
+            </v-icon>
+          </template>
+          <template v-if="useDeleteAction">
+            <v-icon
+              small
+              @click="deleteItem(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+        </template>
 
-            </template>
-            <template v-slot:expanded-item="{ item }">
-                <td :colspan="headers.length">
-                    <slot name="expanded-item"
-                          :item="item"/>
-                </td>
-            </template>
-        </v-data-table>
-    </material-card>
+      </template>
+      <template v-slot:expanded-item="{ item }">
+        <td :colspan="headers.length">
+          <slot
+            name="expanded-item"
+            :item="item"
+          />
+        </td>
+      </template>
+    </v-data-table>
+  </material-card>
 </template>
 
 <script>
@@ -313,6 +322,7 @@ export default {
     }
     this.realHeaders = this.getRealHeaders()
     this.advancedItems = this.getAdvancedItems()
+    console.log(this.advancedItems)
     this.slottedItems = this.getSlottedItems()
     this.editedItem = IKUtils.deepCopy(this.defaultItem)
     this.reload().catch(() => {
@@ -442,6 +452,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+  .v-data-table td {
+    padding: 4px !important;
+  }
 
 </style>

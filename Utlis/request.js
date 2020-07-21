@@ -44,7 +44,7 @@ async function fastQuestion (title, input, url, dataName, dataObj) {
       autocapitalize: 'off',
     },
     showCancelButton: true,
-    cancelButtonText: 'Stornieren',
+    cancelButtonText: 'Zurück',
     confirmButtonText: 'Bestätigen',
     showLoaderOnConfirm: true,
     preConfirm: (data) => {
@@ -69,7 +69,7 @@ function fastSweetAlertRequest (title, input, url, dataName, dataObj, callback =
       autocapitalize: 'off',
     },
     showCancelButton: true,
-    cancelButtonText: 'Stornieren',
+    cancelButtonText: 'Zurück',
     confirmButtonText: 'Bestätigen',
     showLoaderOnConfirm: true,
     preConfirm: (data) => {

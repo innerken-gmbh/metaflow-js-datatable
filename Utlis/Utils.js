@@ -24,7 +24,7 @@ export function showConfirm (title = 'Bist du sicher?', content = 'Sie dürfen d
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
     cancelButtonColor: '#d33',
-    cancelButtonText: 'Stornieren',
+    cancelButtonText: 'Zurück',
     confirmButtonText: 'OK',
   }).then((result) => {
     if (result.value) {

@@ -468,6 +468,7 @@ export default {
       this.loading = true
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.filter)
       this.loading = false
+      this.$emit('reloaded')
     },
   },
 }

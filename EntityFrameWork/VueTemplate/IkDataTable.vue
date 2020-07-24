@@ -15,9 +15,10 @@
             color="white"
             flat
     >
-
+      <slot :items="items" name="filterLeft">
+      </slot>
       <template v-if="mergableFields.length>0">
-        <template v-for="(field,index) in mergableFields.map(f=>({...f}))">
+        <template v-for="(field,index) in mergableFields">
           <form-field
                   class="mx-1"
                   :no-details="true"
@@ -26,12 +27,10 @@
                   :edited-item="filterItem"
           />
         </template>
-        <v-btn @click="filterItem={}" :elevation="1" x-small color="error" dark fab>
-          <v-icon>mdi-refresh</v-icon>
+        <v-btn :color="Object.keys(filterItem).length>0?'error':''" icon @click="filterItem={}">
+          <v-icon>mdi-close-box</v-icon>
         </v-btn>
       </template>
-      <slot :items="items" name="filterLeft">
-      </slot>
       <v-spacer/>
       <slot :items="items" name="filterRight"></slot>
       <v-text-field

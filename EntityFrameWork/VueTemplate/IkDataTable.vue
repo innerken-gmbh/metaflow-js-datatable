@@ -457,7 +457,6 @@ export default {
     },
 
     editItem (item) {
-      console.log(item)
       this.editedIndex = this.tableItem.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.$refs.gf.realDialog = true

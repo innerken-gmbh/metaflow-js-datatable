@@ -231,6 +231,11 @@ export default {
     FormField,
   },
   props: {
+    model: {
+      type: Object,
+      default: () => {
+      },
+    },
     addText: {
       type: String,
       default: 'Add',
@@ -275,11 +280,6 @@ export default {
     useDeleteAction: {
       type: Boolean,
       default: true,
-    },
-    model: {
-      type: Object,
-      default: () => {
-      },
     },
   },
   watch: {
@@ -456,6 +456,7 @@ export default {
     },
 
     editItem (item) {
+      console.log(item)
       this.editedIndex = this.tableItem.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.$refs.gf.realDialog = true

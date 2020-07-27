@@ -118,6 +118,9 @@ export function ModelFactory (entity, config) {
 
     return list
   }
+  const forceGetList=async function(...filter){
+    return await getList(true)
+  }
   const getOne = async function (conditionFunc) {
     return generalGetOne(getList, conditionFunc)
   }
@@ -127,6 +130,7 @@ export function ModelFactory (entity, config) {
     add,
     edit,
     remove,
+    forceGetList,
     getOne
   }
 

@@ -16,7 +16,7 @@
                     :hide-details="noDetails"
                     v-model="editedItem[value]"
                     :disabled="shouldDisable"
-                    :items="selectItems"
+                    :items="selectItemList"
                     :item-text="type.itemText"
                     :item-value="type.itemValue"
                     :multiple="type.multiple"
@@ -181,7 +181,6 @@ export default {
     },
   },
   data: function () {
-    // console.log(this.field)
     return {
       timePickerShow: false,
       datePickerShow: false,
@@ -189,7 +188,10 @@ export default {
     }
   },
   computed: {
-    selectItems: function () {
+    selectItemsIsDynamic: function () {
+      return typeof this.type.selectItems === 'function'
+    },
+    selectItemList: function () {
       let selectItems = []
       const post = (items) => {
         let result = []
@@ -203,15 +205,8 @@ export default {
         }
         return result
       }
-      if (typeof this.type.selectItems === 'function') {
-        if (this.type.selectItems().then) {
-          this.type.selectItems().then(res => {
-            res = post(res)
-            this.type.selectItems = res
-          })
-        } else {
-          selectItems = this.type.selectItems()
-        }
+      if (this.selectItemsIsDynamic) {
+        selectItems = this.type._selectItems ? this.type._selectItems : []
       } else {
         selectItems = this.type.selectItems
       }
@@ -250,6 +245,25 @@ export default {
     root: function () {
       return typeof this.type.root === 'function' ? this.type.root() : this.type.root
     },
+  },
+  methods:{
+    preProcessOptions(){
+      if (this.selectItemsIsDynamic) {
+        if (this.type.selectItems().then) {
+          this.type.selectItems().then(res => {
+            this.$set(this.type, '_selectItems', res)
+          })
+        } else {
+          this.$set(this.type, '_selectItems', this.type.selectItems())
+        }
+      }
+    }
+  },
+  mounted () {
+    this.preProcessOptions()
+  },
+  updated () {
+    this.preProcessOptions()
   },
 }
 </script>

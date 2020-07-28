@@ -57,13 +57,13 @@ export const Types = {
     } else {
       return value
     }
-  }
+  },
 }
 
 Object.freeze(Types)
 
 export async function generalLoad (url, data) {
-  return (await hillo.get(url, {...data}))
+  return (await hillo.get(url, { ...data }))
 
 }
 
@@ -118,27 +118,27 @@ export function ModelFactory (entity, config) {
 
     return list
   }
-  const forceGetList=async function(...filter){
-    return await getList(true)
+  const forceGetList = async function (...filter) {
+    return await getList(true, ...filter)
   }
   const getOne = async function (conditionFunc) {
     return generalGetOne(getList, conditionFunc)
   }
 
   const DefaultConfig = {
+    forceGetList,
     getList,
     add,
     edit,
     remove,
-    forceGetList,
-    getOne
+    getOne,
   }
 
   config = IKUtils.extend(DefaultConfig, config)
 
   return {
     entity,
-    ...config
+    ...config,
   }
 
 }
@@ -155,7 +155,7 @@ const DefaultEntity = {
     md: 6,
     merge: true,
     sm: 12,
-    type: {name: 'text'},
+    type: { name: 'text' },
     // PossibleValue of types
     /*
     Text:{ name: 'text' }
@@ -182,22 +182,22 @@ const DefaultEntity = {
     required: true,
     requiredEdit: true,
     requiredNew: true,
-    dateLocale: ''
+    dateLocale: '',
   },
   tableConfig: {
     overwrite: false,
-    displayChild: () => true
-  }
+    displayChild: () => true,
+  },
 }
 const GroupTableConfig = {
-  displayChild: () => true
+  displayChild: () => true,
 }
 const TimeFormConfig = {
-  type: {name: 'time'}
+  type: { name: 'time' },
 }
 
 const DateFormConfig = {
-  type: {name: 'date'}
+  type: { name: 'date' },
 }
 
 const OptionFormConfig = {
@@ -206,22 +206,22 @@ const OptionFormConfig = {
     itemText: 'name',
     itemValue: 'id',
     selectItems: [],
-    multiple: false
-  }
+    multiple: false,
+  },
 }
 
 const ImageFormConfig = {
   type: {
     name: 'image',
     root: () => '/',
-    fileStorage: 'file'
-  }
+    fileStorage: 'file',
+  },
 }
 
 const BooleanFormConfig = {
   type: {
-    name: 'switch'
-  }
+    name: 'switch',
+  },
 }
 
 /**
@@ -300,7 +300,7 @@ function generateField (_field, key) {
     children: _children,
     childKey: _field.childKey,
     labelKey: _field.labelKey,
-    orgin: _field
+    orgin: _field,
   }
 }
 
@@ -434,5 +434,5 @@ export default {
   Types,
   getFieldFromModel,
   ModelFactory,
-  generalLoad
+  generalLoad,
 }

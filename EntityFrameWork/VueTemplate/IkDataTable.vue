@@ -323,6 +323,7 @@ export default {
               })
     },
     tableItem: function () {
+
       if (this.filterItem) {
         return this.items.filter(i => {
           return Object.keys(this.filterItem).every(

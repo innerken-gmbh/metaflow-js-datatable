@@ -54,7 +54,7 @@ instance.interceptors.request.use(
       RqConfig.LoadingUtils.showLoading()
     }
     if (req.method === 'get') {
-      if (RqConfig.Debug&&!req.nodebug) {
+      if (RqConfig.Debug&&!req.noDebug) {
         console.info('------------------------------------------')
         console.info('Sending GET Request:', req.url, req.params)
       }
@@ -76,7 +76,7 @@ instance.interceptors.response.use(
   res => {
 
 
-    if (RqConfig.Debug&&!res.config.nodebug) {
+    if (RqConfig.Debug&&!res.config.noDebug) {
       console.log(res.data)
     }
     if (validateResponse(res)) {

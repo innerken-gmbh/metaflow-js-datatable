@@ -1,9 +1,9 @@
 <template>
   <material-card
-    class="px-5 py-3 "
-    color="indigo"
-    :icon="icon"
-    inline
+          class="px-5 py-3 "
+          color="indigo"
+          :icon="icon"
+          inline
   >
     <template v-slot:after-heading>
       <div class="display-2 font-weight-light">
@@ -12,97 +12,113 @@
       <slot name="extra-heading"/>
     </template>
     <v-toolbar
-      color="white"
-      flat
+            color="white"
+            flat
     >
-      <slot :items="items" name="filterLeft"></slot>
+      <slot :items="items" name="filterLeft">
+      </slot>
+      <template v-if="mergableFields.length>0">
+        <template v-for="(field,index) in mergableFields">
+          <form-field
+                  class="mx-1"
+                  :no-details="true"
+                  :key="index+'filter'"
+                  :field="field"
+                  :edited-item="filterItem"
+          />
+        </template>
+        <v-btn :color="Object.keys(filterItem).length>0?'error':''" icon @click="filterItem={}">
+          <v-icon>mdi-close-box</v-icon>
+        </v-btn>
+      </template>
       <v-spacer/>
       <slot :items="items" name="filterRight"></slot>
       <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        class="ml-auto"
-        hide-details
-        :label="$t('Search')"
-        single-line
-        style="max-width: 250px;"
+              v-model="search"
+              append-icon="mdi-magnify"
+              class="ml-auto"
+              hide-details
+              clearable
+              :label="$t('Search')"
+              single-line
+              style="max-width: 250px;"
       />
     </v-toolbar>
 
     <v-divider class="mt-3"/>
     <v-data-table
-      dense
-      v-model="selectedItems"
-      :show-expand="showExpand"
-      :single-expand="singleExpand"
-      :show-select="useSelect"
-      :fixed-header="true"
-      :headers="realHeaders"
-      :items="tableItem"
-      :items-per-page="15"
-      :loading="loading"
-      :search.sync="search"
-      multi-sort
+            dense
+            v-model="selectedItems"
+            :show-expand="showExpand"
+            :single-expand="singleExpand"
+            :show-select="useSelect"
+            :fixed-header="true"
+            :headers="realHeaders"
+            :items="tableItem"
+            :items-per-page="15"
+            :loading="loading"
+            :search.sync="search"
+            multi-sort
     >
       <template
-        v-for="slottedItem in slottedItems"
-        v-slot:[slottedItem.name]="{ item }"
+              v-for="slottedItem in slottedItems"
+              v-slot:[slottedItem.name]="{ item }"
       >
         <slot
-          :name="slottedItem.name"
-          :item="item"
+                :name="slottedItem.name"
+                :item="item"
         />
       </template>
       <template
-        v-for="adItem in advancedItems"
-        v-slot:[adItem.name]="{ item }"
+              v-for="adItem in advancedItems"
+              v-slot:[adItem.name]="{ item }"
       >
         <template
-          v-if="
+                v-if="
             adItem.dataType===Types.Image"
         >
           <img-template
-            :key="adItem.name"
-            :model="adItem.value"
-            :item="item"
-            :root="adItem.type.root()"
+                  :key="adItem.name"
+                  :model="adItem.value"
+                  :item="item"
+                  :root="adItem.type.root()"
           />
         </template>
         <template
-          v-else-if="
+                v-else-if="
             adItem.dataType===Types.Group"
         >
           <v-chip
-            v-bind:key="'_'+adItem.value+c"
-            v-for="(c,index) in adItem.childKey.filter(adItem.displayChild)"
+                  v-bind:key="'_'+adItem.value+c"
+                  v-for="(c,index) in adItem.childKey.filter(adItem.displayChild)"
           >
             {{item['_'+adItem.value+c]}}
           </v-chip>
         </template>
         <template
-          v-else-if="
+                v-else-if="
             adItem.dataType===Types.Boolean"
         >
           <v-simple-checkbox
-            dense
-            :key="adItem.name"
-            :readonly="true"
-            v-model="item[adItem.value]"
-            disabled
+                  dense
+                  :key="adItem.name"
+                  :readonly="true"
+                  v-model="item[adItem.value]"
+                  disabled
           />
         </template>
         <template
-          v-else-if="
+                v-else-if="
             adItem.dataType===Types.Option"
         >
           <template v-for="(l,index) of item['opt'+adItem.value]">
             <v-chip
-              :key="item+adItem.name+'c'+index"
-              class="mx-1"
-              :color="adItem.type.color?
+                    :key="item+adItem.name+'c'+index"
+                    class="mx-1"
+                    :color="adItem.type.color?
                             adItem.type.color.find(c=>{
                               return parseInt(item[adItem.value])===c.id}).color:''"
-              label
+                    label
             >
               {{ l }}
             </v-chip>
@@ -111,43 +127,39 @@
       </template>
       <template v-slot:footer>
         <general-form
-          ref="gf"
-          :title="entityName"
-          :dialog="dialog"
-          :edited-item="editedItem"
-          :edited-index="editedIndex"
-          :form-field="formField"
-          @change-general-form="dialogChange"
+                ref="gf"
+                :title="entityName"
+                :dialog="dialog"
+                :edited-item="editedItem"
+                :edited-index="editedIndex"
+                :form-field="formField"
+                @change-general-form="dialogChange"
         />
         <slot name="footer">
           <v-toolbar
-            class="mt-2"
-            flat
-            color="white"
+                  class="mt-2"
+                  flat
+                  color="white"
           >
             <template v-if="selectedItems.length>0">
-              <v-row>
-                <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
-                  <form-field
-                    :key="field.id"
-                    :field="field"
-                    :edited-item="mergeItem"
-                  />
-                </template>
-              </v-row>
-              <v-row>
-                <v-col cols="12">
-                  <v-btn @click="updateAll(mergeItem,false)" color="green">{{ $t('更新选中') }}</v-btn>
-                  <v-btn @click="updateAll(null,true)" color="red">{{ $t('删除选中') }}</v-btn>
-                </v-col>
-              </v-row>
+              <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
+                <form-field
+                        class="mx-1"
+                        :no-details="true"
+                        :key="field.id"
+                        :field="field"
+                        :edited-item="mergeItem"
+                />
+              </template>
+              <v-btn @click="updateAll(mergeItem,false)" color="green">{{ $t('更新选中') }}</v-btn>
+              <v-btn @click="updateAll(null,true)" color="red">{{ $t('删除选中') }}</v-btn>
             </template>
             <v-spacer/>
             <v-btn
-              class="mb-2"
-              color="primary"
-              dark
-              @click="$refs.gf.realDialog=true"
+                    class="mb-2"
+                    color="primary"
+                    dark
+                    @click="$refs.gf.realDialog=true"
             >
               {{ $t(addText) }}
             </v-btn>
@@ -157,8 +169,8 @@
       <template v-slot:no-data>
         <slot name="no-data">
           <v-btn
-            color="primary"
-            @click="reload"
+                  color="primary"
+                  @click="reload"
           >
             {{ $t('重新加载') }}
           </v-btn>
@@ -166,23 +178,23 @@
       </template>
       <template v-slot:item.action="{ item }">
         <slot
-          name="item.action"
-          :item="item"
+                name="item.action"
+                :item="item"
         />
         <template v-if="useDefaultAction">
           <template v-if="useEditAction">
             <v-icon
-              class="mr-2"
-              small
-              @click="editItem(item)"
+                    class="mr-2"
+                    small
+                    @click="editItem(item)"
             >
               mdi-pencil
             </v-icon>
           </template>
           <template v-if="useDeleteAction">
             <v-icon
-              small
-              @click="deleteItem(item)"
+                    small
+                    @click="deleteItem(item)"
             >
               mdi-delete
             </v-icon>
@@ -193,8 +205,8 @@
       <template v-slot:expanded-item="{ item }">
         <td :colspan="headers.length">
           <slot
-            name="expanded-item"
-            :item="item"
+                  name="expanded-item"
+                  :item="item"
           />
         </td>
       </template>
@@ -219,6 +231,11 @@ export default {
     FormField,
   },
   props: {
+    model: {
+      type: Object,
+      default: () => {
+      },
+    },
     addText: {
       type: String,
       default: 'Add',
@@ -264,11 +281,6 @@ export default {
       type: Boolean,
       default: true,
     },
-    model: {
-      type: Object,
-      default: () => {
-      },
-    },
   },
   watch: {
     filter: {
@@ -279,6 +291,7 @@ export default {
   },
   data: function () {
     return {
+      filterItem: {},
       mergeItem: {},
       Types: IKDataEntity.Types,
       search: '',
@@ -292,7 +305,6 @@ export default {
       editedItem: null,
       defaultItem: null,
       selectedItems: [],
-      tableItem: [],
       realHeaders: [],
       advancedItems: [],
       slottedItems: [],
@@ -301,14 +313,28 @@ export default {
   computed: {
     mergableFields: function () {
       return this.formField
-        .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
-        .filter(item => item.merge)
-        .map(item => {
-          return {
-            ...item,
-            name: 'item.' + item.value,
-          }
+              .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+              .filter(item => item.merge)
+              .map(item => {
+                return {
+                  ...item,
+                  name: 'item.' + item.value,
+                }
+              })
+    },
+    tableItem: function () {
+
+      if (this.filterItem) {
+        return this.items.filter(i => {
+          return Object.keys(this.filterItem).every(
+                  t => {
+                    const org = i[t]
+                    const oth = this.filterItem[t]
+                    return org === oth || (Array.isArray(org)&&(org.includes(oth) || oth.every(ot => org.includes(ot))))
+                  })
         })
+      }
+      return this.items
     },
 
   },
@@ -334,15 +360,15 @@ export default {
   methods: {
     getAdvancedItems: function () {
       return this.headers
-        .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
-          IKDataEntity.Types.Option, IKDataEntity.Types.Group,
-        ].includes(item.dataType))
-        .map(item => {
-          return {
-            ...item,
-            name: 'item.' + item.value,
-          }
-        })
+              .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
+                IKDataEntity.Types.Option, IKDataEntity.Types.Group,
+              ].includes(item.dataType))
+              .map(item => {
+                return {
+                  ...item,
+                  name: 'item.' + item.value,
+                }
+              })
     },
     getRealHeaders: function () {
       return this.headers.map(item => {
@@ -352,13 +378,13 @@ export default {
     },
     getSlottedItems: function () {
       return this.headers
-        .filter(item => item.overwrite)
-        .map(item => {
-          return {
-            ...item,
-            name: 'item.' + item.value,
-          }
-        })
+              .filter(item => item.overwrite)
+              .map(item => {
+                return {
+                  ...item,
+                  name: 'item.' + item.value,
+                }
+              })
     },
     dialogChange (save) {
       if (save) {
@@ -381,10 +407,6 @@ export default {
         newItem = {}
       }
 
-    },
-    async renderTableItems () {
-      this.tableItem = this.items
-      return this.tableItem
     },
     closeDialog () {
       console.log('should close dialog')
@@ -415,21 +437,21 @@ export default {
     deleteItem (item, promt = true) {
       if (promt) {
         IKUtils.showConfirm(
-          this.$i18n.t('Are you sure?'),
-          this.$i18n.t('you want to delete this item?'), () => {
-            IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-              .then(() => {
-                IKUtils.toast(this.$i18n.t('删除成功'))
-                this.reload()
-              })
-          },
+                this.$i18n.t('Are you sure?'),
+                this.$i18n.t('you want to delete this item?'), () => {
+                  IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+                          .then(() => {
+                            IKUtils.toast(this.$i18n.t('删除成功'))
+                            this.reload()
+                          })
+                },
         )
       } else {
         IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-          .then(() => {
-            IKUtils.toast(this.$i18n.t('删除成功'))
-            this.reload()
-          })
+                .then(() => {
+                  IKUtils.toast(this.$i18n.t('删除成功'))
+                  this.reload()
+                })
       }
 
     },
@@ -445,8 +467,8 @@ export default {
       const model = this.model
       this.loading = true
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.filter)
-      this.renderTableItems()
       this.loading = false
+      this.$emit('reloaded')
     },
   },
 }

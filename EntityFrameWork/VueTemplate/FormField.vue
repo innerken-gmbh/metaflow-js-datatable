@@ -246,13 +246,20 @@ export default {
       return typeof this.type.root === 'function' ? this.type.root() : this.type.root
     },
   },
+  watch:{
+    editedItem:{
+      deep:true,
+      handler:function (val) {
+        this.preProcessOptions()
+      }
+    },
+  },
   methods:{
-    preProcessOptions(){
+    async preProcessOptions(){
       if (this.selectItemsIsDynamic) {
         if (this.type.selectItems().then) {
-          this.type.selectItems().then(res => {
-            this.$set(this.type, '_selectItems', res)
-          })
+          const res=await this.type.selectItems()
+          this.$set(this.type, '_selectItems',  res)
         } else {
           this.$set(this.type, '_selectItems', this.type.selectItems())
         }
@@ -261,10 +268,7 @@ export default {
   },
   mounted () {
     this.preProcessOptions()
-  },
-  updated () {
-    this.preProcessOptions()
-  },
+  }
 }
 </script>
 

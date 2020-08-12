@@ -9,6 +9,14 @@ const uploadConfig = {
   },
 }
 
+const jsonConfig = {
+  headers: {
+    post: {
+      'Content-Type': 'application/json',
+    },
+  },
+}
+
 function postWithUploadFile (url, data, config) {
   let formData = new FormData()
   for (const i of Object.keys(data)) {
@@ -92,6 +100,10 @@ function silentGet (url, dataInParams, config) {
 }
 
 
+function jsonPost (url, dataInParams, config) {
+  return post(url, dataInParams, Object.assign({}, jsonConfig, config))
+}
+
 export default {
-  fastQuestion, post, fastSweetAlertRequest, get, postWithUploadFile, put, remove, silentGet
+  fastQuestion, post, fastSweetAlertRequest, get, postWithUploadFile, put, remove, silentGet, jsonPost
 }

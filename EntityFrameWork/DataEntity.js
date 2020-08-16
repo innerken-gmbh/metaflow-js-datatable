@@ -51,6 +51,9 @@ export const Types = {
       if (value.includes(',')) {
         return value.split(',').map(item => parseInt(item))
       }
+      if(isNaN(parseInt(value))){
+        return value
+      }
       return parseInt(value)
     } else if (type === Types.Group) {
       return value

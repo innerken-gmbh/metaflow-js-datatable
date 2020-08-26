@@ -146,6 +146,42 @@
                 </v-date-picker>
             </v-dialog>
         </template>
+        <template v-else-if="type.name==='color'">
+            <v-text-field
+                    v-model=editedItem[value]
+                    hide-details
+                    :label="text"
+            >
+                <template
+                        v-slot:append
+                >
+                    <v-menu
+                            v-model="colorPickerShow"
+                            top
+                            nudge-bottom="105"
+                            nudge-left="16"
+                            :close-on-content-click="false"
+                    >
+                        <template v-slot:activator="{ on }">
+                            <div
+                                    :style="swatchStyle"
+                                    v-on="on"
+                            />
+                        </template>
+                        <v-card>
+                            <v-card-text
+                                    class="pa-0"
+                            >
+                                <v-color-picker
+                                        v-model="editedItem[value]"
+                                        flat
+                                />
+                            </v-card-text>
+                        </v-card>
+                    </v-menu>
+                </template>
+            </v-text-field>
+        </template>
         <template v-else>
             <slot/>
         </template>
@@ -184,10 +220,25 @@ export default {
     return {
       timePickerShow: false,
       datePickerShow: false,
+      colorPickerShow: false,
       ...this.field,
     }
   },
   computed: {
+      swatchStyle () {
+          const { colorPickerShow } = this
+          return {
+              backgroundColor: this.editedItem.color,
+              cursor: 'pointer',
+              height: '30px',
+              width: '30px',
+              borderStyle: 'solid',
+              borderColor: '#c1c1c1',
+              borderWidth: '1px',
+              borderRadius: colorPickerShow ? '50%' : '4px',
+              transition: 'border-radius 200ms ease-in-out',
+          }
+      },
     selectItemsIsDynamic: function () {
       return typeof this.type.selectItems === 'function'
     },

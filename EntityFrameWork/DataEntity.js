@@ -12,6 +12,7 @@ export const Types = {
   Date: Symbol('Type:Date'),
   Option: Symbol('Type:Option'),
   Group: Symbol('Type:Group'),
+  Color: Symbol('Type:Color'),
   getTypeDefault (type) {
     if (!type) {
       type = Types.String
@@ -36,6 +37,8 @@ export const Types = {
       return []
     } else if (type === Types.Group) {
       return []
+    } else if (type === Types.Color) {
+      return '#FFFFFF'
     } else {
       return undefined
     }
@@ -227,6 +230,12 @@ const BooleanFormConfig = {
   },
 }
 
+const ColorFormConfig = {
+  type: {
+    name: 'color',
+  },
+}
+
 /**
  * @param {*} _field
  * @param {string} key
@@ -255,6 +264,14 @@ function generateField (_field, key) {
       }
     }
     _field.formConfig = Utils.extend(TimeFormConfig, _field.formConfig)
+  }
+  if (_field.type === Types.Color) {
+    if (_field.formConfig) {
+      if (_field.formConfig.type) {
+        _field.formConfig.type = Utils.extend(ColorFormConfig.type, _field.formConfig.type)
+      }
+    }
+    _field.formConfig = Utils.extend(ColorFormConfig, _field.formConfig)
   }
   if (_field.type === Types.Image) {
     if (_field.formConfig) {

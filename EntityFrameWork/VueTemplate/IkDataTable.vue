@@ -108,6 +108,16 @@
           />
         </template>
         <template
+                v-else-if="
+            adItem.dataType===Types.Color"
+        >
+          <v-chip
+                  :color="item[adItem.value]"
+                  label
+                  :style="swatchStyle"
+          />
+        </template>
+        <template
             v-else-if="
             adItem.dataType===Types.Option"
         >
@@ -311,6 +321,17 @@ export default {
     }
   },
   computed: {
+    swatchStyle () {
+      return {
+        cursor: 'pointer',
+        height: '30px',
+        width: '30px',
+        borderStyle: 'solid',
+        borderColor: '#c1c1c1',
+        borderWidth: '1px',
+        transition: 'border-radius 200ms ease-in-out',
+      }
+    },
     mergableFields: function () {
       return this.formField
           .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
@@ -361,7 +382,7 @@ export default {
     getAdvancedItems: function () {
       return this.headers
           .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
-            IKDataEntity.Types.Option, IKDataEntity.Types.Group,
+            IKDataEntity.Types.Option, IKDataEntity.Types.Group, IKDataEntity.Types.Color
           ].includes(item.dataType))
           .map(item => {
             return {

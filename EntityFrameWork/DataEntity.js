@@ -54,7 +54,7 @@ export const Types = {
       if (value.includes(',')) {
         return value.split(',').map(item => parseInt(item))
       }
-      if(isNaN(parseInt(value))){
+      if (isNaN(parseInt(value))) {
         return value
       }
       return parseInt(value)
@@ -82,8 +82,11 @@ export async function generalGetOne (asyncListFunc, conditionFunc) {
   return _list.find(item => conditionFunc(item))
 }
 
+
+
 export function ModelFactory (entity, config) {
   let list = config.list || null
+
 
   const load = config.load || async function () {
     return []
@@ -98,26 +101,24 @@ export function ModelFactory (entity, config) {
     return new Promise.reject('Add is not Definded')
   }
   let loading = false
-  const getList = async function (force = false, ...filter) {
 
+  const getList = async function (force = false, ...filter) {
     if (!list || force) {
       if (!loading) {
         loading = true
         list = await load(filter)
         const cache = {}
-
-        list.filter(i => !i['__parsed']).forEach(i => {
+        for(let i of list.filter(i => !i['__parsed'])){
           try {
-            i = parseDataForEntity(i, entity, cache)
+            i = await parseDataForEntity(i, entity, cache)
           } catch (e) {
             console.error(e)
           }
-
-        })
+        }
 
         loading = false
       } else {
-        await IKUtils.wait(0.2)
+        await IKUtils.wait(0.5)
         return await getList()
       }
     }
@@ -341,23 +342,30 @@ export function getFieldFromModel (model) {
  * @param {*} item
  * @param {{}} cache
  */
+
 async function getActualOptionValue (option, item, cache) {
   const key = option.value
   const searchKey = option.type.itemValue
   const resultKey = option.type.itemText
   const selectedOpts = [item[key]].flat()
   const listFunction = option.type.selectItems
+
   if (!cache[key]) {
     cache[key] = {}
   }
-  if (!cache[key].list) {
-    cache[key].list = typeof listFunction === 'function' ?
-      await IKUtils.safeCallFunction(this, listFunction) : listFunction
+
+  if(!cache[key].dict){
+    cache[key].dict = (typeof listFunction === 'function' ?
+      await IKUtils.safeCallFunction(this, listFunction) : listFunction).reduce((obj,i)=>{
+      obj[i[searchKey]]=i
+      return obj
+    },{})
   }
+
   const actualValues = []
   for (const v of selectedOpts) {
     if (!cache[key][v]) {
-      cache[key][v] = cache[key].list.find(opt => opt[searchKey] == v)
+      cache[key][v] =cache[key].dict[v] //cache[key].list.find(opt => opt[searchKey] == v)
     }
     if (cache[key][v] && cache[key][v][resultKey]) {
       actualValues.push(cache[key][v][resultKey])
@@ -372,10 +380,9 @@ async function getActualOptionValue (option, item, cache) {
  * @param {{}} entity
  * @param cache
  */
-export function parseDataForEntity (item, entity, cache = {}) {
+export async function parseDataForEntity (item, entity, cache = {}) {
   for (const key of Object.keys(entity)) {
     const instruction = entity[key]
-
     if (item[key]) {
       if (instruction.type === Types.Group) {
         if (!instruction.tableConfig) {
@@ -402,11 +409,7 @@ export function parseDataForEntity (item, entity, cache = {}) {
       }
       if (instruction.type === Types.Option) {
         const opt = generateField(instruction, key)
-        item['opt' + key] = []
-        getActualOptionValue(opt, item, cache).then(res => {
-          item['opt' + key] = res
-        })
-
+        item['opt' + key] = await getActualOptionValue(opt, item, cache)
       }
 
     } else {

@@ -83,7 +83,6 @@ export async function generalGetOne (asyncListFunc, conditionFunc) {
 }
 
 
-
 export function ModelFactory (entity, config) {
   let list = config.list || null
 
@@ -108,7 +107,7 @@ export function ModelFactory (entity, config) {
         loading = true
         list = await load(filter)
         const cache = {}
-        for(let i of list.filter(i => !i['__parsed'])){
+        for (let i of list.filter(i => !i['__parsed'])) {
           try {
             i = await parseDataForEntity(i, entity, cache)
           } catch (e) {
@@ -354,18 +353,18 @@ async function getActualOptionValue (option, item, cache) {
     cache[key] = {}
   }
 
-  if(!cache[key].dict){
+  if (!cache[key].dict) {
     cache[key].dict = (typeof listFunction === 'function' ?
-      await IKUtils.safeCallFunction(this, listFunction) : listFunction).reduce((obj,i)=>{
-      obj[i[searchKey]]=i
+      await IKUtils.safeCallFunction(this, listFunction) : listFunction).reduce((obj, i) => {
+      obj[i[searchKey]] = i
       return obj
-    },{})
+    }, {})
   }
 
   const actualValues = []
   for (const v of selectedOpts) {
     if (!cache[key][v]) {
-      cache[key][v] =cache[key].dict[v] //cache[key].list.find(opt => opt[searchKey] == v)
+      cache[key][v] = cache[key].dict[v] //cache[key].list.find(opt => opt[searchKey] == v)
     }
     if (cache[key][v] && cache[key][v][resultKey]) {
       actualValues.push(cache[key][v][resultKey])

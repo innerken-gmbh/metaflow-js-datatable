@@ -22,23 +22,23 @@
 </template>
 
 <script>
-  export default {
-    name: 'ImgWithLoading',
-    props: {
-      imgSrc: {
-        type: String,
-        default: '',
-      },
-      height: {
-        type: String,
-        default: 'auto',
-      },
-      width: {
-        type: String,
-        default: 'auto',
-      },
+export default {
+  name: 'ImgWithLoading',
+  props: {
+    imgSrc: {
+      type: String,
+      default: ''
     },
+    height: {
+      type: String,
+      default: 'auto'
+    },
+    width: {
+      type: String,
+      default: 'auto'
+    }
   }
+}
 </script>
 
 <style scoped>

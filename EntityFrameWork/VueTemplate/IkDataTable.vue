@@ -228,10 +228,11 @@
 <script>
 
 import GeneralForm from './GeneralForm'
-import { IKDataEntity, IKUtils } from 'innerken-utils'
 import ImgTemplate from './ImgTemplate'
 import MaterialCard from './MaterialCard'
-import FormField from 'innerken-utils/EntityFrameWork/VueTemplate/FormField'
+import FormField from './FormField'
+import { IKDataEntity } from '../../index'
+import IKUtils from 'innerken-js-utils'
 
 export default {
   name: 'IkDataTable',
@@ -239,66 +240,66 @@ export default {
     ImgTemplate,
     GeneralForm,
     MaterialCard,
-    FormField,
+    FormField
   },
   props: {
     model: {
       type: Object,
       default: () => {
-      },
+      }
     },
     addText: {
       type: String,
-      default: 'Add',
+      default: 'Add'
     },
     entityName: {
       type: String,
-      default: '',
+      default: ''
     },
     filter: {
       type: [Object, Function],
       default: () => {
-      },
+      }
     },
     icon: {
       type: String,
-      default: '',
+      default: ''
     },
     showExpand: {
       type: Boolean,
-      default: false,
+      default: false
     },
     singleExpand: {
       type: Boolean,
-      default: false,
+      default: false
     },
     useAction: {
       type: Boolean,
-      default: true,
+      default: true
     },
     useSelect: {
       type: Boolean,
-      default: true,
+      default: true
     },
     useDefaultAction: {
       type: Boolean,
-      default: true,
+      default: true
     },
     useEditAction: {
       type: Boolean,
-      default: true,
+      default: true
     },
     useDeleteAction: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   watch: {
     filter: {
       handler () {
         this.reload()
-      },
-    },
+      }
+    }
   },
   data: function () {
     return {
@@ -318,7 +319,7 @@ export default {
       selectedItems: [],
       realHeaders: [],
       advancedItems: [],
-      slottedItems: [],
+      slottedItems: []
     }
   },
   computed: {
@@ -330,33 +331,33 @@ export default {
         borderStyle: 'solid',
         borderColor: '#c1c1c1',
         borderWidth: '1px',
-        transition: 'border-radius 200ms ease-in-out',
+        transition: 'border-radius 200ms ease-in-out'
       }
     },
     mergableFields: function () {
       return this.formField
-          .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
-          .filter(item => item.merge)
-          .map(item => {
-            return {
-              ...item,
-              name: 'item.' + item.value,
-            }
-          })
+        .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+        .filter(item => item.merge)
+        .map(item => {
+          return {
+            ...item,
+            name: 'item.' + item.value
+          }
+        })
     },
     tableItem: function () {
       if (this.filterItem) {
         return this.items.filter(i => {
           return Object.keys(this.filterItem).every(
-              t => {
-                const org = i[t]
-                const oth = this.filterItem[t]
-                return org === oth || (Array.isArray(org) && (org.includes(oth) || oth.every(ot => org.includes(ot))))
-              })
+            t => {
+              const org = i[t]
+              const oth = this.filterItem[t]
+              return org === oth || (Array.isArray(org) && (org.includes(oth) || oth.every(ot => org.includes(ot))))
+            })
         })
       }
       return this.items
-    },
+    }
 
   },
   created () {
@@ -364,7 +365,7 @@ export default {
     if (this.useAction) {
       this.headers.push({
         text: 'action',
-        value: 'action',
+        value: 'action'
       })
     }
     this.realHeaders = this.getRealHeaders()
@@ -375,20 +376,19 @@ export default {
       this.loading = false
       this.items = []
     })
-
   },
   methods: {
     getAdvancedItems: function () {
       return this.headers
-          .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
-            IKDataEntity.Types.Option, IKDataEntity.Types.Group, IKDataEntity.Types.Color,
-          ].includes(item.dataType))
-          .map(item => {
-            return {
-              ...item,
-              name: 'item.' + item.value,
-            }
-          })
+        .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
+          IKDataEntity.Types.Option, IKDataEntity.Types.Group, IKDataEntity.Types.Color
+        ].includes(item.dataType))
+        .map(item => {
+          return {
+            ...item,
+            name: 'item.' + item.value
+          }
+        })
     },
     getRealHeaders: function () {
       return this.headers.map(item => {
@@ -398,13 +398,13 @@ export default {
     },
     getSlottedItems: function () {
       return this.headers
-          .filter(item => item.overwrite)
-          .map(item => {
-            return {
-              ...item,
-              name: 'item.' + item.value,
-            }
-          })
+        .filter(item => item.overwrite)
+        .map(item => {
+          return {
+            ...item,
+            name: 'item.' + item.value
+          }
+        })
     },
     dialogChange (save) {
       if (save) {
@@ -426,7 +426,6 @@ export default {
         this.mergeItem = {}
         newItem = {}
       }
-
     },
     closeDialog () {
       console.log('should close dialog')
@@ -457,23 +456,22 @@ export default {
     deleteItem (item, promt = true) {
       if (promt) {
         IKUtils.showConfirm(
-            this.$i18n.t('Are you sure?'),
-            this.$i18n.t('you want to delete this item?'), () => {
-              IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-                  .then(() => {
-                    IKUtils.toast(this.$i18n.t('删除成功'))
-                    this.reload()
-                  })
-            },
+          this.$i18n.t('Are you sure?'),
+          this.$i18n.t('you want to delete this item?'), () => {
+            IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+              .then(() => {
+                IKUtils.toast(this.$i18n.t('删除成功'))
+                this.reload()
+              })
+          }
         )
       } else {
         IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-            .then(() => {
-              IKUtils.toast(this.$i18n.t('删除成功'))
-              this.reload()
-            })
+          .then(() => {
+            IKUtils.toast(this.$i18n.t('删除成功'))
+            this.reload()
+          })
       }
-
     },
 
     editItem (item) {
@@ -490,8 +488,8 @@ export default {
 
       this.loading = false
       this.$emit('reloaded')
-    },
-  },
+    }
+  }
 }
 </script>
 

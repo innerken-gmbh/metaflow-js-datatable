@@ -95,59 +95,58 @@
 </template>
 
 <script>
-  export default {
-    name: 'MaterialCard',
-
-    props: {
-      avatar: {
-        type: String,
-        default: '',
-      },
-      color: {
-        type: String,
-        default: 'success',
-      },
-      hoverReveal: {
-        type: Boolean,
-        default: false,
-      },
-      icon: {
-        type: String,
-        default: undefined,
-      },
-      image: {
-        type: Boolean,
-        default: false,
-      },
-      inline: {
-        type: Boolean,
-        default: false,
-      },
-      text: {
-        type: String,
-        default: '',
-      },
-      title: {
-        type: String,
-        default: '',
-      },
+export default {
+  name: 'MaterialCard',
+  props: {
+    avatar: {
+      type: String,
+      default: ''
     },
-
-    computed: {
-      classes () {
-        return {
-          'v-card--material--has-heading': this.hasHeading,
-          'v-card--material--hover-reveal': this.hoverReveal,
-        }
-      },
-      hasHeading () {
-        return Boolean(this.$slots.heading || this.title || this.icon)
-      },
-      hasAltHeading () {
-        return Boolean(this.$slots.heading || (this.title && this.icon))
-      },
+    color: {
+      type: String,
+      default: 'success'
     },
+    hoverReveal: {
+      type: Boolean,
+      default: false
+    },
+    icon: {
+      type: String,
+      default: undefined
+    },
+    image: {
+      type: Boolean,
+      default: false
+    },
+    inline: {
+      type: Boolean,
+      default: false
+    },
+    text: {
+      type: String,
+      default: ''
+    },
+    title: {
+      type: String,
+      default: ''
+    }
+  },
+
+  computed: {
+    classes () {
+      return {
+        'v-card--material--has-heading': this.hasHeading,
+        'v-card--material--hover-reveal': this.hoverReveal
+      }
+    },
+    hasHeading () {
+      return Boolean(this.$slots.heading || this.title || this.icon)
+    },
+    hasAltHeading () {
+      return Boolean(this.$slots.heading || (this.title && this.icon))
+    }
   }
+}
 </script>
 
 <style lang="sass">

@@ -1,11 +1,11 @@
 {
   "name": "metaflow-js",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "EntityFramework for Metaflow",
   "main": "index.js",
   "scripts": {
     "test": "node test.js",
-    "lint": "eslint . --fix",
+    "lint": "eslint --fix",
     "update": "npm run lint  && git add . && dotenv -- release-it --ci"
   },
   "repository": {

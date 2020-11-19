@@ -7,27 +7,27 @@
 </template>
 
 <script>
-    import ImgWithLoading from './ImgWithLoading'
+import ImgWithLoading from './ImgWithLoading'
 
-    export default {
-        name: 'ImgTemplate',
-        components: { ImgWithLoading },
-        props: {
-            root: {
-                type: String,
-                default: '/',
-            },
-            item: {
-                type: Object,
-                default: null,
-            },
-            model: {
-                type: String,
-                default: 'photo',
-            },
-
-        },
+export default {
+  name: 'ImgTemplate',
+  components: { ImgWithLoading },
+  props: {
+    root: {
+      type: String,
+      default: '/'
+    },
+    item: {
+      type: Object,
+      default: null
+    },
+    model: {
+      type: String,
+      default: 'photo'
     }
+
+  }
+}
 </script>
 
 <style scoped>

@@ -192,7 +192,7 @@
 <script>
 
 import ImgWithLoading from './ImgWithLoading'
-import Utils from '../../Utlis/Utils'
+import Utils from 'innerken-js-utils'
 
 export default {
   name: 'FormField',
@@ -201,28 +201,28 @@ export default {
     field: {
       type: Object,
       default: () => {
-      },
+      }
     },
     editedItem: {
       type: Object,
       default: () => {
-      },
+      }
     },
     currentState: {
       type: Number,
-      default: -1,
+      default: -1
     },
     noDetails: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data: function () {
     return {
       timePickerShow: false,
       datePickerShow: false,
       colorPickerShow: false,
-      ...this.field,
+      ...this.field
     }
   },
   computed: {
@@ -237,7 +237,7 @@ export default {
         borderColor: '#c1c1c1',
         borderWidth: '1px',
         borderRadius: colorPickerShow ? '50%' : '4px',
-        transition: 'border-radius 200ms ease-in-out',
+        transition: 'border-radius 200ms ease-in-out'
       }
     },
     selectItemsIsDynamic: function () {
@@ -252,7 +252,7 @@ export default {
         } else {
           result = items.map(item => ({
             ...item,
-            disabled: false,
+            disabled: false
           }))
         }
         return result
@@ -276,7 +276,6 @@ export default {
           (this.disableEdit && !this.isNew)
     },
     rules: function () {
-
       let rules = this.rule
       if (this.required && this.type.name !== 'switch') {
         if (!this.overwriteRule) {
@@ -286,32 +285,31 @@ export default {
             rules = rules.concat(Utils.ValidateRules.NotEmpty)
           }
         }
-
       }
       return rules
     },
     locale: function () {
-      let locale = this.dateLocale
+      const locale = this.dateLocale
       return locale
     },
     root: function () {
       return typeof this.type.root === 'function' ? this.type.root() : this.type.root
-    },
+    }
   },
-  watch:{
-    editedItem:{
-      deep:true,
-      handler:function (val) {
+  watch: {
+    editedItem: {
+      deep: true,
+      handler: function (val) {
         this.preProcessOptions()
       }
-    },
+    }
   },
-  methods:{
-    async preProcessOptions(){
+  methods: {
+    async preProcessOptions () {
       if (this.selectItemsIsDynamic) {
         if (this.type.selectItems().then) {
-          const res=await this.type.selectItems()
-          this.$set(this.type, '_selectItems',  res)
+          const res = await this.type.selectItems()
+          this.$set(this.type, '_selectItems', res)
         } else {
           this.$set(this.type, '_selectItems', this.type.selectItems())
         }

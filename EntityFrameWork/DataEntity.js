@@ -1,5 +1,5 @@
-import Utils from '../Utlis/Utils.js'
-import { hillo, IKUtils } from '../index'
+import hillo from 'hillo'
+import IKUtils from 'innerken-js-utils'
 
 export const Types = {
   Integer: Symbol('Type:Integer'),
@@ -19,58 +19,55 @@ export const Types = {
     }
     if (type === Types.Integer) {
       return -1
-    } else if (type === Types.Float) {
+    } if (type === Types.Float) {
       return 0
-    } else if (type === Types.String) {
+    } if (type === Types.String) {
       return ''
-    } else if (type === Types.Boolean) {
+    } if (type === Types.Boolean) {
       return false
-    } else if (type === Types.Object) {
+    } if (type === Types.Object) {
       return null
-    } else if (type === Types.Image) {
+    } if (type === Types.Image) {
       return ''
-    } else if (type === Types.Date) {
+    } if (type === Types.Date) {
       return ''
-    } else if (type === Types.Time) {
+    } if (type === Types.Time) {
       return ''
-    } else if (type === Types.Option) {
+    } if (type === Types.Option) {
       return []
-    } else if (type === Types.Group) {
+    } if (type === Types.Group) {
       return []
-    } else if (type === Types.Color) {
+    } if (type === Types.Color) {
       return '#FFFFFF'
-    } else {
-      return undefined
     }
+    return undefined
   },
   parseValue (type, value) {
     if (type === Types.Integer) {
       return parseInt(value)
-    } else if (type === Types.Float) {
+    } if (type === Types.Float) {
       return parseFloat(value)
-    } else if (type === Types.Boolean) {
+    } if (type === Types.Boolean) {
       return !!parseInt(value)
-    } else if (type === Types.Option) {
+    } if (type === Types.Option) {
       if (value.includes(',')) {
-        return value.split(',').map(item => parseInt(item))
+        return value.split(',').map((item) => parseInt(item))
       }
       if (isNaN(parseInt(value))) {
         return value
       }
       return parseInt(value)
-    } else if (type === Types.Group) {
-      return value
-    } else {
+    } if (type === Types.Group) {
       return value
     }
-  },
+    return value
+  }
 }
 
 Object.freeze(Types)
 
 export async function generalLoad (url, data) {
   return (await hillo.get(url, { ...data }))
-
 }
 
 /**
@@ -79,25 +76,26 @@ export async function generalLoad (url, data) {
  */
 export async function generalGetOne (asyncListFunc, conditionFunc) {
   const _list = await asyncListFunc()
-  return _list.find(item => conditionFunc(item))
+  return _list.find((item) => conditionFunc(item))
 }
-
 
 export function ModelFactory (entity, config) {
   let list = config.list || null
-
 
   const load = config.load || async function () {
     return []
   }
   const add = function () {
+    // eslint-disable-next-line new-cap
     return new Promise.reject('Add is not Definded')
   }
   const edit = function () {
-    return new Promise.reject('Add is not Definded')
+    // eslint-disable-next-line new-cap
+    return new Promise.reject('edit is not Definded')
   }
   const remove = function () {
-    return new Promise.reject('Add is not Definded')
+    // eslint-disable-next-line new-cap
+    return new Promise.reject('remove is not Definded')
   }
   let loading = false
 
@@ -107,7 +105,7 @@ export function ModelFactory (entity, config) {
         loading = true
         list = await load(filter)
         const cache = {}
-        for (let i of list.filter(i => !i['__parsed'])) {
+        for (let i of list.filter((i) => !i.__parsed)) {
           try {
             i = await parseDataForEntity(i, entity, cache)
           } catch (e) {
@@ -137,16 +135,15 @@ export function ModelFactory (entity, config) {
     add,
     edit,
     remove,
-    getOne,
+    getOne
   }
 
   config = IKUtils.extend(DefaultConfig, config)
 
   return {
     entity,
-    ...config,
+    ...config
   }
-
 }
 
 const DefaultEntity = {
@@ -188,22 +185,22 @@ const DefaultEntity = {
     required: true,
     requiredEdit: true,
     requiredNew: true,
-    dateLocale: '',
+    dateLocale: ''
   },
   tableConfig: {
     overwrite: false,
-    displayChild: () => true,
-  },
+    displayChild: () => true
+  }
 }
 const GroupTableConfig = {
-  displayChild: () => true,
+  displayChild: () => true
 }
 const TimeFormConfig = {
-  type: { name: 'time' },
+  type: { name: 'time' }
 }
 
 const DateFormConfig = {
-  type: { name: 'date' },
+  type: { name: 'date' }
 }
 
 const OptionFormConfig = {
@@ -212,28 +209,28 @@ const OptionFormConfig = {
     itemText: 'name',
     itemValue: 'id',
     selectItems: [],
-    multiple: false,
-  },
+    multiple: false
+  }
 }
 
 const ImageFormConfig = {
   type: {
     name: 'image',
     root: () => '/',
-    fileStorage: 'file',
-  },
+    fileStorage: 'file'
+  }
 }
 
 const BooleanFormConfig = {
   type: {
-    name: 'switch',
-  },
+    name: 'switch'
+  }
 }
 
 const ColorFormConfig = {
   type: {
-    name: 'color',
-  },
+    name: 'color'
+  }
 }
 
 /**
@@ -244,61 +241,59 @@ function generateField (_field, key) {
   if (_field.type === Types.Boolean) {
     if (_field.formConfig) {
       if (_field.formConfig.type) {
-        _field.formConfig.type = Utils.extend(BooleanFormConfig.type, _field.formConfig.type)
+        _field.formConfig.type = IKUtils.extend(BooleanFormConfig.type, _field.formConfig.type)
       }
     }
-    _field.formConfig = Utils.extend(BooleanFormConfig, _field.formConfig)
+    _field.formConfig = IKUtils.extend(BooleanFormConfig, _field.formConfig)
   }
   if (_field.type === Types.Date) {
     if (_field.formConfig) {
       if (_field.formConfig.type) {
-        _field.formConfig.type = Utils.extend(DateFormConfig.type, _field.formConfig.type)
+        _field.formConfig.type = IKUtils.extend(DateFormConfig.type, _field.formConfig.type)
       }
     }
-    _field.formConfig = Utils.extend(DateFormConfig, _field.formConfig)
+    _field.formConfig = IKUtils.extend(DateFormConfig, _field.formConfig)
   }
   if (_field.type === Types.Time) {
     if (_field.formConfig) {
       if (_field.formConfig.type) {
-        _field.formConfig.type = Utils.extend(TimeFormConfig.type, _field.formConfig.type)
+        _field.formConfig.type = IKUtils.extend(TimeFormConfig.type, _field.formConfig.type)
       }
     }
-    _field.formConfig = Utils.extend(TimeFormConfig, _field.formConfig)
+    _field.formConfig = IKUtils.extend(TimeFormConfig, _field.formConfig)
   }
   if (_field.type === Types.Color) {
     if (_field.formConfig) {
       if (_field.formConfig.type) {
-        _field.formConfig.type = Utils.extend(ColorFormConfig.type, _field.formConfig.type)
+        _field.formConfig.type = IKUtils.extend(ColorFormConfig.type, _field.formConfig.type)
       }
     }
-    _field.formConfig = Utils.extend(ColorFormConfig, _field.formConfig)
+    _field.formConfig = IKUtils.extend(ColorFormConfig, _field.formConfig)
   }
   if (_field.type === Types.Image) {
     if (_field.formConfig) {
       if (_field.formConfig.type) {
-        _field.formConfig.type = Utils.extend(ImageFormConfig.type, _field.formConfig.type)
+        _field.formConfig.type = IKUtils.extend(ImageFormConfig.type, _field.formConfig.type)
       }
     }
-    _field.formConfig = Utils.extend(ImageFormConfig, _field.formConfig)
+    _field.formConfig = IKUtils.extend(ImageFormConfig, _field.formConfig)
   }
   if (_field.type === Types.Option) {
     if (_field.formConfig) {
       if (_field.formConfig.type) {
-        _field.formConfig.type = Utils.extend(OptionFormConfig.type, _field.formConfig.type)
+        _field.formConfig.type = IKUtils.extend(OptionFormConfig.type, _field.formConfig.type)
       }
     }
-    _field.formConfig = Utils.extend(OptionFormConfig, _field.formConfig)
+    _field.formConfig = IKUtils.extend(OptionFormConfig, _field.formConfig)
   }
   let _children = []
   if (_field.type === Types.Group) {
     if (_field.children) {
       _field.childKey = [_field.childKey].flat()
-      _children = _field.children.map(item => getFieldFromModel(item))
+      _children = _field.children.map((item) => getFieldFromModel(item))
       const newChildren = []
-      _children.forEach(child => {
-        child = child.filter(i => {
-          return _field.childKey.includes(i.value)
-        })
+      _children.forEach((child) => {
+        child = child.filter((i) => _field.childKey.includes(i.value))
         newChildren.push(child)
       })
       _children = newChildren
@@ -307,8 +302,8 @@ function generateField (_field, key) {
       _field.tableConfig.displayChild = GroupTableConfig.displayChild
     }
   }
-  _field.formConfig = Utils.extend(DefaultEntity.formConfig, _field.formConfig)
-  const field = Utils.extend(DefaultEntity, _field)
+  _field.formConfig = IKUtils.extend(DefaultEntity.formConfig, _field.formConfig)
+  const field = IKUtils.extend(DefaultEntity, _field)
   return {
     value: key,
     text: field.displayName ? field.displayName : key,
@@ -320,7 +315,7 @@ function generateField (_field, key) {
     children: _children,
     childKey: _field.childKey,
     labelKey: _field.labelKey,
-    orgin: _field,
+    orgin: _field
   }
 }
 
@@ -354,24 +349,24 @@ async function getActualOptionValue (option, item, cache) {
   }
 
   if (!cache[key].dict) {
-    cache[key].dict = (typeof listFunction === 'function' ?
-      await IKUtils.safeCallFunction(this, listFunction) : listFunction).reduce((obj, i) => {
-      obj[i[searchKey]] = i
-      return obj
-    }, {})
+    cache[key].dict =
+      (typeof listFunction === 'function' ? await IKUtils.safeCallFunction(this, listFunction) : listFunction)
+        .reduce((obj, i) => {
+          obj[i[searchKey]] = i
+          return obj
+        }, {})
   }
 
   const actualValues = []
   for (const v of selectedOpts) {
     if (!cache[key][v]) {
-      cache[key][v] = cache[key].dict[v] //cache[key].list.find(opt => opt[searchKey] == v)
+      cache[key][v] = cache[key].dict[v] // cache[key].list.find(opt => opt[searchKey] == v)
     }
     if (cache[key][v] && cache[key][v][resultKey]) {
       actualValues.push(cache[key][v][resultKey])
     }
   }
   return actualValues
-
 }
 
 /**
@@ -385,17 +380,17 @@ export async function parseDataForEntity (item, entity, cache = {}) {
     if (item[key]) {
       if (instruction.type === Types.Group) {
         if (!instruction.tableConfig) {
-          throw new Error('Parse Failed for group' + item + instruction)
+          throw new Error(`Parse Failed for group${item}${instruction}`)
         }
         if (!instruction.tableConfig.displayCondition) {
-          throw new Error('Parse Failed for group' + item + instruction)
+          throw new Error(`Parse Failed for group${item}${instruction}`)
         }
         if (!instruction.childKey) {
-          throw new Error('Parse Failed for group' + item + instruction)
+          throw new Error(`Parse Failed for group${item}${instruction}`)
         }
         instruction.childKey = [instruction.childKey].flat()
-        instruction.childKey.forEach(childKey => {
-          item['_' + key + childKey] = item[key].find(i => (instruction.tableConfig.displayCondition(i)))[childKey]
+        instruction.childKey.forEach((childKey) => {
+          item[`_${key}${childKey}`] = item[key].find((i) => (instruction.tableConfig.displayCondition(i)))[childKey]
         })
       }
       item[key] = Types.parseValue(instruction.type, item[key])
@@ -408,14 +403,13 @@ export async function parseDataForEntity (item, entity, cache = {}) {
       }
       if (instruction.type === Types.Option) {
         const opt = generateField(instruction, key)
-        item['opt' + key] = await getActualOptionValue(opt, item, cache)
+        item[`opt${key}`] = await getActualOptionValue(opt, item, cache)
       }
-
     } else {
       item[key] = Types.getTypeDefault(instruction.type)
     }
   }
-  item['__parsed'] = true
+  item.__parsed = true
   return item
 }
 
@@ -456,5 +450,5 @@ export default {
   Types,
   getFieldFromModel,
   ModelFactory,
-  generalLoad,
+  generalLoad
 }

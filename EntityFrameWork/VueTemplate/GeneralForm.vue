@@ -146,79 +146,79 @@
 </template>
 
 <script>
-    import FormField from './FormField'
-    import { IKDataEntity } from 'innerken-utils'
+import FormField from './FormField'
+import { IKDataEntity } from '../../index'
 
-    export default {
-        name: 'GeneralForm',
-        components: { FormField },
-        props: {
-            title: {
-                type: String,
-                default: 'Form',
-            },
-            formField: {
-                type: Array,
-                default: () => [],
-            },
-            editedItem: {
-                type: Object,
-                default: () => {
-                },
-            },
-            editedIndex: {
-                type: Number,
-                default: -1,
-            },
-            dialog: {
-                type: Boolean,
-                default: false,
-            },
-        },
-        data: function () {
-            return {
-                realDialog: this.dialog,
-                valid: true,
-                tab: null,
-                IKDataEntity: IKDataEntity,
-            }
-        },
-        computed: {
-            requiredFields: function () {
-                return this.formField.filter(f => this.fieldIsRequired(f))
-            },
-            notRequiredFields: function () {
-                return this.formField.filter(f => !this.fieldIsRequired(f))
-            },
-        },
-        watch: {
-            realDialog (val) {
-                val || this.close()
-            },
-            dialog: {
-                immediate: true,
-                handler: function (val) {
-                    this.realDialog = val
-                },
-            },
-        },
-        methods: {
-            fieldIsRequired (field) {
-                return field.required && (
-                    (field.requiredEdit && this.editedIndex !== -1) ||
-                    (field.requiredNew && this.editedIndex === -1))
-            },
-
-            close () {
-                this.realDialog = false
-                this.$emit('change-general-form', false)
-            },
-
-            save () {
-                this.$emit('change-general-form', true)
-            },
-        },
+export default {
+  name: 'GeneralForm',
+  components: { FormField },
+  props: {
+    title: {
+      type: String,
+      default: 'Form'
+    },
+    formField: {
+      type: Array,
+      default: () => []
+    },
+    editedItem: {
+      type: Object,
+      default: () => {
+      }
+    },
+    editedIndex: {
+      type: Number,
+      default: -1
+    },
+    dialog: {
+      type: Boolean,
+      default: false
     }
+  },
+  data: function () {
+    return {
+      realDialog: this.dialog,
+      valid: true,
+      tab: null,
+      IKDataEntity: IKDataEntity
+    }
+  },
+  computed: {
+    requiredFields: function () {
+      return this.formField.filter(f => this.fieldIsRequired(f))
+    },
+    notRequiredFields: function () {
+      return this.formField.filter(f => !this.fieldIsRequired(f))
+    }
+  },
+  watch: {
+    realDialog (val) {
+      val || this.close()
+    },
+    dialog: {
+      immediate: true,
+      handler: function (val) {
+        this.realDialog = val
+      }
+    }
+  },
+  methods: {
+    fieldIsRequired (field) {
+      return field.required && (
+        (field.requiredEdit && this.editedIndex !== -1) ||
+                    (field.requiredNew && this.editedIndex === -1))
+    },
+
+    close () {
+      this.realDialog = false
+      this.$emit('change-general-form', false)
+    },
+
+    save () {
+      this.$emit('change-general-form', true)
+    }
+  }
+}
 </script>
 
 <style scoped>

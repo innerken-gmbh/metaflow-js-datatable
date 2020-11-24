@@ -19,25 +19,35 @@ export const Types = {
     }
     if (type === Types.Integer) {
       return -1
-    } if (type === Types.Float) {
+    }
+    if (type === Types.Float) {
       return 0
-    } if (type === Types.String) {
+    }
+    if (type === Types.String) {
       return ''
-    } if (type === Types.Boolean) {
+    }
+    if (type === Types.Boolean) {
       return false
-    } if (type === Types.Object) {
+    }
+    if (type === Types.Object) {
       return null
-    } if (type === Types.Image) {
+    }
+    if (type === Types.Image) {
       return ''
-    } if (type === Types.Date) {
+    }
+    if (type === Types.Date) {
       return ''
-    } if (type === Types.Time) {
+    }
+    if (type === Types.Time) {
       return ''
-    } if (type === Types.Option) {
+    }
+    if (type === Types.Option) {
       return []
-    } if (type === Types.Group) {
+    }
+    if (type === Types.Group) {
       return []
-    } if (type === Types.Color) {
+    }
+    if (type === Types.Color) {
       return '#FFFFFF'
     }
     return undefined
@@ -45,11 +55,14 @@ export const Types = {
   parseValue (type, value) {
     if (type === Types.Integer) {
       return parseInt(value)
-    } if (type === Types.Float) {
+    }
+    if (type === Types.Float) {
       return parseFloat(value)
-    } if (type === Types.Boolean) {
+    }
+    if (type === Types.Boolean) {
       return !!parseInt(value)
-    } if (type === Types.Option) {
+    }
+    if (type === Types.Option) {
       if (value.includes(',')) {
         return value.split(',').map((item) => parseInt(item))
       }
@@ -57,7 +70,8 @@ export const Types = {
         return value
       }
       return parseInt(value)
-    } if (type === Types.Group) {
+    }
+    if (type === Types.Group) {
       return value
     }
     return value
@@ -147,9 +161,9 @@ export function ModelFactory (entity, config) {
 }
 
 const DefaultEntity = {
-  value: '',
-  displayName: '',
-  type: Types.String,
+  value: '', // key for value
+  displayName: '', // 默认为Value
+  type: Types.String, // 共计11种TYPE
   form: true, // shows in form
   header: true, // shows in header
   formConfig: {
@@ -161,7 +175,9 @@ const DefaultEntity = {
     type: { name: 'text' },
     // PossibleValue of types
     /*
-    Text:{ name: 'text' }
+    Text:{
+     name: 'text'
+    }
     Select:
       {
         name:'select',
@@ -177,18 +193,21 @@ const DefaultEntity = {
         fileStorage:''//fileStorageItemKey will generate a key auto, default:file
        }
     * */
-    inNew: true,
-    inEdit: true,
-    disableNew: false,
-    disableEdit: false,
-    rule: [],
-    required: true,
-    requiredEdit: true,
-    requiredNew: true,
-    dateLocale: ''
+    overwriteRule: false, // 如果为True，那么就不会应用默认的校验规则
+    inNew: true, // 在新增模式中显示
+    inEdit: true, // 在编辑模式中显示
+    disableNew: false, // 在新增模式中禁用
+    disableEdit: false, // 在编辑模式中禁用
+    rule: [
+      // v => /^[0-9]+\.{0,1}[0-9]{0,2}$/.test(v) || 'Bitte geben Sie den richtigen Preis ein', 示例
+    ], // 规则
+    required: true, // 是否必填
+    requiredEdit: true, // 在编辑中必填
+    requiredNew: true, // 在新增中必填
+    dateLocale: '' //
   },
   tableConfig: {
-    overwrite: false,
+    overwrite: false, // 如果这里为True，
     displayChild: () => true
   }
 }

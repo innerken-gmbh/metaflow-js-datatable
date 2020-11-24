@@ -8,7 +8,9 @@
     <template v-slot:after-heading>
       <v-toolbar flat dense class="display-2 font-weight-light">
         {{ entityName }}
-        <v-btn @click="reload" icon><v-icon>mdi-refresh</v-icon></v-btn>
+        <v-btn @click="reload" icon>
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
       </v-toolbar>
       <slot name="extra-heading"/>
     </template>
@@ -17,6 +19,7 @@
         color="white"
         flat
     >
+
       <slot :items="items" name="filterLeft">
       </slot>
       <template v-if="mergableFields.length>0">
@@ -34,7 +37,9 @@
         </v-btn>
       </template>
       <v-spacer/>
-      <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
+      <v-toolbar-items>
+        <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
+      </v-toolbar-items>
       <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
@@ -46,7 +51,6 @@
           style="max-width: 250px;"
       />
     </v-toolbar>
-
     <v-divider class="mt-3"/>
     <v-data-table
         dense
@@ -136,7 +140,7 @@
           </template>
         </template>
       </template>
-      <template v-slot:footer>
+      <template  v-slot:footer>
         <general-form
             ref="gf"
             :title="entityName"
@@ -146,7 +150,7 @@
             :form-field="formField"
             @change-general-form="dialogChange"
         />
-        <slot name="footer">
+        <slot :items="items" :selectItems="selectedItems" name="footer">
           <v-toolbar
               class="mt-2"
               flat
@@ -360,6 +364,7 @@ export default {
     }
 
   },
+
   created () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
     if (this.useAction) {

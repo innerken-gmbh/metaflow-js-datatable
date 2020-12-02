@@ -104,7 +104,7 @@
             adItem.dataType===Types.Boolean"
         >
           <v-simple-checkbox
-              :value="item[adItem.value]"
+              :value="!!item[adItem.value]"
               dense
               @click="toggleProperty(item,adItem.value)"
               :key="adItem.name"

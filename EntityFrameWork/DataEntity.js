@@ -60,7 +60,7 @@ export const Types = {
       return parseFloat(value)
     }
     if (type === Types.Boolean) {
-      return !!parseInt(value)
+      return typeof value === 'boolean' ? value : !!parseInt(value)
     }
     if (type === Types.Option) {
       if (value.includes(',')) {

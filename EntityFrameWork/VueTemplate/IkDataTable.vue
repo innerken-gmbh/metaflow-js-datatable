@@ -19,7 +19,6 @@
         color="white"
         flat
     >
-
       <slot :items="items" name="filterLeft">
       </slot>
       <template v-if="mergableFields.length>0">
@@ -37,9 +36,7 @@
         </v-btn>
       </template>
       <v-spacer/>
-      <v-toolbar-items>
-        <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
-      </v-toolbar-items>
+      <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
       <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
@@ -51,6 +48,7 @@
           style="max-width: 250px;"
       />
     </v-toolbar>
+
     <v-divider class="mt-3"/>
     <v-data-table
         dense
@@ -96,7 +94,7 @@
         >
           <v-chip
               v-bind:key="'_'+adItem.value+c"
-              v-for="(c,index) in adItem.childKey.filter(adItem.displayChild)"
+              v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
           >
             {{ item['_' + adItem.value + c] }}
           </v-chip>
@@ -106,11 +104,10 @@
             adItem.dataType===Types.Boolean"
         >
           <v-simple-checkbox
+              :value="item[adItem.value]"
               dense
+              @click="toggleProperty(item,adItem.value)"
               :key="adItem.name"
-              :readonly="true"
-              :value="!!item[adItem.value]"
-              disabled
           />
         </template>
         <template
@@ -118,6 +115,7 @@
             adItem.dataType===Types.Color"
         >
           <v-chip
+              :key="adItem.name"
               :color="item[adItem.value]"
               label
               :style="swatchStyle"
@@ -140,7 +138,7 @@
           </template>
         </template>
       </template>
-      <template  v-slot:footer>
+      <template v-slot:footer>
         <general-form
             ref="gf"
             :title="entityName"
@@ -150,7 +148,7 @@
             :form-field="formField"
             @change-general-form="dialogChange"
         />
-        <slot :items="items" :selectItems="selectedItems" name="footer">
+        <slot name="footer">
           <v-toolbar
               class="mt-2"
               flat
@@ -364,7 +362,6 @@ export default {
     }
 
   },
-
   created () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
     if (this.useAction) {
@@ -440,6 +437,12 @@ export default {
       this.$refs.gf.realDialog = false
       this.reload()
     },
+    toggleProperty (item, key) {
+      const _item = IKUtils.deepCopy(item)
+      _item[key] = !_item[key]
+      this.updateItem(_item)
+    },
+
     async updateItem (item) {
       return IKUtils.safeCallFunction(this.model, this.model.edit, item).then(() => {
         IKUtils.toast(this.$i18n.t('编辑成功'))

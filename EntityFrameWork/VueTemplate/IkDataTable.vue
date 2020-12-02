@@ -106,6 +106,7 @@
           <v-simple-checkbox
               :value="!!item[adItem.value]"
               dense
+              v-ripple
               @click="toggleProperty(item,adItem.value)"
               :key="adItem.name"
           />

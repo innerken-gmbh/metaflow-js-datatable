@@ -36,7 +36,9 @@
         </v-btn>
       </template>
       <v-spacer/>
-      <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
+      <v-toolbar-items>
+        <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
+      </v-toolbar-items>
       <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
@@ -149,7 +151,7 @@
             :form-field="formField"
             @change-general-form="dialogChange"
         />
-        <slot name="footer">
+        <slot :items="items" :selectItems="selectedItems" name="footer">
           <v-toolbar
               class="mt-2"
               flat
@@ -198,19 +200,19 @@
         <template v-if="useDefaultAction">
           <template v-if="useEditAction">
             <v-icon
+                large
                 class="mr-2"
-                small
                 @click="editItem(item)"
             >
-              mdi-pencil
+              mdi-pencil-box
             </v-icon>
           </template>
           <template v-if="useDeleteAction">
             <v-icon
-                small
+                large
                 @click="deleteItem(item)"
             >
-              mdi-delete
+              mdi-delete-circle
             </v-icon>
           </template>
         </template>

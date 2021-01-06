@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@sweetalert2/theme-material-ui": "^3.1.4",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "core-js": "^3.6.2",
     "hillo": "^1.1.4",
     "innerken-js-utils": "^1.0.2",

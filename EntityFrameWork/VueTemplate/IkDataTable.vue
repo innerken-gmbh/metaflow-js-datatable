@@ -16,7 +16,7 @@
           :length="pageCount"
           :total-visible="5"
       ></v-pagination>
-      <v-select class="flex-grow-0" hide-details style="width: 64px" v-model="itemsPerPage" :items="[-1,5,10,15]"></v-select>
+      <v-select class="flex-grow-0" hide-details style="width: 64px" v-model="itemsPerPage" :items="[-1,5,15,30]"></v-select>
       <v-spacer></v-spacer>
       <v-text-field
           class="mr-2"
@@ -74,7 +74,7 @@
         :items="tableItem"
         :loading="loading"
         :search.sync="search"
-        :height="'calc(100vh - '+selectedItems.length>0?'248px)':'196px)'"
+        :height="'calc(100vh - '+(selectedItems.length>0?'248px)':'196px)')"
         :page.sync="page"
         :items-per-page="itemsPerPage"
         hide-default-footer
@@ -315,7 +315,7 @@ export default {
     return {
       page: 1,
       pageCount: 0,
-      itemsPerPage: 10,
+      itemsPerPage: 15,
       filterItem: {},
       mergeItem: {},
       Types: IKDataEntity.Types,
@@ -349,24 +349,24 @@ export default {
     },
     mergableFields: function () {
       return this.formField
-        .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
-        .filter(item => item.merge)
-        .map(item => {
-          return {
-            ...item,
-            name: 'item.' + item.value
-          }
-        })
+          .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+          .filter(item => item.merge)
+          .map(item => {
+            return {
+              ...item,
+              name: 'item.' + item.value
+            }
+          })
     },
     tableItem: function () {
       if (this.filterItem) {
         return this.items.filter(i => {
           return Object.keys(this.filterItem).every(
-            t => {
-              const org = i[t]
-              const oth = this.filterItem[t]
-              return org === oth || (Array.isArray(org) && (org.includes(oth) || oth.every(ot => org.includes(ot))))
-            })
+              t => {
+                const org = i[t]
+                const oth = this.filterItem[t]
+                return org === oth || (Array.isArray(org) && (org.includes(oth) || oth.every(ot => org.includes(ot))))
+              })
         })
       }
       return this.items
@@ -393,15 +393,15 @@ export default {
   methods: {
     getAdvancedItems: function () {
       return this.headers
-        .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
-          IKDataEntity.Types.Option, IKDataEntity.Types.Group, IKDataEntity.Types.Color
-        ].includes(item.dataType))
-        .map(item => {
-          return {
-            ...item,
-            name: 'item.' + item.value
-          }
-        })
+          .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
+            IKDataEntity.Types.Option, IKDataEntity.Types.Group, IKDataEntity.Types.Color
+          ].includes(item.dataType))
+          .map(item => {
+            return {
+              ...item,
+              name: 'item.' + item.value
+            }
+          })
     },
     getRealHeaders: function () {
       return this.headers.map(item => {
@@ -411,13 +411,13 @@ export default {
     },
     getSlottedItems: function () {
       return this.headers
-        .filter(item => item.overwrite)
-        .map(item => {
-          return {
-            ...item,
-            name: 'item.' + item.value
-          }
-        })
+          .filter(item => item.overwrite)
+          .map(item => {
+            return {
+              ...item,
+              name: 'item.' + item.value
+            }
+          })
     },
     dialogChange (save) {
       if (save) {
@@ -475,21 +475,21 @@ export default {
     deleteItem (item, promt = true) {
       if (promt) {
         IKUtils.showConfirm(
-          this.$i18n.t('Are you sure?'),
-          this.$i18n.t('you want to delete this item?'), () => {
-            IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-              .then(() => {
-                IKUtils.toast(this.$i18n.t('删除成功'))
-                this.reload()
-              })
-          }
+            this.$i18n.t('Are you sure?'),
+            this.$i18n.t('you want to delete this item?'), () => {
+              IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+                  .then(() => {
+                    IKUtils.toast(this.$i18n.t('删除成功'))
+                    this.reload()
+                  })
+            }
         )
       } else {
         IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-          .then(() => {
-            IKUtils.toast(this.$i18n.t('删除成功'))
-            this.reload()
-          })
+            .then(() => {
+              IKUtils.toast(this.$i18n.t('删除成功'))
+              this.reload()
+            })
       }
     },
 

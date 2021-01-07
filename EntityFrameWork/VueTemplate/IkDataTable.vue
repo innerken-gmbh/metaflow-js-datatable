@@ -241,7 +241,6 @@
 
 import GeneralForm from './GeneralForm'
 import ImgTemplate from './ImgTemplate'
-import MaterialCard from './MaterialCard'
 import FormField from './FormField'
 import { IKDataEntity } from '../../index'
 import IKUtils from 'innerken-js-utils'
@@ -251,7 +250,6 @@ export default {
   components: {
     ImgTemplate,
     GeneralForm,
-    MaterialCard,
     FormField
   },
   props: {

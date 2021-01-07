@@ -1,23 +1,45 @@
 <template>
-  <material-card
-      class="px-5 py-3 "
-      color="indigo"
-      :icon="icon"
-      inline
+  <v-card
+      class="mt-0"
   >
-    <template v-slot:after-heading>
-      <v-toolbar flat dense class="display-2 font-weight-light">
+    <v-toolbar dark dense>
+      <v-toolbar-title>
+        <v-icon>{{ icon }}</v-icon>
         {{ entityName }}
-        <v-btn @click="reload" icon>
-          <v-icon>mdi-refresh</v-icon>
-        </v-btn>
-      </v-toolbar>
-      <slot name="extra-heading"/>
-    </template>
+      </v-toolbar-title>
+      <v-btn @click="reload" icon>
+        <v-icon>mdi-refresh</v-icon>
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-pagination
+          v-model="page"
+          :length="pageCount"
+          :total-visible="5"
+      ></v-pagination>
+      <v-select class="flex-grow-0" hide-details style="width: 64px" v-model="itemsPerPage" :items="[-1,5,10,15]"></v-select>
+      <v-spacer></v-spacer>
+      <v-text-field
+          class="mr-2"
+          v-model="search"
+          append-icon="mdi-magnify"
+          hide-details
+          clearable
+          :label="$t('Search')"
+          single-line
+          style="max-width: 250px;"
+      />
+      <v-btn
+          color="primary"
+
+          dark
+          @click="$refs.gf.realDialog=true"
+      >
+        {{ $t(addText) }}
+      </v-btn>
+    </v-toolbar>
+    <slot name="extra-heading"/>
     <v-toolbar
         dense
-        color="white"
-        flat
     >
       <slot :items="items" name="filterLeft">
       </slot>
@@ -31,6 +53,7 @@
               :edited-item="filterItem"
           />
         </template>
+
         <v-btn :color="Object.keys(filterItem).length>0?'error':''" icon @click="filterItem={}">
           <v-icon>mdi-close-box</v-icon>
         </v-btn>
@@ -39,19 +62,7 @@
       <v-toolbar-items>
         <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
       </v-toolbar-items>
-      <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          class="ml-auto"
-          hide-details
-          clearable
-          :label="$t('Search')"
-          single-line
-          style="max-width: 250px;"
-      />
     </v-toolbar>
-
-    <v-divider class="mt-3"/>
     <v-data-table
         dense
         v-model="selectedItems"
@@ -61,9 +72,13 @@
         :fixed-header="true"
         :headers="realHeaders"
         :items="tableItem"
-        :items-per-page="15"
         :loading="loading"
         :search.sync="search"
+        :height="'calc(100vh - '+selectedItems.length>0?'248px)':'196px)'"
+        :page.sync="page"
+        :items-per-page="itemsPerPage"
+        hide-default-footer
+        @page-count="pageCount = $event"
         multi-sort
     >
       <template
@@ -142,22 +157,12 @@
         </template>
       </template>
       <template v-slot:footer>
-        <general-form
-            ref="gf"
-            :title="entityName"
-            :dialog="dialog"
-            :edited-item="editedItem"
-            :edited-index="editedIndex"
-            :form-field="formField"
-            @change-general-form="dialogChange"
-        />
         <slot :items="items" :selectItems="selectedItems" name="footer">
-          <v-toolbar
-              class="mt-2"
-              flat
-              color="white"
+          <v-toolbar v-if="selectedItems.length>0"
+                     dense
+                     color="white"
           >
-            <template v-if="selectedItems.length>0">
+            <template >
               <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
                 <form-field
                     class="mx-1"
@@ -171,14 +176,7 @@
               <v-btn @click="updateAll(null,true)" color="red">{{ $t('删除选中') }}</v-btn>
             </template>
             <v-spacer/>
-            <v-btn
-                class="mb-2"
-                color="primary"
-                dark
-                @click="$refs.gf.realDialog=true"
-            >
-              {{ $t(addText) }}
-            </v-btn>
+
           </v-toolbar>
         </slot>
       </template>
@@ -200,7 +198,7 @@
         <template v-if="useDefaultAction">
           <template v-if="useEditAction">
             <v-icon
-                large
+                x-large
                 class="mr-2"
                 @click="editItem(item)"
             >
@@ -209,10 +207,10 @@
           </template>
           <template v-if="useDeleteAction">
             <v-icon
-                large
+                x-large
                 @click="deleteItem(item)"
             >
-              mdi-delete-circle
+              mdi-delete
             </v-icon>
           </template>
         </template>
@@ -227,7 +225,16 @@
         </td>
       </template>
     </v-data-table>
-  </material-card>
+    <general-form
+        ref="gf"
+        :title="entityName"
+        :dialog="dialog"
+        :edited-item="editedItem"
+        :edited-index="editedIndex"
+        :form-field="formField"
+        @change-general-form="dialogChange"
+    />
+  </v-card>
 </template>
 
 <script>
@@ -308,6 +315,9 @@ export default {
   },
   data: function () {
     return {
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 10,
       filterItem: {},
       mergeItem: {},
       Types: IKDataEntity.Types,

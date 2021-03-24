@@ -396,36 +396,33 @@ async function getActualOptionValue (option, item, cache) {
 export async function parseDataForEntity (item, entity, cache = {}) {
   for (const key of Object.keys(entity)) {
     const instruction = entity[key]
-    if (typeof item[key] === 'undefined' || item[key] === null) {
-      if (instruction.type === Types.Group) {
-        if (!instruction.tableConfig) {
-          throw new Error(`Parse Failed for group${item}${instruction}`)
-        }
-        if (!instruction.tableConfig.displayCondition) {
-          throw new Error(`Parse Failed for group${item}${instruction}`)
-        }
-        if (!instruction.childKey) {
-          throw new Error(`Parse Failed for group${item}${instruction}`)
-        }
-        instruction.childKey = [instruction.childKey].flat()
-        instruction.childKey.forEach((childKey) => {
-          item[`_${key}${childKey}`] = item[key].find((i) => (instruction.tableConfig.displayCondition(i)))[childKey]
-        })
+    item[key] = item[key] ?? Types.getTypeDefault(instruction.type)
+    if (instruction.type === Types.Group) {
+      if (!instruction.tableConfig) {
+        throw new Error(`Parse Failed for group${item}${instruction}`)
       }
-      item[key] = Types.parseValue(instruction.type, item[key])
-      if (instruction.formConfig) {
-        if (instruction.formConfig.type) {
-          if (instruction.formConfig.type.multiple) {
-            item[key] = [item[key]].flat()
-          }
+      if (!instruction.tableConfig.displayCondition) {
+        throw new Error(`Parse Failed for group${item}${instruction}`)
+      }
+      if (!instruction.childKey) {
+        throw new Error(`Parse Failed for group${item}${instruction}`)
+      }
+      instruction.childKey = [instruction.childKey].flat()
+      instruction.childKey.forEach((childKey) => {
+        item[`_${key}${childKey}`] = item[key].find((i) => (instruction.tableConfig.displayCondition(i)))[childKey]
+      })
+    }
+    item[key] = Types.parseValue(instruction.type, item[key])
+    if (instruction.formConfig) {
+      if (instruction.formConfig.type) {
+        if (instruction.formConfig.type.multiple) {
+          item[key] = [item[key]].flat()
         }
       }
-      if (instruction.type === Types.Option) {
-        const opt = generateField(instruction, key)
-        item[`opt${key}`] = await getActualOptionValue(opt, item, cache)
-      }
-    } else {
-      item[key] = Types.getTypeDefault(instruction.type)
+    }
+    if (instruction.type === Types.Option) {
+      const opt = generateField(instruction, key)
+      item[`opt${key}`] = await getActualOptionValue(opt, item, cache)
     }
   }
   item.__parsed = true

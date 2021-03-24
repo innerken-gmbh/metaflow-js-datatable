@@ -396,7 +396,11 @@ async function getActualOptionValue (option, item, cache) {
 export async function parseDataForEntity (item, entity, cache = {}) {
   for (const key of Object.keys(entity)) {
     const instruction = entity[key]
-    item[key] = item[key] ?? Types.getTypeDefault(instruction.type)
+    if (item[key] === '' || item[key] === null || item[key] === undefined ||
+      (!item[key] && item[key] !== 0)) {
+      item[key] = Types.getTypeDefault(instruction.type)
+    }
+
     if (instruction.type === Types.Group) {
       if (!instruction.tableConfig) {
         throw new Error(`Parse Failed for group${item}${instruction}`)

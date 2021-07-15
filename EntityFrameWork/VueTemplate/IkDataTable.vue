@@ -26,15 +26,25 @@
     </v-card>
     <slot name="extra-heading"/>
     <v-card class="ma-0">
-      <div class="d-flex align-center">
-        <div style="width: fit-content">
+      <div class="d-flex align-center flex-wrap pa-2">
+        <div style="overflow: hidden">
           <v-tabs height="36px"  v-model="tab">
-            <v-tab>数据</v-tab>
-            <v-tab>筛选</v-tab>
+            <v-tab>{{ $t('数据') }}</v-tab>
+            <v-tab>{{ $t('筛选') }}<v-btn small text v-if="Object.keys(filterItem).length>0"  color="error" @click.stop="filterItem={}"><v-icon>mdi-close-box</v-icon></v-btn>
+            </v-tab>
+            <v-tab>{{ $t('批量操作') }}</v-tab>
           </v-tabs>
         </div>
         <v-spacer></v-spacer>
-        <div class="pr-4">应用的筛选</div>
+        <v-btn
+            v-if="useDefaultAction"
+            color="success"
+            dark
+            small
+            @click="$refs.gf.realDialog=true"
+        >
+          <v-icon left>mdi-plus</v-icon>{{ $t(addText) }}
+        </v-btn>
       </div>
 
       <v-tabs-items v-model="tab">
@@ -50,7 +60,7 @@
               :items="tableItem"
               :loading="loading"
               :search.sync="search"
-              :height="'calc(100vh - '+(selectedItems.length>0?'248px)':'196px)')"
+              height="calc(100vh - 248px)"
               multi-sort
           >
             <template
@@ -128,16 +138,9 @@
                 </template>
               </template>
             </template>
-
-            <template v-slot:footer.prepend>
-              <v-btn
-                  v-if="useDefaultAction"
-                  color="primary"
-                  dark
-                  @click="$refs.gf.realDialog=true"
-              >
-                {{ $t(addText) }}
-              </v-btn>
+            <template v-slot:footer>
+              <slot :items="items" :selectItems="selectedItems" name="footer">
+              </slot>
             </template>
             <template v-slot:no-data>
               <slot name="no-data">
@@ -199,11 +202,28 @@
                     :edited-item="filterItem"
                 />
               </template>
-              <v-btn :color="Object.keys(filterItem).length>0?'error':''" icon @click="filterItem={}">
-                <v-icon>mdi-close-box</v-icon>
-              </v-btn>
             </template>
             <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item>
+          <v-card class="pa-2">
+            <v-card-title>已经选中{{selectedItems.length}}</v-card-title>
+            <v-card-text>
+              <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
+                <form-field
+                    class="mx-1"
+                    :no-details="true"
+                    :key="field.id"
+                    :field="field"
+                    :edited-item="mergeItem"
+                />
+              </template>
+              <div>
+                <v-btn block @click="updateAll(mergeItem,false)" color="green">{{ $t('更新选中') }}</v-btn>
+                <v-btn block @click="updateAll(null,true)" color="red">{{ $t('删除选中') }}</v-btn>
+              </div>
+            </v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs-items>

@@ -195,20 +195,17 @@
       <template>
         <v-speed-dial
             v-if="selectedItems.length>0"
-            style="width: fit-content;position: fixed;right: 30px;bottom: 30px"
+            style="position: absolute;left: 8px;bottom: 8px"
             v-model="fab"
-            right
+            left
             bottom
             direction="top"
-            open-on-hover
         >
           <template v-slot:activator>
             <v-btn
                 v-model="fab"
                 color="primary"
                 dark
-                fab
-                large
             >
               <v-icon v-if="fab">
                 mdi-close
@@ -244,12 +241,10 @@
           </v-btn>
         </v-speed-dial>
         <v-btn
-            style="position: fixed;right: 30px;bottom: 30px"
+            style="position: absolute;left: 8px;bottom: 8px"
             v-else-if="useDefaultAction"
             color="success"
-            fab
             dark
-            large
             @click="$refs.gf.realDialog=true"
         >
           <v-icon>mdi-plus</v-icon>

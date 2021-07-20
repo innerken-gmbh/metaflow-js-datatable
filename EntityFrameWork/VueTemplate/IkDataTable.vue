@@ -2,7 +2,7 @@
   <v-card
       class="mt-0"
   >
-    <v-card dark color="primary" class="d-flex align-center ma-0 px-4 py-1">
+    <v-card dark color="grey darken-2" class="d-flex align-center ma-0 px-4 py-1">
       <div>
         <v-icon>{{ icon }}</v-icon>
         {{ entityName }}
@@ -23,210 +23,260 @@
             style="max-width: 250px;"
         />
       </div>
+
+    </v-card>
+    <v-card class="ma-0 px-4 py-1">
+      <slot :items="items" name="filterLeft">
+      </slot>
+      <template v-if="mergableFields.length>0">
+        <v-row dense>
+          <template v-for="(field,index) in mergableFields">
+            <v-col :key="index+'filter'" cols="6" lg="4">
+              <form-field
+                  class="mx-1"
+                  :no-details="true"
+                  :field="field"
+                  :edited-item="filterItem"
+              />
+            </v-col>
+          </template>
+          <v-col cols="6" lg="4">
+            <v-btn
+                block v-if="Object.keys(filterItem).length>0"
+                color="error" @click.stop="filterItem={}"
+            >
+              <v-icon left>mdi-close-box</v-icon>
+              Reset
+            </v-btn>
+          </v-col>
+        </v-row>
+      </template>
+      <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
     </v-card>
     <slot name="extra-heading"/>
     <v-card class="ma-0">
-      <div class="d-flex align-center flex-wrap pa-2">
-        <div style="overflow: hidden">
-          <v-tabs height="36px"  v-model="tab">
-            <v-tab>{{ $t('数据') }}</v-tab>
-            <v-tab>{{ $t('筛选') }}<v-btn small text v-if="Object.keys(filterItem).length>0"  color="error" @click.stop="filterItem={}"><v-icon>mdi-close-box</v-icon></v-btn>
-            </v-tab>
-            <v-tab>{{ $t('批量操作') }}</v-tab>
-          </v-tabs>
-        </div>
-        <v-spacer></v-spacer>
+      <v-data-table
+          dense
+          v-model="selectedItems"
+          :show-expand="showExpand"
+          :single-expand="singleExpand"
+          :show-select="useSelect"
+          :fixed-header="true"
+          :headers="realHeaders"
+          :items="tableItem"
+          :loading="loading"
+          :search.sync="search"
+          multi-sort
+      >
+        <template
+            v-for="slottedItem in slottedItems"
+            v-slot:[slottedItem.name]="{ item }"
+        >
+          <slot
+              :name="slottedItem.name"
+              :item="item"
+          />
+        </template>
+        <template
+            v-for="adItem in advancedItems"
+            v-slot:[adItem.name]="{ item }"
+        >
+          <template
+              v-if="
+            adItem.dataType===Types.Image"
+          >
+            <img-template
+                :key="adItem.name"
+                :model="adItem.value"
+                :item="item"
+                :root="adItem.type.root()"
+            />
+          </template>
+          <template
+              v-else-if="
+            adItem.dataType===Types.Group"
+          >
+            <v-chip
+                v-bind:key="'_'+adItem.value+c"
+                v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
+            >
+              {{ item['_' + adItem.value + c] }}
+            </v-chip>
+          </template>
+          <template
+              v-else-if="
+            adItem.dataType===Types.Boolean"
+          >
+            <v-simple-checkbox
+                :value="!!item[adItem.value]"
+                dense
+                v-ripple
+                @click="toggleProperty(item,adItem.value)"
+                :key="adItem.name"
+            />
+          </template>
+          <template
+              v-else-if="
+            adItem.dataType===Types.Color"
+          >
+            <v-chip
+                :key="adItem.name"
+                :color="item[adItem.value]"
+                label
+                :style="swatchStyle"
+            />
+          </template>
+          <template
+              v-else-if="
+            adItem.dataType===Types.Option"
+          >
+            <template v-for="(l,index) of item['opt'+adItem.value]">
+              <v-chip
+                  :key="item+adItem.name+'c'+index"
+                  class="mx-1"
+                  :color="adItem.type.color?
+                            adItem.type.color.find(c=>{return parseInt(item[adItem.value])===c.id}).color:''"
+                  label
+              >
+                {{ l }}
+              </v-chip>
+            </template>
+          </template>
+        </template>
+        <template v-slot:footer>
+          <slot :items="items" :selectItems="selectedItems" name="footer">
+          </slot>
+        </template>
+        <template v-slot:no-data>
+          <slot name="no-data">
+            <v-btn
+                color="primary"
+                @click="reload"
+            >
+              {{ $t('重新加载') }}
+            </v-btn>
+          </slot>
+        </template>
+        <template v-slot:item.action="{ item }">
+          <slot
+              name="item.action"
+              :item="item"
+          />
+          <template v-if="useDefaultAction">
+            <template v-if="useEditAction">
+              <v-icon
+                  x-large
+                  class="mr-2"
+                  @click="editItem(item)"
+              >
+                mdi-pencil-box
+              </v-icon>
+            </template>
+            <template v-if="useDeleteAction">
+              <v-icon
+                  x-large
+                  @click="deleteItem(item)"
+              >
+                mdi-delete
+              </v-icon>
+            </template>
+          </template>
+
+        </template>
+        <template v-slot:expanded-item="{ item }">
+          <td :colspan="headers.length">
+            <slot
+                name="expanded-item"
+                :item="item"
+            />
+          </td>
+        </template>
+      </v-data-table>
+      <template>
+        <v-speed-dial
+            v-if="selectedItems.length>0"
+            style="width: fit-content;position: fixed;right: 30px;bottom: 30px"
+            v-model="fab"
+            right
+            bottom
+            direction="top"
+            open-on-hover
+        >
+          <template v-slot:activator>
+            <v-btn
+                v-model="fab"
+                color="primary"
+                dark
+                fab
+                large
+            >
+              <v-icon v-if="fab">
+                mdi-close
+              </v-icon>
+              <v-icon v-else>
+                mdi-square-edit-outline
+              </v-icon>
+            </v-btn>
+          </template>
+          <v-btn
+              fab
+              dark
+              @click="massEditDialog=true"
+              color="green"
+          >
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn
+              fab
+              dark
+              color="indigo"
+              @click="$refs.gf.realDialog=true"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+          <v-btn
+              fab
+              dark
+              color="red"
+              @click="updateAll(null,true)"
+          >
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </v-speed-dial>
         <v-btn
-            v-if="useDefaultAction"
+            style="position: fixed;right: 30px;bottom: 30px"
+            v-else-if="useDefaultAction"
             color="success"
+            fab
             dark
-            small
+            large
             @click="$refs.gf.realDialog=true"
         >
-          <v-icon left>mdi-plus</v-icon>{{ $t(addText) }}
+          <v-icon>mdi-plus</v-icon>
         </v-btn>
-      </div>
-
-      <v-tabs-items v-model="tab">
-        <v-tab-item>
-          <v-data-table
-              dense
-              v-model="selectedItems"
-              :show-expand="showExpand"
-              :single-expand="singleExpand"
-              :show-select="useSelect"
-              :fixed-header="true"
-              :headers="realHeaders"
-              :items="tableItem"
-              :loading="loading"
-              :search.sync="search"
-              height="calc(100vh - 248px)"
-              multi-sort
-          >
-            <template
-                v-for="slottedItem in slottedItems"
-                v-slot:[slottedItem.name]="{ item }"
-            >
-              <slot
-                  :name="slottedItem.name"
-                  :item="item"
-              />
-            </template>
-            <template
-                v-for="adItem in advancedItems"
-                v-slot:[adItem.name]="{ item }"
-            >
-              <template
-                  v-if="
-            adItem.dataType===Types.Image"
-              >
-                <img-template
-                    :key="adItem.name"
-                    :model="adItem.value"
-                    :item="item"
-                    :root="adItem.type.root()"
-                />
-              </template>
-              <template
-                  v-else-if="
-            adItem.dataType===Types.Group"
-              >
-                <v-chip
-                    v-bind:key="'_'+adItem.value+c"
-                    v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
-                >
-                  {{ item['_' + adItem.value + c] }}
-                </v-chip>
-              </template>
-              <template
-                  v-else-if="
-            adItem.dataType===Types.Boolean"
-              >
-                <v-simple-checkbox
-                    :value="!!item[adItem.value]"
-                    dense
-                    v-ripple
-                    @click="toggleProperty(item,adItem.value)"
-                    :key="adItem.name"
-                />
-              </template>
-              <template
-                  v-else-if="
-            adItem.dataType===Types.Color"
-              >
-                <v-chip
-                    :key="adItem.name"
-                    :color="item[adItem.value]"
-                    label
-                    :style="swatchStyle"
-                />
-              </template>
-              <template
-                  v-else-if="
-            adItem.dataType===Types.Option"
-              >
-                <template v-for="(l,index) of item['opt'+adItem.value]">
-                  <v-chip
-                      :key="item+adItem.name+'c'+index"
-                      class="mx-1"
-                      :color="adItem.type.color?
-                            adItem.type.color.find(c=>{return parseInt(item[adItem.value])===c.id}).color:''"
-                      label
-                  >
-                    {{ l }}
-                  </v-chip>
-                </template>
-              </template>
-            </template>
-            <template v-slot:footer>
-              <slot :items="items" :selectItems="selectedItems" name="footer">
-              </slot>
-            </template>
-            <template v-slot:no-data>
-              <slot name="no-data">
-                <v-btn
-                    color="primary"
-                    @click="reload"
-                >
-                  {{ $t('重新加载') }}
-                </v-btn>
-              </slot>
-            </template>
-            <template v-slot:item.action="{ item }">
-              <slot
-                  name="item.action"
-                  :item="item"
-              />
-              <template v-if="useDefaultAction">
-                <template v-if="useEditAction">
-                  <v-icon
-                      x-large
-                      class="mr-2"
-                      @click="editItem(item)"
-                  >
-                    mdi-pencil-box
-                  </v-icon>
-                </template>
-                <template v-if="useDeleteAction">
-                  <v-icon
-                      x-large
-                      @click="deleteItem(item)"
-                  >
-                    mdi-delete
-                  </v-icon>
-                </template>
-              </template>
-
-            </template>
-            <template v-slot:expanded-item="{ item }">
-              <td :colspan="headers.length">
-                <slot
-                    name="expanded-item"
-                    :item="item"
-                />
-              </td>
-            </template>
-          </v-data-table>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card>
-            <slot :items="items" name="filterLeft">
-            </slot>
-            <template v-if="mergableFields.length>0">
-              <template v-for="(field,index) in mergableFields">
-                <form-field
-                    class="mx-1"
-                    :no-details="true"
-                    :key="index+'filter'"
-                    :field="field"
-                    :edited-item="filterItem"
-                />
-              </template>
-            </template>
-            <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
-          </v-card>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card class="pa-2">
-            <v-card-title>已经选中{{selectedItems.length}}</v-card-title>
-            <v-card-text>
+      </template>
+      <v-dialog v-model="massEditDialog" max-width="600px">
+        <v-card class="pa-2">
+          <v-card-title>已经选中{{ selectedItems.length }}</v-card-title>
+          <v-card-text>
+            <v-row>
               <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
-                <form-field
-                    class="mx-1"
-                    :no-details="true"
-                    :key="field.id"
-                    :field="field"
-                    :edited-item="mergeItem"
-                />
+                <v-col :key="field.id" cols="12">
+                  <form-field
+                      class="mx-1"
+                      :no-details="true"
+                      :field="field"
+                      :edited-item="mergeItem"
+                  />
+                </v-col>
               </template>
-              <div>
-                <v-btn block @click="updateAll(mergeItem,false)" color="green">{{ $t('更新选中') }}</v-btn>
-                <v-btn block @click="updateAll(null,true)" color="red">{{ $t('删除选中') }}</v-btn>
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-      </v-tabs-items>
+            </v-row>
+            <div>
+              <v-btn block @click="updateAll(mergeItem,false)" color="green">{{ $t('更新选中') }}</v-btn>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </v-card>
     <general-form
         ref="gf"
@@ -237,6 +287,7 @@
         :form-field="formField"
         @change-general-form="dialogChange"
     />
+
   </v-card>
 </template>
 
@@ -317,7 +368,7 @@ export default {
   data: function () {
     return {
       page: 1,
-      tab:null,
+      fab: null,
       pageCount: 0,
       itemsPerPage: 15,
       filterItem: {},
@@ -337,6 +388,7 @@ export default {
       realHeaders: [],
       advancedItems: [],
       slottedItems: [],
+      massEditDialog: false,
     }
   },
   computed: {
@@ -353,7 +405,8 @@ export default {
     },
     mergableFields: function () {
       return this.formField
-          .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+          .filter(item =>
+              [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
           .filter(item => item.merge)
           .map(item => {
             return {
@@ -430,19 +483,27 @@ export default {
         this.closeDialog()
       }
     },
-    updateAll (newItem = null, remove = false) {
+    async updateAll (newItem = null, remove = false) {
       if (remove) {
         this.selectedItems.forEach(item => this.deleteItem(item, false))
         return
       }
       if (newItem) {
-        this.selectedItems.forEach(item => {
+        const update = this.selectedItems.reduce((arr, item) => {
           const _i = IKUtils.extend(item, newItem)
-          this.updateItem(_i)
-        })
+          arr.push(this.updateItem(_i))
+          return arr
+        }, [])
+        const result = await Promise.allSettled(update)
+        console.log(result)
         this.mergeItem = {}
         newItem = {}
+        IKUtils.toast(this.$i18n.t('编辑成功'))
+
       }
+      this.massEditDialog = false
+      this.selectedItems = []
+      this.closeDialog()
     },
     closeDialog () {
       console.log('should close dialog')
@@ -452,22 +513,23 @@ export default {
       this.$refs.gf.realDialog = false
       this.reload()
     },
-    toggleProperty (item, key) {
+    async toggleProperty (item, key) {
       const _item = IKUtils.deepCopy(item)
       _item[key] = !_item[key]
-      this.updateItem(_item)
+      await this.updateItem(_item)
+      IKUtils.toast(this.$i18n.t('编辑成功'))
+      this.closeDialog()
     },
 
     async updateItem (item) {
-      return IKUtils.safeCallFunction(this.model, this.model.edit, item).then(() => {
-        IKUtils.toast(this.$i18n.t('编辑成功'))
-        this.closeDialog()
-      })
+      return await IKUtils.safeCallFunction(this.model, this.model.edit, item)
     },
 
-    save () {
+    async save () {
       if (this.editedIndex > -1) {
-        this.updateItem(this.editedItem)
+        await this.updateItem(this.editedItem)
+        IKUtils.toast(this.$i18n.t('编辑成功'))
+        this.closeDialog()
       } else {
         IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem).then(() => {
           IKUtils.toast(this.$i18n.t('添加成功'))

@@ -4,6 +4,7 @@
   >
     <template v-if="type.name==='text'">
       <v-text-field
+          dense
           :hide-details="noDetails"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
@@ -13,6 +14,8 @@
     </template>
     <template v-else-if="type.name==='select'">
       <v-select
+          dense
+          clearable
           :hide-details="noDetails"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
@@ -26,6 +29,7 @@
     </template>
     <template v-else-if="type.name==='switch'">
       <v-checkbox
+          dense
           hide-details
           v-model="editedItem[value]"
           :disabled="shouldDisable"
@@ -60,6 +64,7 @@
     </template>
     <template v-else-if="type.name==='switch'">
       <v-switch
+          dense
           v-model="editedItem[value]"
           :disabled="shouldDisable"
           :label="text"
@@ -76,6 +81,7 @@
       >
         <template v-slot:activator="{ on }">
           <v-text-field
+              dense
               v-model="editedItem[value]"
               :label="text"
               prepend-icon="mdi-clock-outline"
@@ -116,6 +122,7 @@
       >
         <template v-slot:activator="{ on }">
           <v-text-field
+              dense
               v-model="editedItem[value]"
               :label="text"
               prepend-icon="mdi-clock-outline"
@@ -149,6 +156,7 @@
     </template>
     <template v-else-if="type.name==='color'">
       <v-text-field
+          dense
           v-model=editedItem[value]
           hide-details
           :label="text"

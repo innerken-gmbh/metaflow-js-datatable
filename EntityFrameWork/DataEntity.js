@@ -100,15 +100,12 @@ export function ModelFactory(entity, config) {
         return []
     }
     const add = function () {
-        // eslint-disable-next-line new-cap
         return new Promise.reject('Add is not Definded')
     }
     const edit = function () {
-        // eslint-disable-next-line new-cap
         return new Promise.reject('edit is not Definded')
     }
     const remove = function () {
-        // eslint-disable-next-line new-cap
         return new Promise.reject('remove is not Definded')
     }
     let loading = false

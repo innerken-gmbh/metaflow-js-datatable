@@ -1,14 +1,102 @@
 <template>
-  <v-card
-      class="mt-0"
-  >
-    <v-card dark color="grey darken-2" class="d-flex align-center ma-0 px-4 py-1">
-      <div>
-        <v-icon>{{ icon }}</v-icon>
-        {{ entityName }}
-        <v-btn @click="reload" text small>
-          <v-icon>mdi-refresh</v-icon>
-        </v-btn>
+  <div class="mt-0">
+    <div dark color="grey darken-2" class="d-flex align-center ma-0 px-4 py-1">
+      <div class="d-flex">
+        <div>
+          <v-card
+              dark
+              color="primary"
+              style="height: 100%"
+              class=" d-flex align-center justify-center px-4 mr-3"
+              @click.stop="showFilterDialog=true"
+          >
+            <v-icon left>{{ icon }}</v-icon>
+            {{ entityName }}
+          </v-card>
+        </div>
+        <template v-if="displayMergableFields.length>0">
+          <div v-if="Object.keys(filterItem).length>0" style="width: 164px">
+            <v-card
+                dark
+                color="error"
+                style="height: 100%"
+                class=" d-flex align-center justify-center"
+                @click.stop="filterItem={}"
+            >
+              <v-icon left>mdi-close-box</v-icon>
+              Reset
+            </v-card>
+          </div>
+          <div v-else style="width: 164px">
+            <v-card
+                dark
+                color="warning"
+                style="height: 100%"
+                class=" d-flex align-center justify-center"
+                @click.stop="showFilterDialog=true"
+            >
+              <v-icon left>mdi-filter-variant</v-icon>
+              {{ $t('filter') }}
+            </v-card>
+          </div>
+          <template v-for="(field) in displayMergableFields">
+            <div class="ml-2" :key="field.value" style="width: 164px">
+              <form-field
+                  class="mx-1"
+                  :no-details="true"
+                  :field="field"
+                  :edited-item="filterItem"
+              />
+            </div>
+          </template>
+        </template>
+        <template v-if="useDateFilter">
+          <v-menu
+              ref="datePickerMenu"
+              v-model="datePickerMenu"
+              :close-on-content-click="false"
+              :return-value.sync="dates"
+              offset-y
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                  class="ma-0 pa-0"
+                  v-model="dates"
+                  hide-details
+                  :label="$t('日期筛选')"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  single-line
+                  append-icon="mdi-close"
+                  @click:append="clear"
+                  v-on="on"
+              />
+            </template>
+            <v-date-picker
+                v-model="dates"
+                no-title
+                range
+                scrollable
+                locale="de"
+            >
+              <v-spacer/>
+              <v-btn
+                  text
+                  color="primary"
+                  @click="datePickerMenu = false"
+              >
+                {{ $t('Cancel') }}
+              </v-btn>
+              <v-btn
+                  text
+                  color="primary"
+                  @click="$refs.datePickerMenu.save(dates)"
+              >
+                {{ $t('OK') }}
+              </v-btn>
+            </v-date-picker>
+          </v-menu>
+        </template>
       </div>
       <v-spacer></v-spacer>
       <div style="width: 150px;height: 100%;" class="d-flex align-center">
@@ -23,40 +111,12 @@
             style="max-width: 250px;"
         />
       </div>
-
-    </v-card>
-    <v-card class="ma-0 px-4 py-1">
-      <slot :items="items" name="filterLeft">
-      </slot>
-      <template v-if="mergableFields.length>0">
-        <v-row dense>
-          <template v-for="(field,index) in mergableFields">
-            <v-col :key="index+'filter'" cols="6" lg="4">
-              <form-field
-                  class="mx-1"
-                  :no-details="true"
-                  :field="field"
-                  :edited-item="filterItem"
-              />
-            </v-col>
-          </template>
-          <v-col cols="6" lg="4">
-            <v-btn
-                block v-if="Object.keys(filterItem).length>0"
-                color="error" @click.stop="filterItem={}"
-            >
-              <v-icon left>mdi-close-box</v-icon>
-              Reset
-            </v-btn>
-          </v-col>
-        </v-row>
-      </template>
-      <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
-    </v-card>
+    </div>
     <slot name="extra-heading"/>
     <v-card class="ma-0">
       <v-data-table
           dense
+          :height="onePageArrangement?'calc(100vh - 100px)':auto"
           v-model="selectedItems"
           :show-expand="showExpand"
           :single-expand="singleExpand"
@@ -66,6 +126,7 @@
           :items="tableItem"
           :loading="loading"
           :search.sync="search"
+          :items-per-page="30"
           multi-sort
       >
         <template
@@ -133,7 +194,6 @@
             <template v-for="(l,index) of item['opt'+adItem.value]">
               <v-chip
                   :key="item+adItem.name+'c'+index"
-                  class="mx-1"
                   :color="adItem.type.color?
                             adItem.type.color.find(c=>{return parseInt(item[adItem.value])===c.id}).color:''"
                   label
@@ -142,10 +202,6 @@
               </v-chip>
             </template>
           </template>
-        </template>
-        <template v-slot:footer>
-          <slot :items="items" :selectItems="selectedItems" name="footer">
-          </slot>
         </template>
         <template v-slot:no-data>
           <slot name="no-data">
@@ -191,65 +247,65 @@
             />
           </td>
         </template>
-      </v-data-table>
-      <template>
-        <v-speed-dial
-            v-if="selectedItems.length>0"
-            style="position: absolute;left: 8px;bottom: 8px"
-            v-model="fab"
-            left
-            bottom
-            direction="top"
-        >
-          <template v-slot:activator>
-            <v-btn
-                v-model="fab"
-                color="primary"
-                dark
-            >
-              <v-icon v-if="fab">
-                mdi-close
-              </v-icon>
-              <v-icon v-else>
-                mdi-square-edit-outline
-              </v-icon>
-            </v-btn>
-          </template>
-          <v-btn
-              fab
-              dark
-              @click="massEditDialog=true"
-              color="green"
+        <template v-slot:footer.prepend>
+          <v-speed-dial
+              v-if="selectedItems.length>0"
+              v-model="fab"
+              left
+              bottom
+              direction="top"
           >
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
+            <template v-slot:activator>
+              <v-btn
+                  v-model="fab"
+                  color="primary"
+                  dark
+              >
+                <v-icon v-if="fab">
+                  mdi-close
+                </v-icon>
+                <v-icon v-else>
+                  mdi-square-edit-outline
+                </v-icon>
+              </v-btn>
+            </template>
+            <v-btn
+                fab
+                dark
+                @click="massEditDialog=true"
+                color="green"
+            >
+              <v-icon color="white">mdi-pencil</v-icon>
+            </v-btn>
+            <v-btn
+                fab
+                dark
+                color="indigo"
+                @click="$refs.gf.realDialog=true"
+            >
+              <v-icon color="white">mdi-plus</v-icon>
+            </v-btn>
+            <v-btn
+                fab
+                dark
+                color="red"
+                @click="updateAll(null,true)"
+            >
+              <v-icon color="white">mdi-delete</v-icon>
+            </v-btn>
+          </v-speed-dial>
           <v-btn
-              fab
+              v-else-if="useDefaultAction"
+              color="success"
               dark
-              color="indigo"
               @click="$refs.gf.realDialog=true"
           >
             <v-icon>mdi-plus</v-icon>
           </v-btn>
-          <v-btn
-              fab
-              dark
-              color="red"
-              @click="updateAll(null,true)"
-          >
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </v-speed-dial>
-        <v-btn
-            style="position: absolute;left: 8px;bottom: 8px"
-            v-else-if="useDefaultAction"
-            color="success"
-            dark
-            @click="$refs.gf.realDialog=true"
-        >
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-      </template>
+          <slot :items="items" :selectItems="selectedItems" name="footer">
+          </slot>
+        </template>
+      </v-data-table>
       <v-dialog v-model="massEditDialog" max-width="600px">
         <v-card class="pa-2">
           <v-card-title>已经选中{{ selectedItems.length }}</v-card-title>
@@ -282,8 +338,36 @@
         :form-field="formField"
         @change-general-form="dialogChange"
     />
-
-  </v-card>
+    <v-dialog max-width="400px" v-model="showFilterDialog">
+      <v-card class="ma-0 px-2 pa-4">
+        <slot :items="items" name="filterLeft"></slot>
+        <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
+        <template v-for="(field) in mergableFields">
+          <div class="mt-2" :key="field.value">
+            <form-field
+                @clear="()=>delete filterItem[field.value]"
+                class="mx-1"
+                :no-details="true"
+                :field="field"
+                :edited-item="filterItem"
+            />
+          </div>
+        </template>
+        <div class="mt-2" v-if="Object.keys(filterItem).length>0">
+          <v-card
+              dark
+              color="error"
+              style="height: 100%"
+              class=" d-flex align-center justify-center pa-2"
+              @click.stop="filterItem={}"
+          >
+            <v-icon left>mdi-close-box</v-icon>
+            Reset
+          </v-card>
+        </div>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -352,11 +436,29 @@ export default {
       type: Boolean,
       default: true,
     },
+    onePageArrangement: {
+      type: Boolean,
+      default: true,
+    },
+    useDateFilter: {
+      type: Boolean,
+      default: false,
+    },
+    requiredDateValue: {},
   },
   watch: {
-    filter: {
+    realFilter: {
       handler () {
         this.reload()
+      },
+    },
+    requiredDateValue: {
+      immediate: true,
+      handler: function (val) {
+        console.log(val)
+        if (val?.length === 2) {
+          this.dates = val
+        }
       },
     },
   },
@@ -384,9 +486,30 @@ export default {
       advancedItems: [],
       slottedItems: [],
       massEditDialog: false,
+      showFilterDialog: false,
+      datePickerMenu: false,
+      dates: [],
     }
   },
   computed: {
+    okDates () {
+      console.log(this.dates)
+      const res = this.dates
+      console.log(res)
+      if (res.length < 2) {
+        res[1] = res[0] ?? dayjs().format('yyyy-mm-dd')
+      }
+      if (Date.parse(res[0]) > Date.parse(res[1])) {
+        [res[0], res[1]] = [res[1], res[0]]
+      }
+      return res
+    },
+    realFilter () {
+      const res = this.filter ?? {}
+      res.dateFilter = this.okDates
+      return res
+
+    },
     swatchStyle () {
       return {
         cursor: 'pointer',
@@ -397,6 +520,9 @@ export default {
         borderWidth: '1px',
         transition: 'border-radius 200ms ease-in-out',
       }
+    },
+    displayMergableFields: function () {
+      return this.mergableFields.slice(0, 2)
     },
     mergableFields: function () {
       return this.formField
@@ -413,7 +539,7 @@ export default {
     tableItem: function () {
       if (this.filterItem) {
         return this.items.filter(i => {
-          return Object.keys(this.filterItem).every(
+          return Object.keys(this.filterItem).filter(k => this.filterItem[k] != null).every(
               t => {
                 const org = i[t]
                 const oth = this.filterItem[t]
@@ -532,7 +658,9 @@ export default {
         })
       }
     },
-
+    clear () {
+      this.dates = []
+    },
     deleteItem (item, promt = true) {
       if (promt) {
         IKUtils.showConfirm(
@@ -564,7 +692,7 @@ export default {
       const model = this.model
       this.loading = true
 
-      this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.filter)
+      this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
 
       this.loading = false
       this.$emit('reloaded')

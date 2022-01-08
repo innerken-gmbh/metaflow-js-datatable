@@ -16,6 +16,7 @@
       <v-select
           dense
           clearable
+          @click:clear="$emit('clear')"
           :hide-details="noDetails"
           v-model="editedItem[value]"
           :disabled="shouldDisable"

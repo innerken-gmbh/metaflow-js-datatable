@@ -1,21 +1,20 @@
 <template>
   <div class="mt-0">
-    <div dark color="grey darken-2" class="d-flex align-center ma-0 px-4 py-1">
+    <div style="background: white" class="d-flex align-center ma-0 px-4 py-1">
       <div class="d-flex">
         <div>
           <v-card
               dark
               color="primary"
-              style="height: 100%"
+              style="height: 32px"
               class=" d-flex align-center justify-center px-4 mr-3"
-              @click.stop="showFilterDialog=true"
           >
             <v-icon left>{{ icon }}</v-icon>
             {{ entityName }}
           </v-card>
         </div>
         <template v-if="displayMergableFields.length>0">
-          <div v-if="Object.keys(filterItem).length>0" style="width: 164px">
+          <div v-if="Object.keys(filterItem).length>0" style="width: 80px">
             <v-card
                 dark
                 color="error"
@@ -27,7 +26,7 @@
               Reset
             </v-card>
           </div>
-          <div v-else style="width: 164px">
+          <div v-else style="width: 80px">
             <v-card
                 dark
                 color="warning"
@@ -56,6 +55,7 @@
               v-model="datePickerMenu"
               :close-on-content-click="false"
               :return-value.sync="dates"
+              :close-on-click="false"
               offset-y
           >
             <template v-slot:activator="{ on }">
@@ -193,6 +193,7 @@
           >
             <template v-for="(l,index) of item['opt'+adItem.value]">
               <v-chip
+                  class="mx-1"
                   :key="item+adItem.name+'c'+index"
                   :color="adItem.type.color?
                             adItem.type.color.find(c=>{return parseInt(item[adItem.value])===c.id}).color:''"
@@ -251,8 +252,6 @@
           <v-speed-dial
               v-if="selectedItems.length>0"
               v-model="fab"
-              left
-              bottom
               direction="top"
           >
             <template v-slot:activator>
@@ -339,7 +338,7 @@
         @change-general-form="dialogChange"
     />
     <v-dialog max-width="400px" v-model="showFilterDialog">
-      <v-card class="ma-0 px-2 pa-4">
+      <v-card class="ma-0 py-8 pa-4">
         <slot :items="items" name="filterLeft"></slot>
         <slot :items="items" :tableItems="tableItem" name="filterRight"></slot>
         <template v-for="(field) in mergableFields">
@@ -377,6 +376,7 @@ import ImgTemplate from './ImgTemplate'
 import FormField from './FormField'
 import { IKDataEntity } from '../../index'
 import IKUtils from 'innerken-js-utils'
+import dayjs from 'dayjs'
 
 export default {
   name: 'IkDataTable',
@@ -493,11 +493,10 @@ export default {
   },
   computed: {
     okDates () {
-      console.log(this.dates)
-      const res = this.dates
-      console.log(res)
+      const res = IKUtils.deepCopy(this.dates)
       if (res.length < 2) {
-        res[1] = res[0] ?? dayjs().format('yyyy-mm-dd')
+        res[0] = res[0] ?? dayjs().format('YYYY-MM-DD')
+        res[1] = res[0]
       }
       if (Date.parse(res[0]) > Date.parse(res[1])) {
         [res[0], res[1]] = [res[1], res[0]]
@@ -522,7 +521,7 @@ export default {
       }
     },
     displayMergableFields: function () {
-      return this.mergableFields.slice(0, 2)
+      return this.mergableFields.slice(0, this.useDateFilter ? 2 : 3)
     },
     mergableFields: function () {
       return this.formField
@@ -543,7 +542,7 @@ export default {
               t => {
                 const org = i[t]
                 const oth = this.filterItem[t]
-                return org === oth || (Array.isArray(org) && (org.includes(oth) || oth.every(ot => org.includes(ot))))
+                return org == oth || (Array.isArray(org) && (org.includes(oth) || oth.every(ot => org.includes(ot))))
               })
         })
       }
@@ -551,7 +550,7 @@ export default {
     },
 
   },
-  created () {
+  mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
     if (this.useAction) {
       this.headers.push({

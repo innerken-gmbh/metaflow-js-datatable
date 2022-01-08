@@ -6,8 +6,8 @@
           <v-card
               dark
               color="primary"
-              style="height: 32px"
-              class=" d-flex align-center justify-center px-4 mr-3"
+              style="height: 32px;width: 160px"
+              class=" d-flex align-center justify-center px-4 mr-3 flex-shrink-0"
           >
             <v-icon left>{{ icon }}</v-icon>
             {{ entityName }}
@@ -116,7 +116,7 @@
     <v-card class="ma-0">
       <v-data-table
           dense
-          :height="onePageArrangement?'calc(100vh - 100px)':auto"
+          :height="onePageArrangement?'calc(100vh - 100px)':'auto'"
           v-model="selectedItems"
           :show-expand="showExpand"
           :single-expand="singleExpand"
@@ -521,7 +521,7 @@ export default {
       }
     },
     displayMergableFields: function () {
-      return this.mergableFields.slice(0, this.useDateFilter ? 2 : 3)
+      return this.mergableFields.slice(0, !this.onePageArrangement ? 0 : this.useDateFilter ? 2 : 3)
     },
     mergableFields: function () {
       return this.formField

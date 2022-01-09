@@ -5,7 +5,6 @@
   >
     <template v-if="type.name==='text'">
       <v-text-field
-          solo
           :dense="!fullHeight"
           :hide-details="noDetails"
           v-model="editedItem[value]"
@@ -33,7 +32,6 @@
     </template>
     <template v-else-if="type.name==='switch'">
       <v-checkbox
-          solo
           :dense="!fullHeight"
           hide-details
           v-model="editedItem[value]"
@@ -59,7 +57,6 @@
         </template>
       </div>
       <v-file-input
-          solo
           v-model="editedItem[type.fileStorage]"
           :disabled="shouldDisable"
           :label="text"
@@ -70,7 +67,6 @@
     </template>
     <template v-else-if="type.name==='switch'">
       <v-switch
-          solo
           :dense="!fullHeight"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
@@ -88,7 +84,6 @@
       >
         <template v-slot:activator="{ on }">
           <v-text-field
-              solo
               :dense="!fullHeight"
               v-model="editedItem[value]"
               :label="text"
@@ -130,7 +125,6 @@
       >
         <template v-slot:activator="{ on }">
           <v-text-field
-              solo
               :dense="!fullHeight"
               v-model="editedItem[value]"
               :label="text"
@@ -165,7 +159,6 @@
     </template>
     <template v-else-if="type.name==='color'">
       <v-text-field
-          solo
           :dense="!fullHeight"
           v-model=editedItem[value]
           hide-details
@@ -234,7 +227,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    fullHeight: {default:false},
+    fullHeight: { default: false },
   },
   data: function () {
     return {

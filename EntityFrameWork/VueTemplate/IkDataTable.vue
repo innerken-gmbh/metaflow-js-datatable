@@ -2,16 +2,11 @@
   <div class="mt-0">
     <div style="background: white" class="d-flex align-center ma-0 px-4 py-1">
       <div class="d-flex">
-        <div>
-          <v-card
-              dark
-              color="primary"
-              style="height: 32px;width: 160px"
-              class=" d-flex align-center justify-center mx-2 px-4 flex-shrink-0"
-          >
-            <v-icon left>{{ icon }}</v-icon>
-            {{ entityName }}
-          </v-card>
+        <div style="height: 32px;"
+             class="d-flex align-center justify-center px-4 flex-shrink-0"
+        >
+          <v-icon left>{{ icon }}</v-icon>
+          {{ entityName }}
         </div>
       </div>
       <v-spacer></v-spacer>
@@ -564,13 +559,11 @@ export default {
   },
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
-    if (this.useAction) {
-      this.headers = [{
-        text: 'action',
-        width: '132px',
-        value: 'action',
-      }, ...this.headers]
-    }
+    this.headers.push({
+      text: 'action',
+      width: '132px',
+      value: 'action',
+    })
     this.realHeaders = this.getRealHeaders()
     this.advancedItems = this.getAdvancedItems()
     this.slottedItems = this.getSlottedItems()

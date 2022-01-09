@@ -1,21 +1,17 @@
 <template>
   <v-img
-    :src="imgSrc"
-    class="grey lighten-2"
-    :height="height"
-    :width="width"
-    cover
+      :src="imgSrc"
+      :height="height"
+      :width="width"
+      cover
   >
     <template v-slot:placeholder>
       <v-row
-        class="fill-height ma-0"
-        align="center"
-        justify="center"
+          class="fill-height ma-0"
+          align="center"
+          justify="center"
       >
-        <v-progress-circular
-          indeterminate
-          color="grey lighten-5"
-        />
+        <v-icon>mdi-panorama-outline</v-icon>
       </v-row>
     </template>
   </v-img>

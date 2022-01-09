@@ -1,10 +1,12 @@
 <template>
   <v-sheet
+      class="pa-2"
       v-if="(currentState===-1&&inNew)||(currentState>-1&&inEdit)"
   >
     <template v-if="type.name==='text'">
       <v-text-field
-          dense
+          solo
+          :dense="!fullHeight"
           :hide-details="noDetails"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
@@ -14,7 +16,8 @@
     </template>
     <template v-else-if="type.name==='select'">
       <v-select
-          dense
+          solo
+          :dense="!fullHeight"
           clearable
           @click:clear="$emit('clear')"
           :hide-details="noDetails"
@@ -30,7 +33,8 @@
     </template>
     <template v-else-if="type.name==='switch'">
       <v-checkbox
-          dense
+          solo
+          :dense="!fullHeight"
           hide-details
           v-model="editedItem[value]"
           :disabled="shouldDisable"
@@ -55,6 +59,7 @@
         </template>
       </div>
       <v-file-input
+          solo
           v-model="editedItem[type.fileStorage]"
           :disabled="shouldDisable"
           :label="text"
@@ -65,7 +70,8 @@
     </template>
     <template v-else-if="type.name==='switch'">
       <v-switch
-          dense
+          solo
+          :dense="!fullHeight"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
           :label="text"
@@ -82,7 +88,8 @@
       >
         <template v-slot:activator="{ on }">
           <v-text-field
-              dense
+              solo
+              :dense="!fullHeight"
               v-model="editedItem[value]"
               :label="text"
               prepend-icon="mdi-clock-outline"
@@ -123,7 +130,8 @@
       >
         <template v-slot:activator="{ on }">
           <v-text-field
-              dense
+              solo
+              :dense="!fullHeight"
               v-model="editedItem[value]"
               :label="text"
               prepend-icon="mdi-clock-outline"
@@ -157,7 +165,8 @@
     </template>
     <template v-else-if="type.name==='color'">
       <v-text-field
-          dense
+          solo
+          :dense="!fullHeight"
           v-model=editedItem[value]
           hide-details
           :label="text"
@@ -210,28 +219,29 @@ export default {
     field: {
       type: Object,
       default: () => {
-      }
+      },
     },
     editedItem: {
       type: Object,
       default: () => {
-      }
+      },
     },
     currentState: {
       type: Number,
-      default: -1
+      default: -1,
     },
     noDetails: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
+    fullHeight: {default:false},
   },
   data: function () {
     return {
       timePickerShow: false,
       datePickerShow: false,
       colorPickerShow: false,
-      ...this.field
+      ...this.field,
     }
   },
   computed: {
@@ -246,7 +256,7 @@ export default {
         borderColor: '#c1c1c1',
         borderWidth: '1px',
         borderRadius: colorPickerShow ? '50%' : '4px',
-        transition: 'border-radius 200ms ease-in-out'
+        transition: 'border-radius 200ms ease-in-out',
       }
     },
     selectItemsIsDynamic: function () {
@@ -261,7 +271,7 @@ export default {
         } else {
           result = items.map(item => ({
             ...item,
-            disabled: false
+            disabled: false,
           }))
         }
         return result
@@ -303,15 +313,15 @@ export default {
     },
     root: function () {
       return typeof this.type.root === 'function' ? this.type.root() : this.type.root
-    }
+    },
   },
   watch: {
     editedItem: {
       deep: true,
       handler: function (val) {
         this.preProcessOptions()
-      }
-    }
+      },
+    },
   },
   methods: {
     async preProcessOptions () {
@@ -323,11 +333,11 @@ export default {
           this.$set(this.type, '_selectItems', this.type.selectItems())
         }
       }
-    }
+    },
   },
   mounted () {
     this.preProcessOptions()
-  }
+  },
 }
 </script>
 

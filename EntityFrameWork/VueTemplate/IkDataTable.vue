@@ -7,96 +7,12 @@
               dark
               color="primary"
               style="height: 32px;width: 160px"
-              class=" d-flex align-center justify-center px-4 mr-3 flex-shrink-0"
+              class=" d-flex align-center justify-center mx-2 px-4 flex-shrink-0"
           >
             <v-icon left>{{ icon }}</v-icon>
             {{ entityName }}
           </v-card>
         </div>
-        <template v-if="displayMergableFields.length>0">
-          <div v-if="Object.keys(filterItem).length>0" style="width: 80px">
-            <v-card
-                dark
-                color="error"
-                style="height: 100%"
-                class=" d-flex align-center justify-center"
-                @click.stop="filterItem={}"
-            >
-              <v-icon left>mdi-close-box</v-icon>
-              Reset
-            </v-card>
-          </div>
-          <div v-else style="width: 80px">
-            <v-card
-                dark
-                color="warning"
-                style="height: 100%"
-                class=" d-flex align-center justify-center"
-                @click.stop="showFilterDialog=true"
-            >
-              <v-icon left>mdi-filter-variant</v-icon>
-              {{ $t('filter') }}
-            </v-card>
-          </div>
-          <template v-for="(field) in displayMergableFields">
-            <div class="ml-2" :key="field.value" style="width: 164px">
-              <form-field
-                  class="mx-1"
-                  :no-details="true"
-                  :field="field"
-                  :edited-item="filterItem"
-              />
-            </div>
-          </template>
-        </template>
-        <template v-if="useDateFilter">
-          <v-menu
-              ref="datePickerMenu"
-              v-model="datePickerMenu"
-              :close-on-content-click="false"
-              :return-value.sync="dates"
-              :close-on-click="false"
-              offset-y
-          >
-            <template v-slot:activator="{ on }">
-              <v-text-field
-                  class="ma-0 pa-0"
-                  v-model="dates"
-                  hide-details
-                  :label="$t('日期筛选')"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  single-line
-                  append-icon="mdi-close"
-                  @click:append="clear"
-                  v-on="on"
-              />
-            </template>
-            <v-date-picker
-                v-model="dates"
-                no-title
-                range
-                scrollable
-                locale="de"
-            >
-              <v-spacer/>
-              <v-btn
-                  text
-                  color="primary"
-                  @click="datePickerMenu = false"
-              >
-                {{ $t('Cancel') }}
-              </v-btn>
-              <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.datePickerMenu.save(dates)"
-              >
-                {{ $t('OK') }}
-              </v-btn>
-            </v-date-picker>
-          </v-menu>
-        </template>
       </div>
       <v-spacer></v-spacer>
       <div style="width: 150px;height: 100%;" class="d-flex align-center">
@@ -112,11 +28,97 @@
         />
       </div>
     </div>
+    <v-divider></v-divider>
+    <div class="px-4 d-flex white align-center">
+      <template v-if="displayMergableFields.length>0">
+        <template v-for="(field) in displayMergableFields">
+          <div :key="field.value" style="width: 164px;height: 100%">
+            <form-field
+                :no-details="true"
+                :field="field"
+                :edited-item="filterItem"
+            />
+          </div>
+        </template>
+        <div v-if="Object.keys(filterItem).length>0" style="width: 80px">
+          <v-card
+              dark
+              color="error"
+              style="height: 36px"
+              class=" d-flex align-center justify-center"
+              @click.stop="filterItem={}"
+          >
+            <v-icon left>mdi-close-box</v-icon>
+            Reset
+          </v-card>
+        </div>
+        <div v-else-if="shouldHideMergableField" style="width: 80px">
+          <v-card
+              dark
+              color="warning"
+              style="height: 100%"
+              class=" d-flex align-center justify-center"
+              @click.stop="showFilterDialog=true"
+          >
+            <v-icon left>mdi-filter-variant</v-icon>
+            {{ $t('filter') }}
+          </v-card>
+        </div>
+      </template>
+      <template v-if="useDateFilter">
+        <v-menu
+            ref="datePickerMenu"
+            v-model="datePickerMenu"
+            :close-on-content-click="false"
+            :return-value.sync="dates"
+            :close-on-click="false"
+            offset-y
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
+                class="ma-0 pa-0"
+                v-model="dates"
+                hide-details
+                :label="$t('日期筛选')"
+                prepend-icon="mdi-calendar"
+                readonly
+                single-line
+                append-icon="mdi-close"
+                @click:append="clear"
+                v-on="on"
+            />
+          </template>
+          <v-date-picker
+              v-model="dates"
+              no-title
+              range
+              scrollable
+              locale="de"
+          >
+            <v-spacer/>
+            <v-btn
+                text
+                color="primary"
+                @click="datePickerMenu = false"
+            >
+              {{ $t('Cancel') }}
+            </v-btn>
+            <v-btn
+                text
+                color="primary"
+                @click="$refs.datePickerMenu.save(dates)"
+            >
+              {{ $t('OK') }}
+            </v-btn>
+          </v-date-picker>
+        </v-menu>
+      </template>
+    </div>
     <slot name="extra-heading"/>
     <v-card class="ma-0">
       <v-data-table
           dense
-          :height="onePageArrangement?'calc(100vh - 100px)':'auto'"
+          :height="onePageArrangement?'calc(100vh - 156px)':'auto'"
           v-model="selectedItems"
           :show-expand="showExpand"
           :single-expand="singleExpand"
@@ -154,15 +156,14 @@
             />
           </template>
           <template
-              v-else-if="
-            adItem.dataType===Types.Group"
+              v-else-if="adItem.dataType===Types.Group"
           >
-            <v-chip
+            <div
                 v-bind:key="'_'+adItem.value+c"
                 v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
             >
               {{ item['_' + adItem.value + c] }}
-            </v-chip>
+            </div>
           </template>
           <template
               v-else-if="
@@ -193,10 +194,11 @@
           >
             <template v-for="(l,index) of item['opt'+adItem.value]">
               <v-chip
-                  class="mx-1"
                   :key="item+adItem.name+'c'+index"
                   :color="adItem.type.color?
-                            adItem.type.color.find(c=>{return parseInt(item[adItem.value])===c.id}).color:''"
+                            adItem.type.color
+                            .find(c=>{return parseInt(item[adItem.value])===c.id})
+                            .color:''"
                   label
               >
                 {{ l }}
@@ -221,21 +223,23 @@
           />
           <template v-if="useDefaultAction">
             <template v-if="useEditAction">
-              <v-icon
-                  x-large
+              <v-btn
+                  small
                   class="mr-2"
                   @click="editItem(item)"
               >
-                mdi-pencil-box
-              </v-icon>
+                修改
+              </v-btn>
             </template>
             <template v-if="useDeleteAction">
-              <v-icon
-                  x-large
-                  @click="deleteItem(item)"
+              <v-btn
+                  color="error"
+                  small
+                  class="mr-2"
+                  @click="editItem(item)"
               >
-                mdi-delete
-              </v-icon>
+                删除
+              </v-btn>
             </template>
           </template>
 
@@ -520,8 +524,16 @@ export default {
         transition: 'border-radius 200ms ease-in-out',
       }
     },
+    requiredDisplayNumber: function () {
+      return !this.onePageArrangement ? 0 : this.useDateFilter ? 4 : 5
+    },
+    shouldHideMergableField: function () {
+      return this.mergableFields.length > this.requiredDisplayNumber
+    },
     displayMergableFields: function () {
-      return this.mergableFields.slice(0, !this.onePageArrangement ? 0 : this.useDateFilter ? 2 : 3)
+      return this.shouldHideMergableField ?
+          this.mergableFields.slice(0, this.requiredDisplayNumber) :
+          this.mergableFields
     },
     mergableFields: function () {
       return this.formField
@@ -553,10 +565,11 @@ export default {
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
     if (this.useAction) {
-      this.headers.push({
+      this.headers = [{
         text: 'action',
+        width: '132px',
         value: 'action',
-      })
+      }, ...this.headers]
     }
     this.realHeaders = this.getRealHeaders()
     this.advancedItems = this.getAdvancedItems()
@@ -699,3 +712,8 @@ export default {
   },
 }
 </script>
+<style>
+.breakWord {
+  word-break: break-all;
+}
+</style>

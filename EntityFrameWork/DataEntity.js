@@ -13,7 +13,7 @@ export const Types = {
     Option: Symbol('Type:Option'),
     Group: Symbol('Type:Group'),
     Color: Symbol('Type:Color'),
-    getTypeDefault(type) {
+    getTypeDefault (type) {
         if (!type) {
             type = Types.String
         }
@@ -52,7 +52,7 @@ export const Types = {
         }
         return undefined
     },
-    parseValue(type, value) {
+    parseValue (type, value) {
         if (type === Types.Integer) {
             return parseInt(value)
         }
@@ -75,25 +75,25 @@ export const Types = {
             return value
         }
         return value
-    }
+    },
 }
 
 Object.freeze(Types)
 
-export async function generalLoad(url, data) {
-    return (await hillo.get(url, {...data}))
+export async function generalLoad (url, data) {
+    return (await hillo.get(url, { ...data }))
 }
 
 /**
  * @param {function(*=, ...[*]=): null} asyncListFunc
  * @param {*} conditionFunc
  */
-export async function generalGetOne(asyncListFunc, conditionFunc) {
+export async function generalGetOne (asyncListFunc, conditionFunc) {
     const _list = await asyncListFunc()
     return _list.find((item) => conditionFunc(item))
 }
 
-export function ModelFactory(entity, config) {
+export function ModelFactory (entity, config) {
     let list = config.list || null
 
     const load = config.load || async function () {
@@ -151,14 +151,14 @@ export function ModelFactory(entity, config) {
         add,
         edit,
         remove,
-        getOne
+        getOne,
     }
 
     config = IKUtils.extend(DefaultConfig, config)
 
     return {
         entity,
-        ...config
+        ...config,
     }
 }
 
@@ -174,7 +174,7 @@ const DefaultEntity = {
         md: 6,
         merge: true,
         sm: 12,
-        type: {name: 'text'},
+        type: { name: 'text' },
         // PossibleValue of types
         /*
         Text:{
@@ -206,22 +206,24 @@ const DefaultEntity = {
         required: true, // 是否必填
         requiredEdit: true, // 在编辑中必填
         requiredNew: true, // 在新增中必填
-        dateLocale: '' //
+        dateLocale: '', //
     },
     tableConfig: {
         overwrite: false, // 如果这里为True，
-        displayChild: () => true
-    }
+        sortable: false,
+        class:'breakWord',
+        displayChild: () => true,
+    },
 }
 const GroupTableConfig = {
-    displayChild: () => true
+    displayChild: () => true,
 }
 const TimeFormConfig = {
-    type: {name: 'time'}
+    type: { name: 'time' },
 }
 
 const DateFormConfig = {
-    type: {name: 'date'}
+    type: { name: 'date' },
 }
 
 const OptionFormConfig = {
@@ -230,35 +232,35 @@ const OptionFormConfig = {
         itemText: 'name',
         itemValue: 'id',
         selectItems: [],
-        multiple: false
-    }
+        multiple: false,
+    },
 }
 
 const ImageFormConfig = {
     type: {
         name: 'image',
         root: () => '/',
-        fileStorage: 'file'
-    }
+        fileStorage: 'file',
+    },
 }
 
 const BooleanFormConfig = {
     type: {
-        name: 'switch'
-    }
+        name: 'switch',
+    },
 }
 
 const ColorFormConfig = {
     type: {
-        name: 'color'
-    }
+        name: 'color',
+    },
 }
 
 /**
  * @param {*} _field
  * @param {string} key
  */
-function generateField(_field, key) {
+function generateField (_field, key) {
     if (_field.type === Types.Boolean) {
         if (_field.formConfig) {
             if (_field.formConfig.type) {
@@ -305,6 +307,7 @@ function generateField(_field, key) {
                 _field.formConfig.type = IKUtils.extend(OptionFormConfig.type, _field.formConfig.type)
             }
         }
+
         _field.formConfig = IKUtils.extend(OptionFormConfig, _field.formConfig)
     }
     let _children = []
@@ -336,11 +339,11 @@ function generateField(_field, key) {
         children: _children,
         childKey: _field.childKey,
         labelKey: _field.labelKey,
-        orgin: _field
+        orgin: _field,
     }
 }
 
-export function getFieldFromModel(model) {
+export function getFieldFromModel (model) {
     const field = []
     if (model.entity) {
         Object.keys(model.entity).forEach((key) => {
@@ -358,7 +361,7 @@ export function getFieldFromModel(model) {
  * @param {{}} cache
  */
 
-async function getActualOptionValue(option, item, cache) {
+async function getActualOptionValue (option, item, cache) {
     const key = option.value
     const searchKey = option.type.itemValue
     const resultKey = option.type.itemText
@@ -371,11 +374,11 @@ async function getActualOptionValue(option, item, cache) {
 
     if (!cache[key].dict) {
         cache[key].dict =
-            (typeof listFunction === 'function' ? await IKUtils.safeCallFunction(this, listFunction) : listFunction)
-                .reduce((obj, i) => {
-                    obj[i[searchKey]] = i
-                    return obj
-                }, {})
+          (typeof listFunction === 'function' ? await IKUtils.safeCallFunction(this, listFunction) : listFunction)
+            .reduce((obj, i) => {
+                obj[i[searchKey]] = i
+                return obj
+            }, {})
     }
 
     const actualValues = []
@@ -395,11 +398,11 @@ async function getActualOptionValue(option, item, cache) {
  * @param {{}} entity
  * @param cache
  */
-export async function parseDataForEntity(item, entity, cache = {}) {
+export async function parseDataForEntity (item, entity, cache = {}) {
     for (const key of Object.keys(entity)) {
         const instruction = entity[key]
         if (item[key] === '' || item[key] === null || item[key] === undefined ||
-            (!item[key] && item[key] !== 0)) {
+          (!item[key] && item[key] !== 0)) {
             item[key] = Types.getTypeDefault(instruction.type)
         }
 
@@ -439,7 +442,7 @@ export async function parseDataForEntity(item, entity, cache = {}) {
  * @param { * } model
  * @return [header,formField,defaultItem]
  */
-export function parseField(model) {
+export function parseField (model) {
     const headers = []
     const formField = []
     const defaultItem = getFieldFromModel(model).reduce((map, item) => {
@@ -472,5 +475,5 @@ export default {
     Types,
     getFieldFromModel,
     ModelFactory,
-    generalLoad
+    generalLoad,
 }

@@ -110,10 +110,10 @@
       </template>
     </div>
     <slot name="extra-heading"/>
-    <v-card class="ma-0">
+    <v-card class="ma-0" flat>
       <v-data-table
           dense
-          :height="onePageArrangement?'calc(100vh - 156px)':'auto'"
+          :height=" bottomDistanceFix ? 'calc(100vh - 100px)': (onePageArrangement ?'calc(100vh - 155px)': 'auto')"
           v-model="selectedItems"
           :show-expand="showExpand"
           :single-expand="singleExpand"
@@ -488,9 +488,16 @@ export default {
       showFilterDialog: false,
       datePickerMenu: false,
       dates: [],
+
     }
   },
   computed: {
+    bottomDistanceFix () {
+
+      const res = this.onePageArrangement && !this.useDateFilter && this.displayMergableFields.length <= 0
+
+      return res
+    },
     okDates () {
       const res = IKUtils.deepCopy(this.dates)
       if (res.length < 2) {

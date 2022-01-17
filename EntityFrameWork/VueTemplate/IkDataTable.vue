@@ -68,6 +68,7 @@
             :return-value.sync="dates"
             :close-on-click="false"
             offset-y
+            max-width="290px"
         >
           <template v-slot:activator="{ on }">
             <v-text-field

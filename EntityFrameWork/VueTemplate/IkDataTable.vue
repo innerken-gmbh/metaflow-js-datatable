@@ -27,15 +27,16 @@
     <div class="px-4 d-flex white align-center">
       <template v-if="displayMergableFields.length>0">
         <template v-for="(field) in displayMergableFields">
-          <div :key="field.value" style="width: 164px;height: 100%">
+          <div :key="field.value" style="max-width: 164px;height: 100%">
             <form-field
+                :on-toolbar="true"
                 :no-details="true"
                 :field="field"
                 :edited-item="filterItem"
             />
           </div>
         </template>
-        <div v-if="Object.keys(filterItem).length>0" style="width: 80px">
+        <div v-if="Object.keys(filterItem).length>0" style="width: 160px">
           <v-card
               dark
               color="error"
@@ -44,7 +45,7 @@
               @click.stop="filterItem={}"
           >
             <v-icon left>mdi-close-box</v-icon>
-            Reset
+            重置筛选器
           </v-card>
         </div>
         <div v-else-if="shouldHideMergableField" style="width: 80px">
@@ -68,7 +69,6 @@
             :return-value.sync="dates"
             :close-on-click="false"
             offset-y
-            max-width="290px"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
@@ -111,10 +111,10 @@
       </template>
     </div>
     <slot name="extra-heading"/>
-    <v-card class="ma-0" flat>
+    <v-card class="ma-0">
       <v-data-table
           dense
-          :height=" bottomDistanceFix ? 'calc(100vh - 100px)': (onePageArrangement ?'calc(100vh - 155px)': 'auto')"
+          :height="onePageArrangement?'calc(100vh - 156px)':'auto'"
           v-model="selectedItems"
           :show-expand="showExpand"
           :single-expand="singleExpand"
@@ -125,6 +125,7 @@
           :loading="loading"
           :search.sync="search"
           :items-per-page="30"
+          :footer-props="{itemsPerPageOptions:[30,-1]}"
           multi-sort
       >
         <template
@@ -189,16 +190,12 @@
             adItem.dataType===Types.Option"
           >
             <template v-for="(l,index) of item['opt'+adItem.value]">
-              <v-chip
-                  :key="item+adItem.name+'c'+index"
-                  :color="adItem.type.color?
+              <span class="font-weight-bold" :key="item+adItem.name+'c'+index" :class="adItem.type.color?
                             adItem.type.color
                             .find(c=>{return parseInt(item[adItem.value])===c.id})
-                            .color:''"
-                  label
-              >
+                            .color+'--text':''">
                 {{ l }}
-              </v-chip>
+              </span>
             </template>
           </template>
         </template>
@@ -221,7 +218,7 @@
             <template v-if="useEditAction">
               <v-btn
                   small
-                  class="mr-2"
+                  class="mr-2 grey white--text"
                   @click="editItem(item)"
               >
                 修改
@@ -489,16 +486,9 @@ export default {
       showFilterDialog: false,
       datePickerMenu: false,
       dates: [],
-
     }
   },
   computed: {
-    bottomDistanceFix () {
-
-      const res = this.onePageArrangement && !this.useDateFilter && this.displayMergableFields.length <= 0
-
-      return res
-    },
     okDates () {
       const res = IKUtils.deepCopy(this.dates)
       if (res.length < 2) {
@@ -571,6 +561,7 @@ export default {
       text: 'action',
       width: '132px',
       value: 'action',
+      sortable:false,
     })
     this.realHeaders = this.getRealHeaders()
     this.advancedItems = this.getAdvancedItems()

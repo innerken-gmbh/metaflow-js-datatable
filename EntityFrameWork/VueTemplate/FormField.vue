@@ -5,16 +5,19 @@
   >
     <template v-if="type.name==='text'">
       <v-text-field
+          :prefix="text"
+          single-line
           :dense="!fullHeight"
           :hide-details="noDetails"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
           :rules="rules"
-          :label="text"
       />
     </template>
     <template v-else-if="type.name==='select'">
       <v-select
+          :placeholder="text"
+          :menu-props="{offsetY:true}"
           solo
           :dense="!fullHeight"
           clearable
@@ -31,14 +34,33 @@
       />
     </template>
     <template v-else-if="type.name==='switch'">
-      <v-checkbox
-          :dense="!fullHeight"
-          hide-details
-          v-model="editedItem[value]"
-          :disabled="shouldDisable"
-          :label="text"
-          :rules="rules"
-      />
+      <template v-if="onToolbar">
+        <v-select
+            :placeholder="text+'状态'"
+            :menu-props="{offsetY:true}"
+            solo
+            :dense="!fullHeight"
+            @click:clear="$emit('clear')"
+            :hide-details="noDetails"
+            v-model="editedItem[value]"
+            :disabled="shouldDisable"
+            :items="[{text:'是',value:true},{text:'否',value:false}]"
+            :label="text+'状态'"
+            :rules="rules"
+        />
+      </template>
+      <template v-else>
+        <v-checkbox
+            :placeholder="text"
+            :dense="!fullHeight"
+            hide-details
+            v-model="editedItem[value]"
+            :disabled="shouldDisable"
+            :label="text"
+            :rules="rules"
+        />
+      </template>
+
     </template>
     <template v-else-if="type.name==='image'">
       <div>
@@ -57,21 +79,13 @@
         </template>
       </div>
       <v-file-input
+          :placeholder="text"
           v-model="editedItem[type.fileStorage]"
           :disabled="shouldDisable"
           :label="text"
           :rules="rules"
           show-size
           counter
-      />
-    </template>
-    <template v-else-if="type.name==='switch'">
-      <v-switch
-          :dense="!fullHeight"
-          v-model="editedItem[value]"
-          :disabled="shouldDisable"
-          :label="text"
-          :rules="rules"
       />
     </template>
     <template v-else-if="type.name==='time'">
@@ -84,6 +98,7 @@
       >
         <template v-slot:activator="{ on }">
           <v-text-field
+              :placeholder="text"
               :dense="!fullHeight"
               v-model="editedItem[value]"
               :label="text"
@@ -125,6 +140,7 @@
       >
         <template v-slot:activator="{ on }">
           <v-text-field
+              :placeholder="text"
               :dense="!fullHeight"
               v-model="editedItem[value]"
               :label="text"
@@ -159,6 +175,7 @@
     </template>
     <template v-else-if="type.name==='color'">
       <v-text-field
+          :placeholder="text"
           :dense="!fullHeight"
           v-model=editedItem[value]
           hide-details
@@ -226,6 +243,10 @@ export default {
     noDetails: {
       type: Boolean,
       default: false,
+    },
+    onToolbar:{
+      type:Boolean,
+      default:false
     },
     fullHeight: { default: false },
   },

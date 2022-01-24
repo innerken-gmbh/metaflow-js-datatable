@@ -2,8 +2,8 @@
   <div class="mt-0">
     <div style="background: white" class="d-flex align-center ma-0 px-4 py-1">
       <div class="d-flex">
-        <div style="height: 32px;"
-             class="d-flex align-center justify-center px-4 flex-shrink-0"
+        <div style="height: 37px;"
+             class="d-flex align-center justify-center px-1 flex-shrink-0"
         >
           <v-icon left>{{ icon }}</v-icon>
           {{ entityName }}
@@ -19,23 +19,24 @@
             clearable
             :label="$t('Search')"
             single-line
-            style="max-width: 250px;"
+            style="max-width: 350px;"
         />
       </div>
     </div>
     <v-divider></v-divider>
-    <div class="px-4 d-flex white align-center">
+    <div class="px-3 d-flex white align-center">
       <template v-if="displayMergableFields.length>0">
         <template v-for="(field) in displayMergableFields">
-          <div :key="field.value" style="width: 164px;height: 100%">
+          <div :key="field.value" style="max-width: 164px;height: 100%">
             <form-field
+                :on-toolbar="true"
                 :no-details="true"
                 :field="field"
                 :edited-item="filterItem"
             />
           </div>
         </template>
-        <div v-if="Object.keys(filterItem).length>0" style="width: 80px">
+        <div v-if="Object.keys(filterItem).length>0" style="width: 160px">
           <v-card
               dark
               color="error"
@@ -44,7 +45,7 @@
               @click.stop="filterItem={}"
           >
             <v-icon left>mdi-close-box</v-icon>
-            Reset
+            {{ $t('重置筛选器') }}
           </v-card>
         </div>
         <div v-else-if="shouldHideMergableField" style="width: 80px">
@@ -60,7 +61,9 @@
           </v-card>
         </div>
       </template>
+
       <template v-if="useDateFilter">
+        <v-spacer></v-spacer>
         <v-menu
             ref="datePickerMenu"
             v-model="datePickerMenu"
@@ -68,21 +71,24 @@
             :return-value.sync="dates"
             :close-on-click="false"
             offset-y
-            max-width="290px"
+            bottom
+            :nudge-width="0"
         >
           <template v-slot:activator="{ on }">
-            <v-text-field
-                class="ma-0 pa-0"
-                v-model="dates"
-                hide-details
-                :label="$t('日期筛选')"
-                prepend-icon="mdi-calendar"
-                readonly
-                single-line
-                append-icon="mdi-close"
-                @click:append="clear"
-                v-on="on"
-            />
+            <div style="max-width: 300px; height: 54px;" class="d-flex align-center">
+              <v-text-field
+                  class="ma-0 pa-0"
+                  v-model="dates"
+                  hide-details
+                  :label="$t('日期筛选')"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  single-line
+                  append-icon="mdi-close"
+                  @click:append="clear"
+                  v-on="on"
+              />
+            </div>
           </template>
           <v-date-picker
               v-model="dates"
@@ -114,7 +120,7 @@
     <v-card class="ma-0" flat>
       <v-data-table
           dense
-          :height=" bottomDistanceFix ? 'calc(100vh - 100px)': (onePageArrangement ?'calc(100vh - 155px)': 'auto')"
+          :height="displayMergableFields.length>0 || useDateFilter ? 'calc(100vh - 160px)' :onePageArrangement?'calc(100vh - 106px)':'auto'"
           v-model="selectedItems"
           :show-expand="showExpand"
           :single-expand="singleExpand"
@@ -125,6 +131,7 @@
           :loading="loading"
           :search.sync="search"
           :items-per-page="30"
+          :footer-props="{itemsPerPageOptions:[30,-1]}"
           multi-sort
       >
         <template
@@ -163,7 +170,7 @@
           </template>
           <template
               v-else-if="
-            adItem.dataType===Types.Boolean"
+              adItem.dataType===Types.Boolean"
           >
             <v-simple-checkbox
                 :value="!!item[adItem.value]"
@@ -189,16 +196,13 @@
             adItem.dataType===Types.Option"
           >
             <template v-for="(l,index) of item['opt'+adItem.value]">
-              <v-chip
-                  :key="item+adItem.name+'c'+index"
-                  :color="adItem.type.color?
+              <span class="font-weight-bold" :key="item+adItem.name+'c'+index" :class="adItem.type.color?
                             adItem.type.color
                             .find(c=>{return parseInt(item[adItem.value])===c.id})
-                            .color:''"
-                  label
+                            .color+'--text':''"
               >
                 {{ l }}
-              </v-chip>
+              </span>
             </template>
           </template>
         </template>
@@ -221,10 +225,10 @@
             <template v-if="useEditAction">
               <v-btn
                   small
-                  class="mr-2"
+                  class="mr-2 grey white--text"
                   @click="editItem(item)"
               >
-                修改
+                {{ $t('修改') }}
               </v-btn>
             </template>
             <template v-if="useDeleteAction">
@@ -232,9 +236,9 @@
                   color="error"
                   small
                   class="mr-2"
-                  @click="editItem(item)"
+                  @click="deleteItem(item)"
               >
-                删除
+                {{ $t('删除') }}
               </v-btn>
             </template>
           </template>
@@ -354,6 +358,7 @@
         </template>
         <div class="mt-2" v-if="Object.keys(filterItem).length>0">
           <v-card
+              flat
               dark
               color="error"
               style="height: 100%"
@@ -361,7 +366,7 @@
               @click.stop="filterItem={}"
           >
             <v-icon left>mdi-close-box</v-icon>
-            Reset
+            {{ $t('Reset') }}
           </v-card>
         </div>
       </v-card>
@@ -415,10 +420,6 @@ export default {
     singleExpand: {
       type: Boolean,
       default: false,
-    },
-    useAction: {
-      type: Boolean,
-      default: true,
     },
     useSelect: {
       type: Boolean,
@@ -489,16 +490,9 @@ export default {
       showFilterDialog: false,
       datePickerMenu: false,
       dates: [],
-
     }
   },
   computed: {
-    bottomDistanceFix () {
-
-      const res = this.onePageArrangement && !this.useDateFilter && this.displayMergableFields.length <= 0
-
-      return res
-    },
     okDates () {
       const res = IKUtils.deepCopy(this.dates)
       if (res.length < 2) {
@@ -567,11 +561,16 @@ export default {
   },
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
-    this.headers.push({
-      text: 'action',
-      width: '132px',
-      value: 'action',
-    })
+
+    if (this.useDefaultAction ) {
+      this.headers.unshift({
+        text: 'action',
+        width: '132px',
+        value: 'action',
+        sortable: false,
+      })
+    }
+
     this.realHeaders = this.getRealHeaders()
     this.advancedItems = this.getAdvancedItems()
     this.slottedItems = this.getSlottedItems()

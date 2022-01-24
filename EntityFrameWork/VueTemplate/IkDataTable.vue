@@ -117,7 +117,7 @@
       </template>
     </div>
     <slot name="extra-heading"/>
-    <v-card class="ma-0" flat>
+    <v-card class="ma-0">
       <v-data-table
           dense
           :height="displayMergableFields.length>0 || useDateFilter ? 'calc(100vh - 160px)' :onePageArrangement?'calc(100vh - 106px)':'auto'"

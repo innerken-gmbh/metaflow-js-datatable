@@ -30,17 +30,17 @@
         <v-tabs :vertical="$vuetify.breakpoint.mdAndUp">
           <v-tab>
             <v-icon left>mdi-menu</v-icon>
-            Required
+            必填信息
           </v-tab>
           <v-tab>
             <v-icon left>mdi-dots-vertical</v-icon>
-            Optional
+            选填信息
           </v-tab>
           <v-tab-item>
             <v-card flat height="'400px'">
               <v-card-text>
                 <v-container>
-                  <v-row>
+                  <v-row dense>
                     <template v-for="(field,index) in requiredFields">
                       <template v-if="field.dataType===IKDataEntity.Types.Group">
                         <v-col
@@ -52,13 +52,13 @@
                           </div>
                           <v-row>
                             <template v-for="(child,i) in field.children">
-                              <v-col class="py-0" cols="12">
+                              <v-col cols="12" class="py-0 mt-1">
                                 <span
                                     class="subtitle-1 grey--text font-weight-bold"
                                 >{{$t(editedItem[field.value][i][field.childLabelKey])}}</span>
                               </v-col>
                               <template v-for="(c,t) in child">
-                                <v-col :key="field.id+'t'+t+'c'+i" cols="6">
+                                <v-col class="py-0" :key="field.id+'t'+t+'c'+i" cols="6">
                                   <form-field
                                       v-if="editedItem[field.value]"
                                       :field="c"

@@ -36,7 +36,7 @@
     <template v-else-if="type.name==='switch'">
       <template v-if="onToolbar">
         <v-select
-            :placeholder="text+'状态'"
+            :placeholder="text"
             :menu-props="{offsetY:true}"
             solo
             :dense="!fullHeight"
@@ -44,8 +44,8 @@
             :hide-details="noDetails"
             v-model="editedItem[value]"
             :disabled="shouldDisable"
-            :items="[{text:'是',value:true},{text:'否',value:false}]"
-            :label="text+'状态'"
+            :items="[{text:$t('yes'),value:true},{text:$t('no'),value:false}]"
+            :label="text"
             :rules="rules"
         />
       </template>

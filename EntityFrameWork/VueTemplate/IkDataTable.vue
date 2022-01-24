@@ -311,7 +311,7 @@
       </v-data-table>
       <v-dialog v-model="massEditDialog" max-width="600px">
         <v-card class="pa-2">
-          <v-card-title>已经选中{{ selectedItems.length }}</v-card-title>
+          <v-card-title>{{ $t('已经选中') }}{{ selectedItems.length }}</v-card-title>
           <v-card-text>
             <v-row>
               <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
@@ -326,7 +326,7 @@
               </template>
             </v-row>
             <div>
-              <v-btn block @click="updateAll(mergeItem,false)" color="green">{{ $t('更新选中') }}</v-btn>
+              <v-btn block @click="updateAll(mergeItem,false)" color="green">{{ i18n.t('更新选中') }}</v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -366,7 +366,7 @@
               @click.stop="filterItem={}"
           >
             <v-icon left>mdi-close-box</v-icon>
-            {{ $t('Reset') }}
+            {{ i18n.t('Reset') }}
           </v-card>
         </div>
       </v-card>
@@ -382,6 +382,7 @@ import FormField from './FormField'
 import { IKDataEntity } from '../../index'
 import IKUtils from 'innerken-js-utils'
 import dayjs from 'dayjs'
+import i18n from 'i18n'
 
 export default {
   name: 'IkDataTable',

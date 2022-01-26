@@ -1,14 +1,13 @@
 <template>
   <div class="mt-0">
     <div style="background: white" class="d-flex align-center ma-0 px-4 py-1">
-      <div class="d-flex">
-        <div style="height: 37px;"
-             class="d-flex align-center justify-center px-1 flex-shrink-0"
-        >
-          <v-icon left>{{ icon }}</v-icon>
-          {{ entityName }}
-        </div>
+      <div style="height: 37px;"
+           class="d-flex align-center justify-center px-1 flex-shrink-0"
+      >
+        <v-icon left>{{ icon }}</v-icon>
+        <span class="display-2">{{ entityName }}</span>
       </div>
+
       <v-spacer></v-spacer>
       <div style="width: 150px;height: 100%;" class="d-flex align-center">
         <v-text-field
@@ -23,9 +22,13 @@
         />
       </div>
     </div>
-    <v-divider></v-divider>
-    <div class="px-3 d-flex white align-center">
+
+
+    <v-divider/>
+
+    <div class="px-3 d-flex align-center" style="background-color: #FAFAFA; ">
       <template v-if="displayMergableFields.length>0">
+
         <template v-for="(field) in displayMergableFields">
           <div :key="field.value" style="max-width: 164px;height: 100%">
             <form-field
@@ -60,6 +63,7 @@
             {{ $t('filter') }}
           </v-card>
         </div>
+
       </template>
 
       <template v-if="useDateFilter">
@@ -81,7 +85,9 @@
                   v-model="dates"
                   hide-details
                   :label="$t('日期筛选')"
-                  prepend-icon="mdi-calendar"
+                  solo
+                  dense
+                  prepend-inner-icon="mdi-calendar"
                   readonly
                   single-line
                   append-icon="mdi-close"
@@ -91,6 +97,7 @@
             </div>
           </template>
           <v-date-picker
+
               v-model="dates"
               no-title
               range
@@ -116,11 +123,15 @@
         </v-menu>
       </template>
     </div>
+
+    <v-divider/>
+
     <slot name="extra-heading"/>
-    <v-card class="ma-0">
+
+    <v-card class="ma-0" flat>
       <v-data-table
           dense
-          :height="displayMergableFields.length>0 || useDateFilter ? 'calc(100vh - 160px)' :onePageArrangement?'calc(100vh - 106px)':'auto'"
+          :height="displayMergableFields.length>0 || useDateFilter ? 'calc(100vh - 160px)' :onePageArrangement?'calc(100vh - 107px)':'auto'"
           v-model="selectedItems"
           :show-expand="showExpand"
           :single-expand="singleExpand"
@@ -196,12 +207,18 @@
             adItem.dataType===Types.Option"
           >
             <template v-for="(l,index) of item['opt'+adItem.value]">
-              <span class="font-weight-bold" :key="item+adItem.name+'c'+index" :class="adItem.type.color?
+              <span class="font-weight-bold"
+                    :key="item+adItem.name+'c'+index"
+                    :class="adItem.type.color?
                             adItem.type.color
                             .find(c=>{return parseInt(item[adItem.value])===c.id})
                             .color+'--text':''"
+                    style="font-size: 18px"
               >
                 {{ l }}
+              </span>
+              <span v-if="index<item['opt'+adItem.value].length -1">
+                ,
               </span>
             </template>
           </template>
@@ -298,12 +315,13 @@
             </v-btn>
           </v-speed-dial>
           <v-btn
-              v-else-if="useDefaultAction"
+              v-else-if="useDefaultAction && useAddAction"
               color="success"
-              dark
+
               @click="$refs.gf.realDialog=true"
           >
-            <v-icon>mdi-plus</v-icon>
+            <!--            <v-icon>mdi-plus</v-icon>-->
+            {{ $t('新增') }}
           </v-btn>
           <slot :items="items" :selectItems="selectedItems" name="footer">
           </slot>
@@ -326,7 +344,7 @@
               </template>
             </v-row>
             <div>
-              <v-btn block @click="updateAll(mergeItem,false)" color="green">{{ i18n.t('更新选中') }}</v-btn>
+              <v-btn block @click="updateAll(mergeItem,false)" color="green">{{ $t('更新选中') }}</v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -366,7 +384,7 @@
               @click.stop="filterItem={}"
           >
             <v-icon left>mdi-close-box</v-icon>
-            {{ i18n.t('Reset') }}
+            {{ $t('Reset') }}
           </v-card>
         </div>
       </v-card>
@@ -382,7 +400,6 @@ import FormField from './FormField'
 import { IKDataEntity } from '../../index'
 import IKUtils from 'innerken-js-utils'
 import dayjs from 'dayjs'
-import i18n from 'i18n'
 
 export default {
   name: 'IkDataTable',
@@ -445,6 +462,18 @@ export default {
     useDateFilter: {
       type: Boolean,
       default: false,
+    },
+    useAddFilter: {
+      type: Boolean,
+      default: true,
+    },
+    useCustomerActionOnly: {
+      type: Boolean,
+      default: false,
+    },
+    useAddAction:{
+      type: Boolean,
+      default: true
     },
     requiredDateValue: {},
   },
@@ -563,8 +592,8 @@ export default {
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
 
-    if (this.useDefaultAction ) {
-      this.headers.unshift({
+    if (this.useDefaultAction || this.useCustomerActionOnly) {
+      this.headers.push({
         text: 'action',
         width: '132px',
         value: 'action',
@@ -672,6 +701,7 @@ export default {
       }
     },
     clear () {
+      this.datePickerMenu = false
       this.dates = []
     },
     deleteItem (item, promt = true) {

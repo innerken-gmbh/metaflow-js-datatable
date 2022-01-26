@@ -30,11 +30,11 @@
         <v-tabs :vertical="$vuetify.breakpoint.mdAndUp">
           <v-tab>
             <v-icon left>mdi-menu</v-icon>
-            必填信息
+            {{ $t('必填信息') }}
           </v-tab>
           <v-tab>
             <v-icon left>mdi-dots-vertical</v-icon>
-            选填信息
+            {{ $t('选填信息') }}
           </v-tab>
           <v-tab-item>
             <v-card flat height="'400px'">

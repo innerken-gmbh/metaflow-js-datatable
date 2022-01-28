@@ -206,21 +206,17 @@
               v-else-if="
             adItem.dataType===Types.Option"
           >
-            <template v-for="(l,index) of item['opt'+adItem.value]">
+            <templat>
               <span class="font-weight-bold"
-                    :key="item+adItem.name+'c'+index"
                     :class="adItem.type.color?
                             adItem.type.color
                             .find(c=>{return parseInt(item[adItem.value])===c.id})
                             .color+'--text':''"
                     style="font-size: 18px"
               >
-                {{ l }}
+                {{item['opt'+adItem.value].join(", ")}}
               </span>
-              <span v-if="index<item['opt'+adItem.value].length -1">
-                ,
-              </span>
-            </template>
+            </templat>
           </template>
         </template>
         <template v-slot:no-data>

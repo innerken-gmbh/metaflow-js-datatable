@@ -100,7 +100,7 @@
 
               v-model="dates"
               no-title
-              range
+              :range="!useSingleDate"
               scrollable
               locale="de"
           >
@@ -128,10 +128,10 @@
 
     <slot name="extra-heading"/>
 
-    <v-card class="ma-0" flat>
+    <v-card class="ma-0" flat tile>
       <v-data-table
           dense
-          :height="displayMergableFields.length>0 || useDateFilter ? 'calc(100vh - 160px)' :onePageArrangement?'calc(100vh - 107px)':'auto'"
+          :height="onePageArrangement ? 'calc(100vh - 147px)': displayMergableFields.length>0 || useDateFilter ? 'calc(100vh - 160px)' :'calc(100vh - 107px)'"
           v-model="selectedItems"
           :show-expand="showExpand"
           :single-expand="singleExpand"
@@ -144,7 +144,16 @@
           :items-per-page="30"
           :footer-props="{itemsPerPageOptions:[30,-1]}"
           multi-sort
+          :group-by="groupBy"
       >
+
+        <template v-slot:group.header="items" v-if="groupBy">
+          <td colspan="100%">
+            <div class="display-2"> {{ $t('time') }}: {{ items.group }} {{ $t('hour') }}</div>
+          </td>
+        </template>
+
+
         <template
             v-for="slottedItem in slottedItems"
             v-slot:[slottedItem.name]="{ item }"
@@ -206,7 +215,7 @@
               v-else-if="
             adItem.dataType===Types.Option"
           >
-            <templat>
+            <template>
               <span class="font-weight-bold"
                     :class="adItem.type.color?
                             adItem.type.color
@@ -214,9 +223,9 @@
                             .color+'--text':''"
                     style="font-size: 18px"
               >
-                {{item['opt'+adItem.value].join(", ")}}
+                {{ item['opt' + adItem.value].join(', ') }}
               </span>
-            </templat>
+            </template>
           </template>
         </template>
         <template v-slot:no-data>
@@ -453,7 +462,7 @@ export default {
     },
     onePageArrangement: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     useDateFilter: {
       type: Boolean,
@@ -467,11 +476,16 @@ export default {
       type: Boolean,
       default: false,
     },
-    useAddAction:{
+    useAddAction: {
       type: Boolean,
-      default: true
+      default: true,
     },
     requiredDateValue: {},
+    groupBy: {},
+    useSingleDate: {
+      type: Boolean,
+      default: false,
+    },
   },
   watch: {
     realFilter: {
@@ -483,7 +497,7 @@ export default {
       immediate: true,
       handler: function (val) {
         console.log(val)
-        if (val?.length === 2) {
+        if (val?.length === 2 || val?.length === 1) {
           this.dates = val
         }
       },
@@ -515,12 +529,18 @@ export default {
       massEditDialog: false,
       showFilterDialog: false,
       datePickerMenu: false,
-      dates: [],
+      dates: null,
+
     }
   },
   computed: {
     okDates () {
-      const res = IKUtils.deepCopy(this.dates)
+
+      let res = this.useSingleDate ? [this.dates, this.dates] : IKUtils.deepCopy(this.dates)
+      if(!res) {
+        res = []
+        res[0] = dayjs().format('YYYY-MM-DD')
+      }
       if (res.length < 2) {
         res[0] = res[0] ?? dayjs().format('YYYY-MM-DD')
         res[1] = res[0]
@@ -532,7 +552,9 @@ export default {
     },
     realFilter () {
       const res = this.filter ?? {}
-      res.dateFilter = this.okDates
+      if (this.okDates) {
+        res.dateFilter = this.okDates
+      }
       return res
 
     },
@@ -548,7 +570,7 @@ export default {
       }
     },
     requiredDisplayNumber: function () {
-      return !this.onePageArrangement ? 0 : this.useDateFilter ? 4 : 5
+      return this.onePageArrangement ? 0 : this.useDateFilter ? 4 : 5
     },
     shouldHideMergableField: function () {
       return this.mergableFields.length > this.requiredDisplayNumber
@@ -698,7 +720,7 @@ export default {
     },
     clear () {
       this.datePickerMenu = false
-      this.dates = []
+      this.dates = null
     },
     deleteItem (item, promt = true) {
       if (promt) {

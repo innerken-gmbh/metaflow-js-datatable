@@ -1,11 +1,10 @@
 <template>
   <v-sheet
-      class="pa-2"
       v-if="(currentState===-1&&inNew)||(currentState>-1&&inEdit)"
   >
     <template v-if="type.name==='text'">
       <v-text-field
-          :prefix="text"
+          :prefix="text +': '"
           single-line
           :dense="!fullHeight"
           :hide-details="noDetails"
@@ -63,7 +62,7 @@
 
     </template>
     <template v-else-if="type.name==='image'">
-      <div>
+      <div style="border: 1px solid #d2d2d2">
         <img-with-loading
             v-if="editedItem[type.fileStorage]"
             :height="'200px'"

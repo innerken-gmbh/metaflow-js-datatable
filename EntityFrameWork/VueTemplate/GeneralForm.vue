@@ -76,7 +76,7 @@
                   </div>
                 </template>
                 <template v-else>
-                  <div :key="'f1'+index">
+                  <div :key="'f1'+index" :style="field.dataType===IKDataEntity.Types.Image ? {'grid-column': '1/3'} : {}" class="mt-4">
                     <form-field
                         :field="field"
                         :current-state="editedIndex"
@@ -89,46 +89,49 @@
             </div>
           </v-tab-item>
           <v-tab-item>
-            <template v-for="(field,index) in notRequiredFields">
-              <template v-if="field.dataType===IKDataEntity.Types.Group">
-                <div
-                    :key="'f2'+index"
-                >
-                  <div class="d-flex justify-space-between align-center">
-                    <span class="subtitle-1 font-weight-bold">{{ $t('' + field.groupName) }}</span>
-                  </div>
+            <div style="display: grid; grid-template-columns: repeat(2,1fr); grid-column-gap: 40px" class="mt-4">
+              <template v-for="(field,index) in notRequiredFields">
+                <template v-if="field.dataType===IKDataEntity.Types.Group">
+                  <div
+                      style="grid-column: 1/3"
+                      :key="'f2'+index"
+                  >
+                    <div class="d-flex justify-space-between align-center">
+                      <span class="subtitle-1 font-weight-bold">{{ $t('' + field.groupName) }}</span>
+                    </div>
 
-                  <div>
-                    <template v-for="(child,i) in field.children">
-                      <div class="py-0" >
+                    <div>
+                      <template v-for="(child,i) in field.children">
+                        <div class="py-0" >
                                 <span
                                     class="subtitle-1 grey--text font-weight-bold"
                                 >{{ $t(editedItem[field.value][i][field.childLabelKey]) }}</span>
-                      </div>
-                      <template v-for="(c,t) in child">
-                        <div :key="field.id+'t'+t+'c'+i">
-                          <form-field
-                              v-if="editedItem[field.value]"
-                              :field="c"
-                              :current-state="editedIndex"
-                              :edited-item="editedItem[field.value][i]"
-                          />
                         </div>
+                        <template v-for="(c,t) in child">
+                          <div :key="field.id+'t'+t+'c'+i">
+                            <form-field
+                                v-if="editedItem[field.value]"
+                                :field="c"
+                                :current-state="editedIndex"
+                                :edited-item="editedItem[field.value][i]"
+                            />
+                          </div>
+                        </template>
                       </template>
-                    </template>
+                    </div>
                   </div>
-                </div>
+                </template>
+                <template v-else>
+                  <div :key="'f2'+index" :style="field.dataType===IKDataEntity.Types.Image ? {'grid-column': '1/3'} : {}" class="mt-3">
+                    <form-field
+                        :field="field"
+                        :current-state="editedIndex"
+                        :edited-item="editedItem"
+                    />
+                  </div>
+                </template>
               </template>
-              <template v-else>
-                <v-col :key="'f2'+index" cols="6">
-                  <form-field
-                      :field="field"
-                      :current-state="editedIndex"
-                      :edited-item="editedItem"
-                  />
-                </v-col>
-              </template>
-            </template>
+            </div>
           </v-tab-item>
         </v-tabs-items>
       </div>

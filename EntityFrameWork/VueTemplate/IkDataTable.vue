@@ -26,11 +26,11 @@
 
     <v-divider/>
 
-    <div class="px-3 d-flex align-center" style="background-color: #FAFAFA; ">
+    <div class="d-flex align-center px-3" style="background-color: #FAFAFA; ">
       <template v-if="displayMergableFields.length>0">
 
         <template v-for="(field) in displayMergableFields">
-          <div :key="field.value" style="max-width: 164px;height: 100%">
+          <div :key="field.value" style="max-width: 164px;height: 100%" class="py-2">
             <form-field
                 :on-toolbar="true"
                 :no-details="true"

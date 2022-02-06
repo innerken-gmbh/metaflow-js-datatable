@@ -9,6 +9,7 @@
       </div>
 
       <v-spacer></v-spacer>
+
       <div style="width: 150px;height: 100%;" class="d-flex align-center">
         <v-text-field
             class="mt-0 pt-0"
@@ -30,7 +31,7 @@
       <template v-if="displayMergableFields.length>0">
 
         <template v-for="(field) in displayMergableFields">
-          <div :key="field.value" style="max-width: 164px;height: 100%" class="py-2">
+          <div :key="field.value" style="max-width: 164px;height: 100%" class="py-2 pr-1">
             <form-field
                 :on-toolbar="true"
                 :no-details="true"
@@ -124,14 +125,18 @@
       </template>
     </div>
 
-    <v-divider/>
+    <template v-if="displayMergableFields.length>0 || useDateFilter">
+      <v-divider/>
+    </template>
 
     <slot name="extra-heading"/>
 
     <v-card class="ma-0" flat tile>
       <v-data-table
           dense
-          :height="onePageArrangement ? 'calc(100vh - 147px)': displayMergableFields.length>0 || useDateFilter ? 'calc(100vh - 160px)' :'calc(100vh - 107px)'"
+          :height="onePageArrangementHeight ? onePageArrangementHeight :
+                       onePageArrangement ? 'calc(100vh - 147px)':
+                 displayMergableFields.length>0 || useDateFilter ? 'calc(100vh - 160px)' :'calc(100vh - 105px)'"
           v-model="selectedItems"
           :show-expand="showExpand"
           :single-expand="singleExpand"
@@ -486,6 +491,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    onePageArrangementHeight: {
+      type: String,
+      default: ''
+    }
   },
   watch: {
     realFilter: {

@@ -457,6 +457,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    useAddFilter: {
+      type: Boolean,
+      default: true,
+    },
     useEditAction: {
       type: Boolean,
       default: true,
@@ -472,10 +476,6 @@ export default {
     useDateFilter: {
       type: Boolean,
       default: false,
-    },
-    useAddFilter: {
-      type: Boolean,
-      default: true,
     },
     useCustomerActionOnly: {
       type: Boolean,

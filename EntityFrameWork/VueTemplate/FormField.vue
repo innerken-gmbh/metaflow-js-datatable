@@ -62,7 +62,7 @@
 
     </template>
     <template v-else-if="type.name==='image'">
-      <div style="border: 1px solid #d2d2d2">
+      <div style="border: 1px solid #d2d2d2;">
         <img-with-loading
             v-if="editedItem[type.fileStorage]"
             :height="'200px'"
@@ -72,7 +72,7 @@
             v-else-if="currentState>-1"
         >
           <img-with-loading
-              :height="'200px'"
+              :height="'auto'"
               :img-src="root + editedItem[value]"
           />
         </template>
@@ -97,10 +97,9 @@
       >
         <template v-slot:activator="{ on }">
           <v-text-field
-              :placeholder="text"
+              :prefix="text + ': '"
               :dense="!fullHeight"
               v-model="editedItem[value]"
-              :label="text"
               prepend-icon="mdi-clock-outline"
               readonly
               v-on="on"
@@ -174,11 +173,10 @@
     </template>
     <template v-else-if="type.name==='color'">
       <v-text-field
-          :placeholder="text"
+          :prefix="text + ': '"
           :dense="!fullHeight"
           v-model=editedItem[value]
-          hide-details
-          :label="text"
+          class="pb-1"
       >
         <template
             v-slot:append

@@ -1,8 +1,9 @@
 <template>
   <div class="mt-0">
-    <div style="background: white" class="d-flex align-center ma-0 px-4 py-1">
+    <div style="background: white" class="d-flex ma-0 pa-4 py-1">
+
       <div style="height: 37px;"
-           class="d-flex align-center justify-center px-1 flex-shrink-0"
+           class="d-flex align-center "
       >
         <v-icon left>{{ icon }}</v-icon>
         <span class="display-2">{{ entityName }}</span>
@@ -57,7 +58,7 @@
               dark
               color="warning"
               style="height: 100%"
-              class=" d-flex align-center justify-center"
+              class="d-flex align-center justify-center"
               @click.stop="showFilterDialog=true"
           >
             <v-icon left>mdi-filter-variant</v-icon>
@@ -168,6 +169,7 @@
               :item="item"
           />
         </template>
+
         <template
             v-for="adItem in advancedItems"
             v-slot:[adItem.name]="{ item }"
@@ -289,7 +291,7 @@
               <v-btn
                   v-model="fab"
                   color="primary"
-                  dark
+
               >
                 <v-icon v-if="fab">
                   mdi-close
@@ -299,17 +301,19 @@
                 </v-icon>
               </v-btn>
             </template>
+
             <v-btn
                 fab
-                dark
+
                 @click="massEditDialog=true"
                 color="green"
             >
               <v-icon color="white">mdi-pencil</v-icon>
             </v-btn>
+
             <v-btn
                 fab
-                dark
+
                 color="indigo"
                 @click="$refs.gf.realDialog=true"
             >
@@ -317,7 +321,7 @@
             </v-btn>
             <v-btn
                 fab
-                dark
+
                 color="red"
                 @click="updateAll(null,true)"
             >
@@ -327,39 +331,42 @@
           <v-btn
               v-else-if="useDefaultAction && useAddAction"
               color="success"
-
               @click="$refs.gf.realDialog=true"
           >
-            <!--            <v-icon>mdi-plus</v-icon>-->
+
             {{ $t('新增') }}
           </v-btn>
-          <slot :items="items" :selectItems="selectedItems" name="footer">
+          <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer">
           </slot>
         </template>
       </v-data-table>
+
       <v-dialog v-model="massEditDialog" max-width="600px">
         <v-card class="pa-2">
-          <v-card-title>{{ $t('已经选中') }}{{ selectedItems.length }}</v-card-title>
+          <v-card-title>{{ selectedItems.length }} {{$t('Item')}} {{ $t('已经选中') }} </v-card-title>
           <v-card-text>
-            <v-row>
-              <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
-                <v-col :key="field.id" cols="12">
-                  <form-field
-                      class="mx-1"
-                      :no-details="true"
-                      :field="field"
-                      :edited-item="mergeItem"
-                  />
-                </v-col>
-              </template>
-            </v-row>
-            <div>
-              <v-btn block @click="updateAll(mergeItem,false)" color="green">{{ $t('更新选中') }}</v-btn>
-            </div>
+
+            <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
+
+              <form-field
+                  :key="field.id"
+                  class="mx-1"
+                  :no-details="true"
+                  :field="field"
+                  :edited-item="mergeItem"
+              />
+            </template>
+
           </v-card-text>
+
+          <v-card-actions class="pb-2">
+            <v-spacer/>
+            <v-btn @click="updateAll(mergeItem,false)" class="green white--text">{{ $t('更新选中') }}</v-btn>
+          </v-card-actions>
         </v-card>
       </v-dialog>
     </v-card>
+
     <general-form
         ref="gf"
         :title="entityName"
@@ -618,6 +625,10 @@ export default {
   },
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
+
+    // console.log("this.headers",this.headers)
+    // console.log("this.formField",this.formField)
+    // console.log("this.defaultItem",this.defaultItem)
 
     if (this.useDefaultAction || this.useCustomerActionOnly) {
       this.headers.push({

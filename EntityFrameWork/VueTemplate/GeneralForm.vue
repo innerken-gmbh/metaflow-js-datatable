@@ -28,7 +28,6 @@
           style="display: grid; grid-template-columns: 200px auto; max-height: 90vh; padding-right: 28px"
       >
 
-
         <v-tabs vertical v-model="tab" >
           <v-tab>
             <v-icon left>mdi-menu</v-icon>
@@ -204,12 +203,20 @@ export default {
       IKDataEntity: IKDataEntity,
     }
   },
+  // mounted() {
+  //   console.log('this.editedItem SecondStep', this.editedItem)
+  // },
   computed: {
     requiredFields: function () {
-      return this.formField.filter(f => this.fieldIsRequired(f))
+      const res = this.formField.filter(f => this.fieldIsRequired(f))
+      console.log("requiredFields",res)
+      return res
     },
     notRequiredFields: function () {
-      return this.formField.filter(f => !this.fieldIsRequired(f))
+      const res = this.formField.filter(f => !this.fieldIsRequired(f))
+      console.log('this.editedItem SecondStep', this.editedItem)
+      console.log("notRequiredFields",res)
+      return res
     },
   },
   watch: {

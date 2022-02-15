@@ -31,6 +31,8 @@
           :label="text"
           :rules="rules"
       />
+
+
     </template>
     <template v-else-if="type.name==='switch'">
       <template v-if="onToolbar">
@@ -218,6 +220,7 @@
 
 import ImgWithLoading from './ImgWithLoading'
 import Utils from 'innerken-js-utils'
+import { uniq } from 'lodash'
 
 export default {
   name: 'FormField',
@@ -271,6 +274,7 @@ export default {
       }
     },
     selectItemsIsDynamic: function () {
+      console.log("this.type",this.type)
       return typeof this.type.selectItems === 'function'
     },
     selectItemList: function () {
@@ -285,8 +289,15 @@ export default {
             disabled: false,
           }))
         }
+        // result = JSON.parse('[' + result.toString() + ']')
+        // result = result.toString()
+        console.log("this.editedItem[value]", this.editedItem[this.value])
+        console.log("this.editedItem", this.editedItem)
+
+        console.log("selectItemList " , result)
         return result
       }
+
       if (this.selectItemsIsDynamic) {
         selectItems = this.type._selectItems ? this.type._selectItems : []
       } else {
@@ -330,12 +341,14 @@ export default {
     editedItem: {
       deep: true,
       handler: function (val) {
+        console.log("type flag 3 editedItem",this.editedItem)
         this.preProcessOptions()
       },
     },
   },
   methods: {
     async preProcessOptions () {
+      console.log("type flag 2")
       if (this.selectItemsIsDynamic) {
         if (this.type.selectItems().then) {
           const res = await this.type.selectItems()
@@ -347,6 +360,7 @@ export default {
     },
   },
   mounted () {
+    console.log("type flag 1", this.field)
     this.preProcessOptions()
   },
 }

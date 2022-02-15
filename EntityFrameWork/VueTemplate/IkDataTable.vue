@@ -1,30 +1,32 @@
 <template>
   <div class="mt-0">
-    <div style="background: white" class="d-flex ma-0 pa-4 py-1">
 
-      <div style="height: 37px;"
-           class="d-flex align-center "
-      >
-        <v-icon left>{{ icon }}</v-icon>
-        <span class="display-2">{{ entityName }}</span>
+    <template v-if="!hideIkdatatableHeader">
+      <div style="background: white" class="d-flex ma-0 pa-4 py-1">
+
+        <div style="height: 37px;"
+             class="d-flex align-center "
+        >
+          <v-icon left>{{ icon }}</v-icon>
+          <span class="display-2">{{ entityName }}</span>
+        </div>
+
+        <v-spacer></v-spacer>
+
+        <div style="width: 150px;height: 100%;" class="d-flex align-center">
+          <v-text-field
+              class="mt-0 pt-0"
+              v-model="search"
+              append-icon="mdi-magnify"
+              hide-details
+              clearable
+              :label="$t('Search')"
+              single-line
+              style="max-width: 350px;"
+          />
+        </div>
       </div>
-
-      <v-spacer></v-spacer>
-
-      <div style="width: 150px;height: 100%;" class="d-flex align-center">
-        <v-text-field
-            class="mt-0 pt-0"
-            v-model="search"
-            append-icon="mdi-magnify"
-            hide-details
-            clearable
-            :label="$t('Search')"
-            single-line
-            style="max-width: 350px;"
-        />
-      </div>
-    </div>
-
+    </template>
 
     <v-divider/>
 
@@ -41,6 +43,7 @@
             />
           </div>
         </template>
+
         <div v-if="Object.keys(filterItem).length>0" style="width: 160px">
           <v-card
               dark
@@ -53,6 +56,7 @@
             {{ $t('重置筛选器') }}
           </v-card>
         </div>
+
         <div v-else-if="shouldHideMergableField" style="width: 80px">
           <v-card
               dark
@@ -151,6 +155,7 @@
           :footer-props="{itemsPerPageOptions:[30,-1]}"
           multi-sort
           :group-by="groupBy"
+          :hide-default-footer="hideDefaultFooter"
       >
 
         <template v-slot:group.header="items" v-if="groupBy">
@@ -158,7 +163,6 @@
             <div class="display-2"> {{ $t('time') }}: {{ items.group }} {{ $t('hour') }}</div>
           </td>
         </template>
-
 
         <template
             v-for="slottedItem in slottedItems"
@@ -195,6 +199,7 @@
               {{ item['_' + adItem.value + c] }}
             </div>
           </template>
+
           <template
               v-else-if="
               adItem.dataType===Types.Boolean"
@@ -207,6 +212,7 @@
                 :key="adItem.name"
             />
           </template>
+
           <template
               v-else-if="
             adItem.dataType===Types.Color"
@@ -245,6 +251,7 @@
             </v-btn>
           </slot>
         </template>
+
         <template v-slot:item.action="{ item }">
           <slot
               name="item.action"
@@ -254,7 +261,7 @@
             <template v-if="useEditAction">
               <v-btn
                   small
-                  class="mr-2 grey white--text"
+                  class="mx-2 grey white--text"
                   @click="editItem(item)"
               >
                 {{ $t('修改') }}
@@ -273,6 +280,7 @@
           </template>
 
         </template>
+
         <template v-slot:expanded-item="{ item }">
           <td :colspan="headers.length">
             <slot
@@ -313,7 +321,6 @@
 
             <v-btn
                 fab
-
                 color="indigo"
                 @click="$refs.gf.realDialog=true"
             >
@@ -321,7 +328,6 @@
             </v-btn>
             <v-btn
                 fab
-
                 color="red"
                 @click="updateAll(null,true)"
             >
@@ -336,24 +342,26 @@
 
             {{ $t('新增') }}
           </v-btn>
-          <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer">
-          </slot>
+
+          <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer"
+          ></slot>
         </template>
       </v-data-table>
 
       <v-dialog v-model="massEditDialog" max-width="600px">
         <v-card class="pa-2">
-          <v-card-title>{{ selectedItems.length }} {{$t('Item')}} {{ $t('已经选中') }} </v-card-title>
+          <v-card-title>{{ selectedItems.length }} {{ $t('Item') }} {{ $t('已经选中') }}</v-card-title>
           <v-card-text>
 
             <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
 
               <form-field
                   :key="field.id"
-                  class="mx-1"
+                  class="mx-2"
                   :no-details="true"
                   :field="field"
                   :edited-item="mergeItem"
+
               />
             </template>
 
@@ -376,6 +384,7 @@
         :form-field="formField"
         @change-general-form="dialogChange"
     />
+
     <v-dialog max-width="400px" v-model="showFilterDialog">
       <v-card class="ma-0 py-8 pa-4">
         <slot :items="items" name="filterLeft"></slot>
@@ -500,8 +509,16 @@ export default {
     },
     onePageArrangementHeight: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
+    hideDefaultFooter: {
+      type: Boolean,
+      dafault: false,
+    },
+    hideIkdatatableHeader: {
+      type: Boolean,
+      default: false,
+    },
   },
   watch: {
     realFilter: {
@@ -553,7 +570,7 @@ export default {
     okDates () {
 
       let res = this.useSingleDate ? [this.dates, this.dates] : IKUtils.deepCopy(this.dates)
-      if(!res) {
+      if (!res) {
         res = []
         res[0] = dayjs().format('YYYY-MM-DD')
       }
@@ -568,6 +585,7 @@ export default {
     },
     realFilter () {
       const res = this.filter ?? {}
+      console.log('realFilter', res)
       if (this.okDates) {
         res.dateFilter = this.okDates
       }
@@ -589,7 +607,9 @@ export default {
       return this.onePageArrangement ? 0 : this.useDateFilter ? 4 : 5
     },
     shouldHideMergableField: function () {
-      return this.mergableFields.length > this.requiredDisplayNumber
+      const res = this.mergableFields.length > this.requiredDisplayNumber
+      console.log('shouldHideMergableField', res)
+      return res
     },
     displayMergableFields: function () {
       return this.shouldHideMergableField ?
@@ -597,7 +617,7 @@ export default {
           this.mergableFields
     },
     mergableFields: function () {
-      return this.formField
+      const res = this.formField
           .filter(item =>
               [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
           .filter(item => item.merge)
@@ -607,6 +627,8 @@ export default {
               name: 'item.' + item.value,
             }
           })
+      console.log('mergableFields', res)
+      return res
     },
     tableItem: function () {
       if (this.filterItem) {
@@ -626,14 +648,12 @@ export default {
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
 
-    // console.log("this.headers",this.headers)
-    // console.log("this.formField",this.formField)
-    // console.log("this.defaultItem",this.defaultItem)
+    console.log('this.headers', this.headers, 'this.formField', this.formField, 'this.defaultItem', this.defaultItem)
 
     if (this.useDefaultAction || this.useCustomerActionOnly) {
       this.headers.push({
         text: 'action',
-        width: '132px',
+        width: '240px',
         value: 'action',
         sortable: false,
       })
@@ -643,6 +663,7 @@ export default {
     this.advancedItems = this.getAdvancedItems()
     this.slottedItems = this.getSlottedItems()
     this.editedItem = IKUtils.deepCopy(this.defaultItem)
+    // console.log('this.editedItem firstStep', this.editedItem)
     this.reload().catch(() => {
       this.loading = false
       this.items = []

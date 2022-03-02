@@ -446,7 +446,7 @@ export function parseField (model) {
     const headers = []
     const formField = []
     const defaultItem = getFieldFromModel(model).reduce((map, item) => {
-        // console.log(map)
+
         if ((typeof item.header === 'undefined') || (item.header === true)) {
             if (item.value) {
                 headers.push(item)

@@ -637,7 +637,6 @@ export default {
               name: 'item.' + item.value,
             }
           })
-      // console.log('mergableFields', res)
       return res
     },
     tableItem: function () {
@@ -658,7 +657,6 @@ export default {
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
 
-    // console.log('this.headers', this.headers, 'this.formField', this.formField, 'this.defaultItem', this.defaultItem)
 
     if (this.useDefaultAction || this.useCustomerActionOnly) {
       this.headers.push({
@@ -673,7 +671,6 @@ export default {
     this.advancedItems = this.getAdvancedItems()
     this.slottedItems = this.getSlottedItems()
     this.editedItem = IKUtils.deepCopy(this.defaultItem)
-    // console.log('this.editedItem firstStep', this.editedItem)
     this.reload().catch(() => {
       this.loading = false
       this.items = []

@@ -28,7 +28,7 @@
           style="display: grid; grid-template-columns: 200px auto; max-height: 90vh; padding-right: 28px"
       >
 
-        <v-tabs vertical v-model="tab" >
+        <v-tabs vertical v-model="tab">
           <v-tab>
             <v-icon left>mdi-menu</v-icon>
             {{ $t('必填信息') }}
@@ -40,70 +40,73 @@
         </v-tabs>
 
         <div style="overflow: scroll; max-height: 90vh; padding-top: 5px">
-          <v-tabs-items v-model="tab" >
-            <v-tab-item >
-              <div style="display: grid; grid-template-columns: repeat(2,1fr); grid-column-gap: 40px">
+
+          <v-tabs-items v-model="tab">
+            <v-tab-item>
+              <v-form ref="form" v-model="valid" lazy-validation>
+                <div style="display: grid; grid-template-columns: repeat(2,1fr); grid-column-gap: 40px">
 
 
-                <template v-for="(field,index) in requiredFields">
-                  <template v-if="field.dataType===IKDataEntity.Types.Group">
-                    <div
-                        style="grid-column: 1/3"
-                        :key="'f1'+index"
-                    >
-                      <div class="display-1 font-weight-bold mt-3">
-                        <span>{{ $t('' + field.groupName) }}</span>
-                      </div>
+                  <template v-for="(field,index) in requiredFields">
+                    <template v-if="field.dataType===IKDataEntity.Types.Group">
+                      <div
+                          style="grid-column: 1/3"
+                          :key="'f1'+index"
+                      >
+                        <div class="display-1 font-weight-bold mt-3">
+                          <span>{{ $t('' + field.groupName) }}</span>
+                        </div>
 
-                      <div style="display: grid; grid-template-columns: repeat(2,1fr); grid-column-gap: 40px">
-                        <template v-for="(child,i) in field.children">
-                          <div style="grid-column: 1 / 3" class="py-0 mt-1">
+                        <div style="display: grid; grid-template-columns: repeat(2,1fr); grid-column-gap: 40px">
+                          <template v-for="(child,i) in field.children">
+                            <div style="grid-column: 1 / 3" class="py-0 mt-1">
                         <span class="subtitle-1 grey--text font-weight-bold">
                           {{ $t(editedItem[field.value][i][field.childLabelKey]) }}</span>
-                          </div>
-
-                          <template v-for="(c,t) in child">
-                            <div class="px-0" :key="field.id+'t'+t+'c'+i">
-                              <form-field
-                                  v-if="editedItem[field.value]"
-                                  :field="c"
-                                  :current-state="editedIndex"
-                                  :edited-item="editedItem[field.value][i]"
-                              />
                             </div>
+
+                            <template v-for="(c,t) in child">
+                              <div class="px-0" :key="field.id+'t'+t+'c'+i">
+                                <form-field
+                                    v-if="editedItem[field.value]"
+                                    :field="c"
+                                    :current-state="editedIndex"
+                                    :edited-item="editedItem[field.value][i]"
+                                />
+                              </div>
+                            </template>
                           </template>
-                        </template>
+                        </div>
                       </div>
-                    </div>
-                  </template>
-                  <template v-else>
-                    <!--                  <div :key="'f1'+index">-->
-                    <!--                    <form-field-->
-                    <!--                      :field="field"-->
-                    <!--                      :current-state="editedIndex"-->
-                    <!--                      :edited-item="editedItem"-->
-                    <!--                    />-->
-                    <!--                  </div>-->
-
-                    <div :key="'f1'+index"
-                    >
-                      <form-field
-                          :field="field"
-                          :current-state="editedIndex"
-                          :edited-item="editedItem"
-                      />
-                    </div>
-                    <template v-if="field.dataType===IKDataEntity.Types.Image ">
-                      <v-spacer></v-spacer>
                     </template>
+                    <template v-else>
+                      <!--                  <div :key="'f1'+index">-->
+                      <!--                    <form-field-->
+                      <!--                      :field="field"-->
+                      <!--                      :current-state="editedIndex"-->
+                      <!--                      :edited-item="editedItem"-->
+                      <!--                    />-->
+                      <!--                  </div>-->
+
+                      <div :key="'f1'+index"
+                      >
+                        <form-field
+                            :field="field"
+                            :current-state="editedIndex"
+                            :edited-item="editedItem"
+                        />
+                      </div>
+                      <template v-if="field.dataType===IKDataEntity.Types.Image ">
+                        <v-spacer></v-spacer>
+                      </template>
 
 
+                    </template>
                   </template>
-                </template>
 
-              </div>
+                </div>
+              </v-form>
             </v-tab-item>
-            <v-tab-item >
+            <v-tab-item>
 
               <div style="display: grid; grid-template-columns: repeat(2,1fr); grid-column-gap: 40px">
                 <template v-for="(field,index) in notRequiredFields">
@@ -140,7 +143,7 @@
                   <template v-else>
 
                     <div :key="'f2'+index"
-                         :style="field.dataType===IKDataEntity.Types.Image ? {'grid-column': '1/3', 'width':'50%'}:{}"
+                         :style="field.dataType===IKDataEntity.Types.Image ? {'grid-column': '1/3', 'width':'50%','padding-right':'20px','padding-bottom':'20px'}:{}"
                     >
                       <form-field
                           :field="field"
@@ -155,9 +158,12 @@
                   </template>
                 </template>
               </div>
+
             </v-tab-item>
           </v-tabs-items>
+
         </div>
+
       </div>
 
     </v-card>
@@ -194,6 +200,7 @@ export default {
       type: Boolean,
       default: false,
     },
+
   },
   data: function () {
     return {
@@ -201,21 +208,17 @@ export default {
       valid: true,
       tab: null,
       IKDataEntity: IKDataEntity,
+
     }
   },
-  // mounted() {
-  //   console.log('this.editedItem SecondStep', this.editedItem)
-  // },
+
   computed: {
     requiredFields: function () {
       const res = this.formField.filter(f => this.fieldIsRequired(f))
-      console.log("requiredFields",res)
       return res
     },
     notRequiredFields: function () {
       const res = this.formField.filter(f => !this.fieldIsRequired(f))
-      console.log('this.editedItem SecondStep', this.editedItem)
-      console.log("notRequiredFields",res)
       return res
     },
   },
@@ -243,7 +246,8 @@ export default {
     },
 
     save () {
-      this.$emit('change-general-form', true)
+      if(this.$refs.form.validate())
+        this.$emit('change-general-form', true)
     },
   },
 }

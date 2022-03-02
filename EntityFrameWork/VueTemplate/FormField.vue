@@ -64,7 +64,7 @@
 
     </template>
     <template v-else-if="type.name==='image'">
-      <div style="border: 1px solid #d2d2d2;">
+      <v-card flat style="border: 1px solid #d2d2d2;" min-height="200">
         <img-with-loading
             v-if="editedItem[type.fileStorage]"
             :height="'200px'"
@@ -73,12 +73,13 @@
         <template
             v-else-if="currentState>-1"
         >
+
           <img-with-loading
               :height="'auto'"
               :img-src="root + editedItem[value]"
           />
         </template>
-      </div>
+      </v-card>
       <v-file-input
           :placeholder="text"
           v-model="editedItem[type.fileStorage]"
@@ -249,6 +250,7 @@ export default {
       default:false
     },
     fullHeight: { default: false },
+
   },
   data: function () {
     return {
@@ -274,7 +276,6 @@ export default {
       }
     },
     selectItemsIsDynamic: function () {
-      console.log("this.type",this.type)
       return typeof this.type.selectItems === 'function'
     },
     selectItemList: function () {
@@ -289,12 +290,6 @@ export default {
             disabled: false,
           }))
         }
-        // result = JSON.parse('[' + result.toString() + ']')
-        // result = result.toString()
-        console.log("this.editedItem[value]", this.editedItem[this.value])
-        console.log("this.editedItem", this.editedItem)
-
-        console.log("selectItemList " , result)
         return result
       }
 
@@ -341,14 +336,14 @@ export default {
     editedItem: {
       deep: true,
       handler: function (val) {
-        console.log("type flag 3 editedItem",this.editedItem)
+        // console.log("type flag 3 editedItem",this.editedItem)
         this.preProcessOptions()
       },
     },
   },
   methods: {
     async preProcessOptions () {
-      console.log("type flag 2")
+      // console.log("type flag 2")
       if (this.selectItemsIsDynamic) {
         if (this.type.selectItems().then) {
           const res = await this.type.selectItems()
@@ -360,7 +355,6 @@ export default {
     },
   },
   mounted () {
-    console.log("type flag 1", this.field)
     this.preProcessOptions()
   },
 }

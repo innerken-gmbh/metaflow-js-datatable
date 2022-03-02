@@ -290,8 +290,10 @@
           </td>
         </template>
         <template v-slot:footer.prepend>
+
+
           <v-speed-dial
-              v-if="selectedItems.length>0"
+              v-if="selectedItems.length>0 && !hideSelectedAction"
               v-model="fab"
               direction="top"
           >
@@ -310,6 +312,7 @@
               </v-btn>
             </template>
 
+
             <v-btn
                 fab
 
@@ -318,7 +321,6 @@
             >
               <v-icon color="white">mdi-pencil</v-icon>
             </v-btn>
-
             <v-btn
                 fab
                 color="indigo"
@@ -333,7 +335,10 @@
             >
               <v-icon color="white">mdi-delete</v-icon>
             </v-btn>
+
           </v-speed-dial>
+
+
           <v-btn
               v-else-if="useDefaultAction && useAddAction"
               color="success"
@@ -345,6 +350,7 @@
 
           <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer"
           ></slot>
+
         </template>
       </v-data-table>
 
@@ -519,6 +525,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideSelectedAction: {
+      type: Boolean,
+      default: false,
+    },
+
   },
   watch: {
     realFilter: {
@@ -585,7 +596,6 @@ export default {
     },
     realFilter () {
       const res = this.filter ?? {}
-      console.log('realFilter', res)
       if (this.okDates) {
         res.dateFilter = this.okDates
       }
@@ -608,7 +618,7 @@ export default {
     },
     shouldHideMergableField: function () {
       const res = this.mergableFields.length > this.requiredDisplayNumber
-      console.log('shouldHideMergableField', res)
+
       return res
     },
     displayMergableFields: function () {
@@ -627,7 +637,7 @@ export default {
               name: 'item.' + item.value,
             }
           })
-      console.log('mergableFields', res)
+      // console.log('mergableFields', res)
       return res
     },
     tableItem: function () {
@@ -648,7 +658,7 @@ export default {
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
 
-    console.log('this.headers', this.headers, 'this.formField', this.formField, 'this.defaultItem', this.defaultItem)
+    // console.log('this.headers', this.headers, 'this.formField', this.formField, 'this.defaultItem', this.defaultItem)
 
     if (this.useDefaultAction || this.useCustomerActionOnly) {
       this.headers.push({

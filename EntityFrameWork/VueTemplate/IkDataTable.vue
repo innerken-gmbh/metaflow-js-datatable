@@ -34,7 +34,7 @@
       <template v-if="displayMergableFields.length>0">
 
         <template v-for="(field) in displayMergableFields">
-          <div :key="field.value" style="max-width: 164px;height: 100%" class="py-2 pr-1">
+          <div :key="field.value" style="max-width: 164px; height: 100%" class="py-2 pr-1">
             <form-field
                 :on-toolbar="true"
                 :no-details="true"
@@ -637,18 +637,22 @@ export default {
               name: 'item.' + item.value,
             }
           })
+      console.log('mergableFields', res)
       return res
     },
     tableItem: function () {
+
       if (this.filterItem) {
-        return this.items.filter(i => {
+        const res = this.items.filter(i => {
           return Object.keys(this.filterItem).filter(k => this.filterItem[k] != null).every(
               t => {
                 const org = i[t]
                 const oth = this.filterItem[t]
-                return org == oth || (Array.isArray(org) && (org.includes(oth) || oth.every(ot => org.includes(ot))))
+                return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(ot => org.includes(ot)))))
+
               })
         })
+        return res
       }
       return this.items
     },
@@ -657,6 +661,7 @@ export default {
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
 
+    // console.log('this.headers', this.headers, 'this.formField', this.formField, 'this.defaultItem', this.defaultItem)
 
     if (this.useDefaultAction || this.useCustomerActionOnly) {
       this.headers.push({
@@ -671,6 +676,7 @@ export default {
     this.advancedItems = this.getAdvancedItems()
     this.slottedItems = this.getSlottedItems()
     this.editedItem = IKUtils.deepCopy(this.defaultItem)
+    // console.log('this.editedItem firstStep', this.editedItem)
     this.reload().catch(() => {
       this.loading = false
       this.items = []
@@ -742,6 +748,7 @@ export default {
       this.$refs.gf.realDialog = false
       this.reload()
     },
+
     async toggleProperty (item, key) {
       const _item = IKUtils.deepCopy(item)
       _item[key] = !_item[key]

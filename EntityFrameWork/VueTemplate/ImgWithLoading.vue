@@ -1,20 +1,22 @@
 <template>
-  <v-img
-      :src="imgSrc"
-      :height="height"
-      :width="width"
-      cover
-  >
-    <template v-slot:placeholder>
-      <v-row
-          class="fill-height ma-0"
-          align="center"
-          justify="center"
-      >
-        <v-icon>mdi-panorama-outline</v-icon>
-      </v-row>
-    </template>
-  </v-img>
+  <v-card outlined elevation="0" width="fit-content">
+    <v-img
+        :src="imgSrc"
+        :height="height"
+        :width="width"
+        contain
+    >
+      <template v-slot:placeholder>
+        <v-card :height="height" :width="width"
+                outlined
+                class="d-flex align-center justify-center"
+        >
+          <v-icon>mdi-image-refresh</v-icon>
+        </v-card>
+      </template>
+    </v-img>
+  </v-card>
+
 </template>
 
 <script>
@@ -23,17 +25,17 @@ export default {
   props: {
     imgSrc: {
       type: String,
-      default: ''
+      default: '',
     },
     height: {
       type: String,
-      default: 'auto'
+      default: 'auto',
     },
     width: {
       type: String,
-      default: 'auto'
-    }
-  }
+      default: 'auto',
+    },
+  },
 }
 </script>
 

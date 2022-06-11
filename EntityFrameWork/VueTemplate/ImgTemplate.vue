@@ -1,7 +1,7 @@
 <template>
   <img-with-loading
-      :height="'50px'"
-      :width="'50px'"
+      :height="'36px'"
+      :width="'36px'"
       :img-src="root+item[model]"
   />
 </template>

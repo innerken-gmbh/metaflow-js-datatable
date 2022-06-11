@@ -1,10 +1,11 @@
 <template>
-  <v-sheet
+  <div
       v-if="(currentState===-1&&inNew)||(currentState>-1&&inEdit)"
   >
     <template v-if="type.name==='text'">
+      <div class="text-overline">{{text}}</div>
       <v-text-field
-          :prefix="text +': '"
+          outlined
           single-line
           :dense="!fullHeight"
           :hide-details="noDetails"
@@ -15,32 +16,31 @@
     </template>
     <template v-else-if="type.name==='select'">
       <v-select
+          :outlined="!solo"
           :placeholder="text"
           :menu-props="{offsetY:true}"
-          solo
-          :dense="!fullHeight"
-          clearable
+          :dense="true"
           @click:clear="$emit('clear')"
           :hide-details="noDetails"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
+          :hide-selected="hideSelect"
           :items="selectItemList"
           :item-text="type.itemText"
           :item-value="type.itemValue"
           :multiple="type.multiple"
           :label="text"
           :rules="rules"
+          :solo="solo"
       />
-
-
     </template>
     <template v-else-if="type.name==='switch'">
       <template v-if="onToolbar">
         <v-select
+            outlined
             :placeholder="text"
             :menu-props="{offsetY:true}"
-            solo
-            :dense="!fullHeight"
+            :dense="true"
             @click:clear="$emit('clear')"
             :hide-details="noDetails"
             v-model="editedItem[value]"
@@ -61,19 +61,17 @@
             :rules="rules"
         />
       </template>
-
     </template>
     <template v-else-if="type.name==='image'">
-      <v-card flat style="border: 1px solid #d2d2d2;" min-height="200">
+      <v-card flat style="border: 1px solid #d2d2d2;width: 100%" class="d-flex justify-center align-center" min-height="200">
         <img-with-loading
             v-if="editedItem[type.fileStorage]"
-            :height="'200px'"
+            :height="'160px'"
             :img-src="uploadUrl"
         />
         <template
             v-else-if="currentState>-1"
         >
-
           <img-with-loading
               :height="'auto'"
               :img-src="root + editedItem[value]"
@@ -81,6 +79,12 @@
         </template>
       </v-card>
       <v-file-input
+          outlined
+          dense
+          class="mt-1"
+          prepend-icon=""
+          prepend-inner-icon="mdi-file"
+          :hide-details="noDetails"
           :placeholder="text"
           v-model="editedItem[type.fileStorage]"
           :disabled="shouldDisable"
@@ -175,8 +179,10 @@
       </v-dialog>
     </template>
     <template v-else-if="type.name==='color'">
+      <div class="text-overline">{{text}}</div>
       <v-text-field
-          :prefix="text + ': '"
+          outlined
+          :hide-details="noDetails"
           :dense="!fullHeight"
           v-model=editedItem[value]
           class="pb-1"
@@ -214,7 +220,7 @@
     <template v-else>
       <slot/>
     </template>
-  </v-sheet>
+  </div>
 </template>
 
 <script>
@@ -250,7 +256,8 @@ export default {
       default:false
     },
     fullHeight: { default: false },
-
+    hideSelect:{default:false},
+    solo:{default:false}
   },
   data: function () {
     return {

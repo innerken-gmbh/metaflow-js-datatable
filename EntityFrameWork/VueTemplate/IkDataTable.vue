@@ -1,384 +1,336 @@
 <template>
-  <div class="mt-0">
-
-    <template v-if="!hideIkdatatableHeader">
-      <div style="background: white" class="d-flex ma-0 pa-4 py-1">
-
-        <div style="height: 37px;"
-             class="d-flex align-center "
-        >
-          <v-icon left>{{ icon }}</v-icon>
-          <span class="display-2">{{ entityName }}</span>
-        </div>
-
-        <v-spacer></v-spacer>
-
-        <div style="width: 150px;height: 100%;" class="d-flex align-center">
-          <v-text-field
-              class="mt-0 pt-0"
-              v-model="search"
-              append-icon="mdi-magnify"
-              hide-details
-              clearable
-              :label="$t('Search')"
-              single-line
-              style="max-width: 350px;"
-          />
-        </div>
+  <v-container>
+    <div class="d-flex">
+      <div style="height: 37px;"
+           class="d-flex align-center "
+      >
+        <v-icon size="24" class="mr-2">{{ icon }}</v-icon>
+        <span class="text-h3 font-weight-bold">{{ entityName }}</span>
       </div>
-    </template>
-
-    <v-divider/>
-
-    <div class="d-flex align-center px-3" style="background-color: #FAFAFA; ">
-      <template v-if="displayMergableFields.length>0">
-
-        <template v-for="(field) in displayMergableFields">
-          <div :key="field.value" style="max-width: 164px; height: 100%" class="py-2 pr-1">
-            <form-field
-                :on-toolbar="true"
-                :no-details="true"
-                :field="field"
-                :edited-item="filterItem"
-            />
-          </div>
-        </template>
-
-        <div v-if="Object.keys(filterItem).length>0" style="width: 160px">
-          <v-card
-              dark
-              color="error"
-              style="height: 36px"
-              class=" d-flex align-center justify-center"
-              @click.stop="filterItem={}"
-          >
-            <v-icon left>mdi-close-box</v-icon>
-            {{ $t('重置筛选器') }}
-          </v-card>
-        </div>
-
-        <div v-else-if="shouldHideMergableField" style="width: 80px">
-          <v-card
-              dark
-              color="warning"
-              style="height: 100%"
-              class="d-flex align-center justify-center"
-              @click.stop="showFilterDialog=true"
-          >
-            <v-icon left>mdi-filter-variant</v-icon>
-            {{ $t('filter') }}
-          </v-card>
-        </div>
-
-      </template>
-
-      <template v-if="useDateFilter">
-        <v-spacer></v-spacer>
-        <v-menu
-            ref="datePickerMenu"
-            v-model="datePickerMenu"
-            :close-on-content-click="false"
-            :return-value.sync="dates"
-            :close-on-click="false"
-            offset-y
-            bottom
-            :nudge-width="0"
+      <v-spacer></v-spacer>
+      <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer"
+      ></slot>
+      <template
+          v-if="selectedItems.length>0 && !hideSelectedAction"
+      >
+        <v-btn
+            elevation="0"
+            @click="massEditDialog=true"
+            color="primary darken-4"
         >
-          <template v-slot:activator="{ on }">
-            <div style="max-width: 300px; height: 54px;" class="d-flex align-center">
-              <v-text-field
-                  class="ma-0 pa-0"
-                  v-model="dates"
-                  hide-details
-                  :label="$t('日期筛选')"
-                  solo
-                  dense
-                  prepend-inner-icon="mdi-calendar"
-                  readonly
-                  single-line
-                  append-icon="mdi-close"
-                  @click:append="clear"
-                  v-on="on"
-              />
-            </div>
-          </template>
-          <v-date-picker
+          <v-icon left color="white">mdi-pencil</v-icon>
+          批量编辑
+        </v-btn>
+        <v-btn
+            elevation="0"
+            color="error darken-4"
+            @click="updateAll(null,true)"
+        >
+          <v-icon left color="white">mdi-delete</v-icon>
+          批量删除
+        </v-btn>
 
-              v-model="dates"
-              no-title
-              :range="!useSingleDate"
-              scrollable
-              locale="de"
-          >
-            <v-spacer/>
-            <v-btn
-                text
-                color="primary"
-                @click="datePickerMenu = false"
-            >
-              {{ $t('Cancel') }}
-            </v-btn>
-            <v-btn
-                text
-                color="primary"
-                @click="$refs.datePickerMenu.save(dates)"
-            >
-              {{ $t('OK') }}
-            </v-btn>
-          </v-date-picker>
-        </v-menu>
       </template>
-    </div>
 
-    <template v-if="displayMergableFields.length>0 || useDateFilter">
-      <v-divider/>
-    </template>
 
-    <slot name="extra-heading"/>
-
-    <v-card class="ma-0" flat tile>
-      <v-data-table
-          dense
-          :height="onePageArrangementHeight ? onePageArrangementHeight :
-                       onePageArrangement ? 'calc(100vh - 147px)':
-                 displayMergableFields.length>0 || useDateFilter ? 'calc(100vh - 160px)' :'calc(100vh - 105px)'"
-          v-model="selectedItems"
-          :show-expand="showExpand"
-          :single-expand="singleExpand"
-          :show-select="useSelect"
-          :fixed-header="true"
-          :headers="realHeaders"
-          :items="tableItem"
-          :loading="loading"
-          :search.sync="search"
-          :items-per-page="30"
-          :footer-props="{itemsPerPageOptions:[30,-1]}"
-          multi-sort
-          :group-by="groupBy"
-          :hide-default-footer="hideDefaultFooter"
+      <v-btn
+          v-if="useDefaultAction && useAddAction"
+          color="success darken-4"
+          class="mr-0"
+          elevation="0"
+          @click="$refs.gf.realDialog=true"
       >
 
-        <template v-slot:group.header="items" v-if="groupBy">
-          <td colspan="100%">
-            <div class="display-2"> {{ $t('time') }}: {{ items.group }} {{ $t('hour') }}</div>
-          </td>
-        </template>
-
-        <template
-            v-for="slottedItem in slottedItems"
-            v-slot:[slottedItem.name]="{ item }"
-        >
-          <slot
-              :name="slottedItem.name"
-              :item="item"
-          />
-        </template>
-
-        <template
-            v-for="adItem in advancedItems"
-            v-slot:[adItem.name]="{ item }"
-        >
-          <template
-              v-if="
-            adItem.dataType===Types.Image"
-          >
-            <img-template
-                :key="adItem.name"
-                :model="adItem.value"
-                :item="item"
-                :root="adItem.type.root()"
-            />
-          </template>
-          <template
-              v-else-if="adItem.dataType===Types.Group"
-          >
-            <div
-                v-bind:key="'_'+adItem.value+c"
-                v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
-            >
-              {{ item['_' + adItem.value + c] }}
-            </div>
-          </template>
-
-          <template
-              v-else-if="
-              adItem.dataType===Types.Boolean"
-          >
-            <v-simple-checkbox
-                :value="!!item[adItem.value]"
+        {{ $t('新增') }}
+      </v-btn>
+    </div>
+    <v-card rounded>
+      <template v-if="!hideIkdatatableHeader">
+        <div style="background: white" class="d-flex ma-0 mt-4 pa-4 align-center">
+          <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1">
+            <v-text-field
+                class=""
+                v-model="search"
+                prepend-inner-icon="mdi-magnify"
+                outlined
                 dense
-                v-ripple
-                @click="toggleProperty(item,adItem.value)"
-                :key="adItem.name"
+                hide-details
+                clearable
+                :label="$t('Search')"
+                single-line
+            />
+          </div>
+          <template v-if="displayMergableFields.length>0">
+            <template v-for="(field) in displayMergableFields">
+              <div :key="field.value" style="max-width: 164px; height: 100%" class="mr-2">
+                <form-field
+                    :full-height="false"
+                    :hide-select="true"
+                    :on-toolbar="true"
+                    :no-details="true"
+                    :field="field"
+                    :edited-item="filterItem"
+                />
+              </div>
+            </template>
+
+            <div v-if="Object.keys(filterItem).length>0" style="width: 160px">
+              <v-card
+                  dark
+                  color="error"
+                  style="height: 36px"
+                  class=" d-flex align-center justify-center"
+                  @click.stop="filterItem={}"
+              >
+                <v-icon left>mdi-close-box</v-icon>
+                {{ $t('重置筛选器') }}
+              </v-card>
+            </div>
+
+            <div v-else-if="shouldHideMergableField" style="width: 80px">
+              <v-card
+                  dark
+                  color="warning"
+                  style="height: 100%"
+                  class="d-flex align-center justify-center"
+                  @click.stop="showFilterDialog=true"
+              >
+                <v-icon left>mdi-filter-variant</v-icon>
+                {{ $t('filter') }}
+              </v-card>
+            </div>
+
+          </template>
+
+          <template v-if="useDateFilter">
+            <v-spacer></v-spacer>
+            <v-menu
+                ref="datePickerMenu"
+                v-model="datePickerMenu"
+                :close-on-content-click="false"
+                :return-value.sync="dates"
+                :close-on-click="false"
+                offset-y
+                bottom
+                :nudge-width="0"
+            >
+              <template v-slot:activator="{ on }">
+                <div style="max-width: 300px; height: 54px;" class="d-flex align-center">
+                  <v-text-field
+                      class="ma-0 pa-0"
+                      v-model="dates"
+                      hide-details
+                      :label="$t('日期筛选')"
+                      outlined
+                      dense
+                      prepend-inner-icon="mdi-calendar"
+                      readonly
+                      single-line
+                      append-icon="mdi-close"
+                      @click:append="clear"
+                      v-on="on"
+                  />
+                </div>
+              </template>
+              <v-date-picker
+
+                  v-model="dates"
+                  no-title
+                  :range="!useSingleDate"
+                  scrollable
+                  locale="de"
+              >
+                <v-spacer/>
+                <v-btn
+                    text
+                    color="primary"
+                    @click="datePickerMenu = false"
+                >
+                  {{ $t('Cancel') }}
+                </v-btn>
+                <v-btn
+                    text
+                    color="primary"
+                    @click="$refs.datePickerMenu.save(dates)"
+                >
+                  {{ $t('OK') }}
+                </v-btn>
+              </v-date-picker>
+            </v-menu>
+          </template>
+
+        </div>
+      </template>
+
+      <template v-if="displayMergableFields.length>0 || useDateFilter">
+        <v-divider/>
+      </template>
+
+      <slot name="extra-heading"/>
+
+      <div class="ma-0" flat tile>
+        <v-data-table
+            v-model="selectedItems"
+            :show-expand="showExpand"
+            :single-expand="singleExpand"
+            :show-select="useSelect"
+            :fixed-header="true"
+            :headers="realHeaders"
+            :items="tableItem"
+            :loading="loading"
+            :search.sync="search"
+            :items-per-page="30"
+            :footer-props="{itemsPerPageOptions:[30,-1]}"
+            multi-sort
+            :group-by="groupBy"
+            :hide-default-footer="hideDefaultFooter"
+            @click:row="editItem"
+        >
+
+          <template v-slot:group.header="items" v-if="groupBy">
+            <td colspan="100%">
+              <div class="display-2"> {{ $t('time') }}: {{ items.group }} {{ $t('hour') }}</div>
+            </td>
+          </template>
+
+          <template
+              v-for="slottedItem in slottedItems"
+              v-slot:[slottedItem.name]="{ item }"
+          >
+            <slot
+                :name="slottedItem.name"
+                :item="item"
             />
           </template>
 
           <template
-              v-else-if="
-            adItem.dataType===Types.Color"
+              v-for="adItem in advancedItems"
+              v-slot:[adItem.name]="{ item }"
           >
-            <v-chip
-                :key="adItem.name"
-                :color="item[adItem.value]"
-                label
-                :style="swatchStyle"
-            />
-          </template>
-          <template
-              v-else-if="
-            adItem.dataType===Types.Option"
-          >
-            <template>
-              <span class="font-weight-bold"
-                    :class="adItem.type.color?
-                            adItem.type.color
-                            .find(c=>{return parseInt(item[adItem.value])===c.id})
-                            .color+'--text':''"
-                    style="font-size: 18px"
+            <template
+                v-if="
+            adItem.dataType===Types.Image"
+            >
+              <img-template
+                  :key="adItem.name"
+                  :model="adItem.value"
+                  :item="item"
+                  :root="adItem.type.root()"
+              />
+            </template>
+            <template
+                v-else-if="adItem.dataType===Types.Group"
+            >
+              <div
+                  v-bind:key="'_'+adItem.value+c"
+                  v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
               >
+                {{ item['_' + adItem.value + c] }}
+              </div>
+            </template>
+
+            <template
+                v-else-if="
+              adItem.dataType===Types.Boolean"
+            >
+              <v-simple-checkbox
+                  :value="!!item[adItem.value]"
+                  dense
+                  color="success darken-4"
+                  v-ripple
+                  @click="toggleProperty(item,adItem.value)"
+                  :key="adItem.name"
+              />
+            </template>
+
+            <template
+                v-else-if="
+            adItem.dataType===Types.Color"
+            >
+              <v-chip
+                  :key="adItem.name"
+                  :color="item[adItem.value]"
+                  label
+                  :style="swatchStyle"
+              />
+            </template>
+            <template
+                v-else-if="
+            adItem.dataType===Types.Option"
+            >
+              <template v-if="adItem.type.color">
+                 <span
+                     class="pa-1 px-3 white--text rounded-pill"
+                     :class="
+                       adItem.type.color
+                     .find(c=>{return parseInt(item[adItem.value])===c.id}).color"
+                 >
                 {{ item['opt' + adItem.value].join(', ') }}
               </span>
+              </template>
+              <template v-else>
+                <span>{{ item['opt' + adItem.value].join(', ') }}</span>
+
+              </template>
+
             </template>
           </template>
-        </template>
-        <template v-slot:no-data>
-          <slot name="no-data">
-            <v-btn
-                color="primary"
-                @click="reload"
-            >
-              {{ $t('重新加载') }}
-            </v-btn>
-          </slot>
-        </template>
-
-        <template v-slot:item.action="{ item }">
-          <slot
-              name="item.action"
-              :item="item"
-          />
-          <template v-if="useDefaultAction">
-            <template v-if="useEditAction">
+          <template v-slot:no-data>
+            <slot name="no-data">
               <v-btn
-                  small
-                  class="mx-2 grey white--text"
-                  @click="editItem(item)"
-              >
-                {{ $t('修改') }}
-              </v-btn>
-            </template>
-            <template v-if="useDeleteAction">
-              <v-btn
-                  color="error"
-                  small
-                  class="mr-2"
-                  @click="deleteItem(item)"
-              >
-                {{ $t('删除') }}
-              </v-btn>
-            </template>
-          </template>
-
-        </template>
-
-        <template v-slot:expanded-item="{ item }">
-          <td :colspan="headers.length">
-            <slot
-                name="expanded-item"
-                :item="item"
-            />
-          </td>
-        </template>
-        <template v-slot:footer.prepend>
-
-
-          <v-speed-dial
-              v-if="selectedItems.length>0 && !hideSelectedAction"
-              v-model="fab"
-              direction="top"
-          >
-            <template v-slot:activator>
-              <v-btn
-                  v-model="fab"
                   color="primary"
-
+                  @click="reload"
               >
-                <v-icon v-if="fab">
-                  mdi-close
-                </v-icon>
-                <v-icon v-else>
-                  mdi-square-edit-outline
-                </v-icon>
+                {{ $t('重新加载') }}
               </v-btn>
-            </template>
+            </slot>
+          </template>
+
+          <template v-slot:expanded-item="{ item }">
+            <td :colspan="headers.length">
+              <slot
+                  name="expanded-item"
+                  :item="item"
+              />
+            </td>
+          </template>
+          <template v-slot:footer.prepend>
 
 
-            <v-btn
-                fab
+          </template>
+        </v-data-table>
 
-                @click="massEditDialog=true"
-                color="green"
-            >
-              <v-icon color="white">mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn
-                fab
-                color="indigo"
-                @click="$refs.gf.realDialog=true"
-            >
-              <v-icon color="white">mdi-plus</v-icon>
-            </v-btn>
-            <v-btn
-                fab
-                color="red"
-                @click="updateAll(null,true)"
-            >
-              <v-icon color="white">mdi-delete</v-icon>
-            </v-btn>
+        <v-dialog v-model="massEditDialog" max-width="600px">
+          <v-card class="pa-4 px-6">
+            <h4>{{ selectedItems.length }} {{ $t('Item') }} {{ $t('已经选中') }}</h4>
 
-          </v-speed-dial>
-
-
-          <v-btn
-              v-else-if="useDefaultAction && useAddAction"
-              color="success"
-              @click="$refs.gf.realDialog=true"
-          >
-
-            {{ $t('新增') }}
-          </v-btn>
-
-          <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer"
-          ></slot>
-
-        </template>
-      </v-data-table>
-
-      <v-dialog v-model="massEditDialog" max-width="600px">
-        <v-card class="pa-2">
-          <v-card-title>{{ selectedItems.length }} {{ $t('Item') }} {{ $t('已经选中') }}</v-card-title>
-          <v-card-text>
 
             <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
 
               <form-field
                   :key="field.id"
-                  class="mx-2"
+                  class="my-2"
                   :no-details="true"
                   :field="field"
+                  on-toolbar
                   :edited-item="mergeItem"
 
               />
             </template>
+            <div class="d-flex">
+              <v-spacer/>
+              <v-btn @click="updateAll(mergeItem,false)"
+                     elevation="0"
+                     class="green darken-4 white--text mr-0"
+              >
+                {{ $t('更新选中') }}
+              </v-btn>
 
-          </v-card-text>
+            </div>
+          </v-card>
+        </v-dialog>
+      </div>
 
-          <v-card-actions class="pb-2">
-            <v-spacer/>
-            <v-btn @click="updateAll(mergeItem,false)" class="green white--text">{{ $t('更新选中') }}</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
     </v-card>
 
     <general-form
@@ -421,7 +373,7 @@
         </div>
       </v-card>
     </v-dialog>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -661,9 +613,7 @@ export default {
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
 
-    // console.log('this.headers', this.headers, 'this.formField', this.formField, 'this.defaultItem', this.defaultItem)
-
-    if (this.useDefaultAction || this.useCustomerActionOnly) {
+    if (this.useCustomerActionOnly) {
       this.headers.push({
         text: 'action',
         width: '240px',
@@ -686,6 +636,7 @@ export default {
     getAdvancedItems: function () {
       return this.headers
           .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
+            IKDataEntity.Types.Date,
             IKDataEntity.Types.Option, IKDataEntity.Types.Group, IKDataEntity.Types.Color,
           ].includes(item.dataType))
           .map(item => {

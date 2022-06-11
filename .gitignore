@@ -112,4 +112,5 @@ dist
 .idea
 *.iml
 out
+.env.local
 gen

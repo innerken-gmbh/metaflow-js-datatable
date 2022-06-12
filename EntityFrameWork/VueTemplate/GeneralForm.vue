@@ -15,7 +15,16 @@
           </div>
           <v-spacer></v-spacer>
           <v-btn
-              color="success darken-4"
+              v-if="useDeleteAction"
+              color="error darken-4"
+              elevation="0"
+              class="mr-4"
+              @click="remove"
+          >
+            {{ $t('删除') }}
+          </v-btn>
+          <v-btn
+              color="primary"
               elevation="0"
               class="mr-0"
               :disabled="!valid"
@@ -29,24 +38,37 @@
           <div style="display: grid;grid-template-columns: auto 400px;grid-gap: 20px">
             <div>
               <template v-for="(field,index) in groupedFields">
-                <v-card :key="field.value+index+'group'" height="fit-content" class="pa-4 px-6 my-4">
+                <v-card flat :key="field.value+index+'group'" height="fit-content" class="pa-4 px-6 my-4">
                   <h2 class="mb-6">
                     {{ $t('' + field.groupName) }}
                   </h2>
-
-                  <div
-                      class="my-2"
-                      style="grid-column: 1/3"
-                      :key="'f2'+index"
-                  >
-
+                  <div class="d-flex">
                     <div>
-                      <template v-for="(child,i) in field.children">
-                        <div class="py-0">
-                                <span
-                                    class="subtitle-1 grey--text font-weight-bold"
-                                >{{ $t(editedItem[field.value][i][field.childLabelKey]) }}</span>
-                        </div>
+                      <v-tabs height="36px" v-model="tab">
+                        <v-tab v-for="(child,i) in field.children"
+                               :key="field.value+'c'+editedItem[field.value][i][field.childLabelKey]+'tab'"
+                        >
+                          {{ $t(editedItem[field.value][i][field.childLabelKey].toLowerCase()) }}
+                        </v-tab>
+                      </v-tabs>
+                    </div>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        @click="copyToAll(field,editedItem[field.value])"
+                        color="info"
+                        class="mr-0"
+                        elevation="0"
+                        small
+                        text
+                        depressed
+                    >
+                      <v-icon left>mdi-content-copy</v-icon>
+                      自动填充其他语言
+                    </v-btn>
+                  </div>
+                  <v-card class="pa-4 py-3" outlined>
+                    <v-tabs-items v-model="tab">
+                      <v-tab-item v-for="(child,i) in field.children">
                         <template v-for="(c,t) in child">
                           <div :key="field.id+'t'+t+'c'+i">
                             <form-field
@@ -58,15 +80,16 @@
                             />
                           </div>
                         </template>
-                      </template>
-                    </div>
-                  </div>
+                      </v-tab-item>
+                    </v-tabs-items>
+                  </v-card>
+
                 </v-card>
 
               </template>
 
 
-              <v-card height="fit-content" class="pa-4 px-6 my-4">
+              <v-card flat height="fit-content" class="pa-4 px-6 my-4">
                 <h2 class="mb-6"> {{ $t('必填信息') }}</h2>
                 <div>
                   <template v-for="(field,index) in requiredFields">
@@ -89,7 +112,7 @@
               </v-card>
             </div>
 
-            <v-card height="fit-content" class="pa-4 px-6 my-4">
+            <v-card flat height="fit-content" class="pa-4 px-6 my-4">
               <h2 class="mb-6">{{ $t('选填信息') }}</h2>
               <div>
                 <template v-for="(field,index) in notRequiredFields">
@@ -145,6 +168,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    useDeleteAction: { default: false },
 
   },
   data: function () {
@@ -185,6 +209,27 @@ export default {
     },
   },
   methods: {
+    findLangEntityInLangArr (lang, arr) {
+      return arr.find(d => d.lang.toLowerCase() === lang.toLowerCase()) ?? null
+    },
+
+    copyToAll (field, arr) {
+
+      const [de, zh, en] = [this.findLangEntityInLangArr('DE', arr),
+        this.findLangEntityInLangArr('ZH', arr),
+        this.findLangEntityInLangArr('EN', arr)]
+      console.log(field)
+      for (const fieldKey of field.childKey) {
+        const [deContent, zhContent, enContent] = [de, zh, en].map(it => it[fieldKey])
+        const target = deContent || zhContent || enContent
+        console.log(target)
+        const empty = [de, zh, en].filter(it => !it[fieldKey])
+        for (const key of empty) {
+          key[fieldKey] = target
+        }
+      }
+
+    },
     fieldIsRequired (field) {
       return field.required && (
           (field.requiredEdit && this.editedIndex !== -1) ||
@@ -195,8 +240,14 @@ export default {
       this.realDialog = false
       this.$emit('change-general-form', false)
     },
+    remove () {
+      this.$emit('change-general-form', null, true)
+    },
 
     save () {
+      for (const f of this.groupedFields) {
+        this.copyToAll(f, this.editedItem[f.value])
+      }
       if (this.$refs.form.validate()) {
         this.$emit('change-general-form', true)
       }

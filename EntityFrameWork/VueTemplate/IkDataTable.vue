@@ -35,7 +35,7 @@
 
       <v-btn
           v-if="useDefaultAction && useAddAction"
-          color="success darken-4"
+          color="green darken-4"
           class="mr-0"
           elevation="0"
           @click="$refs.gf.realDialog=true"
@@ -73,21 +73,7 @@
                 />
               </div>
             </template>
-
-            <div v-if="Object.keys(filterItem).length>0" style="width: 160px">
-              <v-card
-                  dark
-                  color="error"
-                  style="height: 36px"
-                  class=" d-flex align-center justify-center"
-                  @click.stop="filterItem={}"
-              >
-                <v-icon left>mdi-close-box</v-icon>
-                {{ $t('重置筛选器') }}
-              </v-card>
-            </div>
-
-            <div v-else-if="shouldHideMergableField" style="width: 80px">
+            <div v-if="shouldHideMergableField" style="width: 80px">
               <v-card
                   dark
                   color="warning"
@@ -161,6 +147,22 @@
 
         </div>
       </template>
+      <div v-if="Object.keys(filterItem).length>0">
+        <div class="px-4 pb-2">
+          <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)" label close
+                  @click:close="$delete(filterItem,item.key)"
+                  class="mr-2"
+                  v-for="item in filterDisplayChips"
+          >
+            <span class="mr-2">
+                {{
+                item.name
+              }}
+            </span>
+            {{ item.value }}
+          </v-chip>
+        </div>
+      </div>
 
       <template v-if="displayMergableFields.length>0 || useDateFilter">
         <v-divider/>
@@ -168,7 +170,7 @@
 
       <slot name="extra-heading"/>
 
-      <div class="ma-0" flat tile>
+      <div class="ma-0">
         <v-data-table
             v-model="selectedItems"
             :show-expand="showExpand"
@@ -294,10 +296,6 @@
               />
             </td>
           </template>
-          <template v-slot:footer.prepend>
-
-
-          </template>
         </v-data-table>
 
         <v-dialog v-model="massEditDialog" max-width="600px">
@@ -340,6 +338,7 @@
         :edited-item="editedItem"
         :edited-index="editedIndex"
         :form-field="formField"
+        :use-delete-action="useDefaultAction&&useDeleteAction"
         @change-general-form="dialogChange"
     />
 
@@ -384,6 +383,7 @@ import FormField from './FormField'
 import { IKDataEntity } from '../../index'
 import IKUtils from 'innerken-js-utils'
 import dayjs from 'dayjs'
+import { groupBy } from 'lodash'
 
 export default {
   name: 'IkDataTable',
@@ -526,12 +526,12 @@ export default {
       showFilterDialog: false,
       datePickerMenu: false,
       dates: null,
+      formDisc: {},
 
     }
   },
   computed: {
     okDates () {
-
       let res = this.useSingleDate ? [this.dates, this.dates] : IKUtils.deepCopy(this.dates)
       if (!res) {
         res = []
@@ -608,11 +608,35 @@ export default {
       }
       return this.items
     },
+    filterDisplayChips: function () {
+      const keys = Object.keys(this.filterItem)
 
+      return keys.map((k) => {
+        const field = this.formDisc[k][0]
+        if (field.dataType === IKDataEntity.Types.Option) {
+          const selectionGroup = groupBy(field.type._selectItems, field.type.itemValue)
+          return {
+            key: k,
+            name: field.text,
+            value: [this.filterItem[k]].flat().map(k => selectionGroup[k][0][field.type.itemText]).join(', '),
+          }
+        } else if (field.dataType === IKDataEntity.Types.Boolean) {
+          const selectionGroup = groupBy(field.type._selectItems, field.type.itemValue)
+          return {
+            key: k,
+            name: field.text,
+            value: this.filterItem[k] ? 'Yes' : 'No',
+          }
+        }
+
+      })
+    },
   },
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
-
+    console.log(this.formField)
+    this.formDisc = _.groupBy(this.formField, 'value')
+    console.log(this.formDisc)
     if (this.useCustomerActionOnly) {
       this.headers.push({
         text: 'action',
@@ -662,7 +686,11 @@ export default {
             }
           })
     },
-    dialogChange (save) {
+    async dialogChange (save, remove = false) {
+      if (remove) {
+        await this.deleteItem(this.editedItem)
+        return
+      }
       if (save) {
         this.save()
       } else {
@@ -728,18 +756,22 @@ export default {
       this.datePickerMenu = false
       this.dates = null
     },
-    deleteItem (item, promt = true) {
+    async deleteItem (item, promt = true) {
       if (promt) {
-        IKUtils.showConfirm(
+        const res = await IKUtils.showConfirmAsyn(
             this.$i18n.t('Are you sure?'),
-            this.$i18n.t('you want to delete this item?'), () => {
-              IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-                  .then(() => {
-                    IKUtils.toast(this.$i18n.t('删除成功'))
-                    this.reload()
-                  })
-            },
+            this.$i18n.t('you want to delete this item?'),
         )
+        console.log(res)
+        if(res.isConfirmed){
+          IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+              .then(() => {
+                IKUtils.toast(this.$i18n.t('删除成功'))
+                this.reload()
+              })
+        }
+
+
       } else {
         IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
             .then(() => {
@@ -760,7 +792,6 @@ export default {
       this.loading = true
 
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
-
       this.loading = false
       this.$emit('reloaded')
     },

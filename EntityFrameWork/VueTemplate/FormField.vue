@@ -3,7 +3,7 @@
       v-if="(currentState===-1&&inNew)||(currentState>-1&&inEdit)"
   >
     <template v-if="type.name==='text'">
-      <div class="text-overline">{{text}}</div>
+      <div class="text-overline">{{ $t(text) }}</div>
       <v-text-field
           outlined
           single-line
@@ -17,28 +17,36 @@
     <template v-else-if="type.name==='select'">
       <v-select
           :outlined="!solo"
-          :placeholder="text"
+          :placeholder="$t(text)"
           :menu-props="{offsetY:true}"
           :dense="true"
           @click:clear="$emit('clear')"
           :hide-details="noDetails"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
-          :hide-selected="hideSelect"
           :items="selectItemList"
           :item-text="type.itemText"
           :item-value="type.itemValue"
           :multiple="type.multiple"
-          :label="text"
+          :label="$t(text)"
           :rules="rules"
           :solo="solo"
-      />
+      >
+        <template v-if="hideSelect" v-slot:selection="{ item, index }">
+          <span
+              v-if="index==0"
+              class="grey--text text-caption"
+          >
+          (+{{ editedItem[value].length || 1 }})
+        </span>
+        </template>
+      </v-select>
     </template>
     <template v-else-if="type.name==='switch'">
       <template v-if="onToolbar">
         <v-select
             outlined
-            :placeholder="text"
+            :placeholder="$t(text)"
             :menu-props="{offsetY:true}"
             :dense="true"
             @click:clear="$emit('clear')"
@@ -46,24 +54,25 @@
             v-model="editedItem[value]"
             :disabled="shouldDisable"
             :items="[{text:$t('yes'),value:true},{text:$t('no'),value:false}]"
-            :label="text"
+            :label="$t(text)"
             :rules="rules"
         />
       </template>
       <template v-else>
         <v-checkbox
-            :placeholder="text"
+            :placeholder="$t(text)"
             :dense="!fullHeight"
             hide-details
             v-model="editedItem[value]"
             :disabled="shouldDisable"
-            :label="text"
+            :label="$t(text)"
             :rules="rules"
         />
       </template>
     </template>
     <template v-else-if="type.name==='image'">
-      <v-card flat style="border: 1px solid #d2d2d2;width: 100%" class="d-flex justify-center align-center" min-height="200">
+      <v-card flat color="#eeeeee" class="d-flex justify-center align-center"
+      >
         <img-with-loading
             v-if="editedItem[type.fileStorage]"
             :height="'160px'"
@@ -73,7 +82,7 @@
             v-else-if="currentState>-1"
         >
           <img-with-loading
-              :height="'auto'"
+              :height="'160px'"
               :img-src="root + editedItem[value]"
           />
         </template>
@@ -81,14 +90,14 @@
       <v-file-input
           outlined
           dense
-          class="mt-1"
+          class="mt-2"
           prepend-icon=""
           prepend-inner-icon="mdi-file"
           :hide-details="noDetails"
-          :placeholder="text"
+          :placeholder="$t(texxt)"
           v-model="editedItem[type.fileStorage]"
           :disabled="shouldDisable"
-          :label="text"
+          :label="$t(texxt)"
           :rules="rules"
           show-size
           counter
@@ -103,8 +112,8 @@
           width="290px"
       >
         <template v-slot:activator="{ on }">
+          <div class="text-overline">{{ $t(text) }}</div>
           <v-text-field
-              :prefix="text + ': '"
               :dense="!fullHeight"
               v-model="editedItem[value]"
               prepend-icon="mdi-clock-outline"
@@ -145,10 +154,10 @@
       >
         <template v-slot:activator="{ on }">
           <v-text-field
-              :placeholder="text"
+              :placeholder="$t(texxt)"
               :dense="!fullHeight"
               v-model="editedItem[value]"
-              :label="text"
+              :label="$t(texxt)"
               prepend-icon="mdi-clock-outline"
               readonly
               v-on="on"
@@ -179,7 +188,7 @@
       </v-dialog>
     </template>
     <template v-else-if="type.name==='color'">
-      <div class="text-overline">{{text}}</div>
+      <div class="text-overline">{{ $t(text) }}</div>
       <v-text-field
           outlined
           :hide-details="noDetails"
@@ -227,7 +236,6 @@
 
 import ImgWithLoading from './ImgWithLoading'
 import Utils from 'innerken-js-utils'
-import { uniq } from 'lodash'
 
 export default {
   name: 'FormField',
@@ -251,13 +259,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    onToolbar:{
-      type:Boolean,
-      default:false
+    onToolbar: {
+      type: Boolean,
+      default: false,
     },
     fullHeight: { default: false },
-    hideSelect:{default:false},
-    solo:{default:false}
+    hideSelect: { default: false },
+    solo: { default: false },
   },
   data: function () {
     return {

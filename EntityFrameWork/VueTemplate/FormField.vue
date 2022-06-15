@@ -5,6 +5,7 @@
     <template v-if="type.name==='text'">
       <div class="text-overline">{{ $t(text) }}</div>
       <v-text-field
+          v-if="!textArea"
           outlined
           single-line
           :dense="!fullHeight"
@@ -12,6 +13,17 @@
           v-model="editedItem[value]"
           :disabled="shouldDisable"
           :rules="rules"
+      />
+      <v-textarea
+          v-else
+          outlined
+          single-line
+          :dense="!fullHeight"
+          :hide-details="noDetails"
+          v-model="editedItem[value]"
+          :disabled="shouldDisable"
+          :rules="rules"
+          :counter="maxLength||''"
       />
     </template>
     <template v-else-if="type.name==='select'">
@@ -39,7 +51,7 @@
               v-if="index==0"
               class="grey--text text-caption"
           >
-          {{$t(text)}}(+{{ editedItem[value].length || 1 }})
+          {{ $t(text) }}(+{{ editedItem[value].length || 1 }})
         </span>
         </template>
       </v-select>
@@ -245,35 +257,35 @@ export default {
     field: {
       type: Object,
       default: () => {
-      }
+      },
     },
     editedItem: {
       type: Object,
       default: () => {
-      }
+      },
     },
     currentState: {
       type: Number,
-      default: -1
+      default: -1,
     },
     noDetails: {
       type: Boolean,
-      default: false
+      default: false,
     },
     onToolbar: {
       type: Boolean,
-      default: false
+      default: false,
     },
     fullHeight: { default: false },
     hideSelect: { default: false },
-    solo: { default: false }
+    solo: { default: false },
   },
   data: function () {
     return {
       timePickerShow: false,
       datePickerShow: false,
       colorPickerShow: false,
-      ...this.field
+      ...this.field,
     }
   },
   computed: {
@@ -288,7 +300,7 @@ export default {
         borderColor: '#c1c1c1',
         borderWidth: '1px',
         borderRadius: colorPickerShow ? '50%' : '4px',
-        transition: 'border-radius 200ms ease-in-out'
+        transition: 'border-radius 200ms ease-in-out',
       }
     },
     selectItemsIsDynamic: function () {
@@ -303,7 +315,7 @@ export default {
         } else {
           result = items.map(item => ({
             ...item,
-            disabled: false
+            disabled: false,
           }))
         }
         return result
@@ -346,7 +358,7 @@ export default {
     },
     root: function () {
       return typeof this.type.root === 'function' ? this.type.root() : this.type.root
-    }
+    },
   },
   watch: {
     editedItem: {
@@ -354,8 +366,8 @@ export default {
       handler: function (val) {
         // console.log("type flag 3 editedItem",this.editedItem)
         this.preProcessOptions()
-      }
-    }
+      },
+    },
   },
   methods: {
     async preProcessOptions () {
@@ -368,11 +380,11 @@ export default {
           this.$set(this.type, '_selectItems', this.type.selectItems())
         }
       }
-    }
+    },
   },
   mounted () {
     this.preProcessOptions()
-  }
+  },
 }
 </script>
 

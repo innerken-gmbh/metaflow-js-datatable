@@ -5,7 +5,7 @@
       v-model="realDialog"
   >
     <v-card tile color="#f6f6f6">
-      <v-container>
+      <v-container style="max-width: 1024px">
         <div class="d-flex align-center mb-4">
           <v-btn @click="close" class="mr-4 rounded" height="36px" width="36px" outlined tile icon>
             <v-icon size="24">mdi-arrow-left</v-icon>
@@ -35,7 +35,7 @@
 
         </div>
         <v-form ref="form" v-model="valid" lazy-validation>
-          <div style="display: flex;"
+          <div
           >
             <div class="flex-grow-1">
               <template v-for="(field,index) in groupedFields">
@@ -110,8 +110,7 @@
                 </div>
               </v-card>
             </div>
-
-            <v-card width="360px" v-if="notRequiredFields.length>0" flat height="fit-content" class="pa-4 px-6 my-4 ml-6">
+            <v-card v-if="notRequiredFields.length>0" flat height="fit-content" class="pa-4 px-6 my-4">
               <h2 class="mb-6">{{ $t('选填信息') }}</h2>
               <div>
                 <template v-for="(field,index) in notRequiredFields">
@@ -125,14 +124,10 @@
                   </div>
                 </template>
               </div>
-
             </v-card>
           </div>
-
         </v-form>
-
       </v-container>
-
     </v-card>
   </v-dialog>
 
@@ -141,33 +136,37 @@
 <script>
 import FormField from './FormField'
 import { IKDataEntity } from '../../index'
+import IkDataTable  from './IkDataTable'
 
 export default {
   name: 'GeneralForm',
-  components: { FormField },
+  components: {
+    FormField,
+    IkDataTable,
+  },
   props: {
     title: {
       type: String,
-      default: 'Form'
+      default: 'Form',
     },
     formField: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     editedItem: {
       type: Object,
       default: () => {
-      }
+      },
     },
     editedIndex: {
       type: Number,
-      default: -1
+      default: -1,
     },
     dialog: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    useDeleteAction: { default: false }
+    useDeleteAction: { default: false },
 
   },
   data: function () {
@@ -175,8 +174,9 @@ export default {
       realDialog: this.dialog,
       valid: true,
       tab: null,
-      IKDataEntity: IKDataEntity
-
+      IKDataEntity: IKDataEntity,
+      detailModel: null,
+      detailRefKey: null,
     }
   },
 
@@ -194,7 +194,7 @@ export default {
     },
     notGroupedFields: function () {
       return this.formField.filter(f => f.dataType !== IKDataEntity.Types.Group)
-    }
+    },
   },
   watch: {
     realDialog (val) {
@@ -204,8 +204,8 @@ export default {
       immediate: true,
       handler: function (val) {
         this.realDialog = val
-      }
-    }
+      },
+    },
   },
   methods: {
     findLangEntityInLangArr (lang, arr) {
@@ -229,7 +229,7 @@ export default {
     },
     fieldIsRequired (field) {
       return field.required && (
-        (field.requiredEdit && this.editedIndex !== -1) ||
+          (field.requiredEdit && this.editedIndex !== -1) ||
           (field.requiredNew && this.editedIndex === -1))
     },
 
@@ -248,8 +248,8 @@ export default {
       if (this.$refs.form.validate()) {
         this.$emit('change-general-form', true)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

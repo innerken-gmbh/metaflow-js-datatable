@@ -1,11 +1,11 @@
 <template>
-  <v-container>
+  <v-container style="position: relative">
     <div class="d-flex">
       <div style="height: 37px;"
            class="d-flex align-center "
       >
         <v-icon size="24" class="mr-2">{{ icon }}</v-icon>
-        <span class="text-h3 font-weight-bold">{{ entityName }}</span>
+        <span class="text-h3 font-weight-bold">{{ entityName||model.name() }}</span>
       </div>
       <v-spacer></v-spacer>
       <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer"
@@ -43,9 +43,9 @@
         {{ $t('新增') }}
       </v-btn>
     </div>
-    <v-card rounded>
+    <v-card class="mt-4" style="position: sticky;top: 0;z-index: 2" elevation="0">
       <template v-if="!hideIkdatatableHeader">
-        <div style="background: white" class="d-flex ma-0 mt-4 pa-4 align-center">
+        <div style="background: white" class="d-flex ma-0 pa-4 align-center">
           <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1">
             <v-text-field
                 class=""
@@ -88,62 +88,26 @@
           </template>
 
           <template v-if="useDateFilter">
-            <v-spacer></v-spacer>
-            <v-menu
-                ref="datePickerMenu"
-                v-model="datePickerMenu"
-                :close-on-content-click="false"
-                :return-value.sync="dates"
-                :close-on-click="false"
-                offset-y
-                bottom
-                :nudge-width="0"
-            >
-              <template v-slot:activator="{ on }">
-                <div style="max-width: 300px; height: 54px;" class="d-flex align-center">
-                  <v-text-field
-                      class="ma-0 pa-0"
-                      v-model="dates"
-                      hide-details
-                      :label="$t('日期筛选')"
-                      outlined
-                      dense
-                      prepend-inner-icon="mdi-calendar"
-                      readonly
-                      single-line
-                      append-icon="mdi-close"
-                      @click:append="clear"
-                      v-on="on"
-                  />
-                </div>
-              </template>
-              <v-date-picker
 
+
+            <div style="max-width: 300px; height: 54px;" class="d-flex align-center">
+              <v-text-field
+                  @click="datePickerMenu=true"
+                  class="ma-0 pa-0"
                   v-model="dates"
-                  no-title
-                  :range="!useSingleDate"
-                  scrollable
-                  locale="de"
-              >
-                <v-spacer/>
-                <v-btn
-                    text
-                    color="primary"
-                    @click="datePickerMenu = false"
-                >
-                  {{ $t('Cancel') }}
-                </v-btn>
-                <v-btn
-                    text
-                    color="primary"
-                    @click="$refs.datePickerMenu.save(dates)"
-                >
-                  {{ $t('OK') }}
-                </v-btn>
-              </v-date-picker>
-            </v-menu>
-          </template>
+                  hide-details
+                  :label="$t('日期筛选')"
+                  outlined
+                  dense
+                  prepend-inner-icon="mdi-calendar"
+                  readonly
+                  single-line
+                  append-icon="mdi-close"
+              />
+            </div>
 
+
+          </template>
         </div>
       </template>
       <div v-if="Object.keys(filterItem).length>0">
@@ -167,10 +131,11 @@
       <template v-if="displayMergableFields.length>0 || useDateFilter">
         <v-divider/>
       </template>
+    </v-card>
+    <v-card rounded>
 
-      <slot name="extra-heading"/>
 
-      <div class="ma-0">
+      <div class="ma-0" style="position: sticky">
         <v-data-table
             v-model="selectedItems"
             :show-expand="showExpand"
@@ -282,8 +247,14 @@
                 v-else-if="
             adItem.dataType===Types.Date"
             >
-              <div>{{item[adItem.value] | beautifulTime}}</div>
+              <div>{{ item[adItem.value] | beautifulTime }}</div>
 
+            </template>
+            <template
+                v-else-if="
+            adItem.dataType===Types.Float"
+            >
+              <price-table-display :price="item[adItem.value]"/>
             </template>
           </template>
           <template v-slot:no-data>
@@ -306,39 +277,36 @@
             </td>
           </template>
         </v-data-table>
-
-        <v-dialog v-model="massEditDialog" max-width="600px">
-          <v-card class="pa-4 px-6">
-            <h4>{{ selectedItems.length }} {{ $t('Item') }} {{ $t('已经选中') }}</h4>
-
-            <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
-
-              <form-field
-                  :key="field.id"
-                  class="my-2"
-                  :no-details="true"
-                  :field="field"
-                  on-toolbar
-                  :edited-item="mergeItem"
-
-              />
-            </template>
-            <div class="d-flex">
-              <v-spacer/>
-              <v-btn @click="updateAll(mergeItem,false)"
-                     elevation="0"
-                     class="green darken-4 white--text mr-0"
-              >
-                {{ $t('更新选中') }}
-              </v-btn>
-
-            </div>
-          </v-card>
-        </v-dialog>
       </div>
-
     </v-card>
+    <v-dialog v-model="massEditDialog" max-width="600px">
+      <v-card class="pa-4 px-6">
+        <h4>{{ selectedItems.length }} {{ $t('Item') }} {{ $t('已经选中') }}</h4>
 
+        <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
+
+          <form-field
+              :key="field.id"
+              class="my-2"
+              :no-details="true"
+              :field="field"
+              on-toolbar
+              :edited-item="mergeItem"
+
+          />
+        </template>
+        <div class="d-flex">
+          <v-spacer/>
+          <v-btn @click="updateAll(mergeItem,false)"
+                 elevation="0"
+                 class="green darken-4 white--text mr-0"
+          >
+            {{ $t('更新选中') }}
+          </v-btn>
+
+        </div>
+      </v-card>
+    </v-dialog>
     <general-form
         ref="gf"
         :title="entityName"
@@ -347,9 +315,14 @@
         :edited-index="editedIndex"
         :form-field="formField"
         :use-delete-action="useDefaultAction&&useDeleteAction"
+        :detail-model="detailModel"
         @change-general-form="dialogChange"
     />
-
+    <v-dialog max-width="400px" v-model="datePickerMenu">
+      <v-card @click="datePickerMenu=false" color="#efefef" class="pa-2">
+        <date-range-picker v-model="dates"></date-range-picker>
+      </v-card>
+    </v-dialog>
     <v-dialog max-width="400px" v-model="showFilterDialog">
       <v-card class="ma-0 py-8 pa-4">
         <slot :items="items" name="filterLeft"></slot>
@@ -382,7 +355,7 @@
     </v-dialog>
   </v-container>
 </template>
-
+ 
 <script>
 
 import GeneralForm from './GeneralForm'
@@ -390,113 +363,112 @@ import ImgTemplate from './ImgTemplate'
 import FormField from './FormField'
 import { IKDataEntity } from '../../index'
 import IKUtils from 'innerken-js-utils'
-import dayjs from 'dayjs'
 import { groupBy } from 'lodash'
+import DateRangePicker from './DateRangePicker'
+import PriceTableDisplay from './PriceTableDisplay'
 
 export default {
   name: 'IkDataTable',
   components: {
+    PriceTableDisplay,
+    DateRangePicker,
     ImgTemplate,
     GeneralForm,
-    FormField
+    FormField,
   },
   props: {
     model: {
       type: Object,
       default: () => {
-      }
+      },
     },
     addText: {
       type: String,
-      default: 'Add'
+      default: 'Add',
     },
     entityName: {
       type: String,
-      default: ''
+      default: '',
     },
     filter: {
       type: [Object, Function],
       default: () => {
-      }
+      },
     },
     icon: {
       type: String,
-      default: ''
+      default: '',
     },
     showExpand: {
       type: Boolean,
-      default: false
+      default: false,
     },
     singleExpand: {
       type: Boolean,
-      default: false
+      default: false,
     },
     useSelect: {
       type: Boolean,
-      default: true
+      default: true,
     },
     useDefaultAction: {
       type: Boolean,
-      default: true
+      default: true,
     },
     useAddFilter: {
       type: Boolean,
-      default: true
+      default: true,
     },
     useEditAction: {
       type: Boolean,
-      default: true
+      default: true,
     },
     useDeleteAction: {
       type: Boolean,
-      default: true
+      default: true,
     },
     onePageArrangement: {
       type: Boolean,
-      default: false
+      default: false,
     },
     useDateFilter: {
       type: Boolean,
-      default: false
+      default: false,
     },
     useCustomerActionOnly: {
       type: Boolean,
-      default: false
+      default: false,
     },
     useAddAction: {
       type: Boolean,
-      default: true
+      default: true,
     },
     requiredDateValue: {},
     groupBy: {},
-    useSingleDate: {
-      type: Boolean,
-      default: false
-    },
     onePageArrangementHeight: {
       type: String,
-      default: ''
+      default: '',
     },
     hideDefaultFooter: {
       type: Boolean,
-      dafault: false
+      dafault: false,
     },
     hideIkdatatableHeader: {
       type: Boolean,
-      default: false
+      default: false,
     },
     hideSelectedAction: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    customOnRowClick: {}
+    customOnRowClick: {},
 
   },
   watch: {
     realFilter: {
       handler () {
         this.reload()
-      }
+      },
     },
     requiredDateValue: {
       immediate: true,
@@ -505,8 +477,8 @@ export default {
         if (val?.length === 2 || val?.length === 1) {
           this.dates = val
         }
-      }
-    }
+      },
+    },
   },
   data: function () {
     return {
@@ -535,25 +507,13 @@ export default {
       showFilterDialog: false,
       datePickerMenu: false,
       dates: null,
-      formDisc: {}
+      formDisc: {},
 
     }
   },
   computed: {
     okDates () {
-      let res = this.useSingleDate ? [this.dates, this.dates] : IKUtils.deepCopy(this.dates)
-      if (!res) {
-        res = []
-        res[0] = dayjs().format('YYYY-MM-DD')
-      }
-      if (res.length < 2) {
-        res[0] = res[0] ?? dayjs().format('YYYY-MM-DD')
-        res[1] = res[0]
-      }
-      if (Date.parse(res[0]) > Date.parse(res[1])) {
-        [res[0], res[1]] = [res[1], res[0]]
-      }
-      return res
+      return this.dates
     },
     realFilter () {
       const res = this.filter ?? {}
@@ -570,7 +530,7 @@ export default {
         borderStyle: 'solid',
         borderColor: '#c1c1c1',
         borderWidth: '1px',
-        transition: 'border-radius 200ms ease-in-out'
+        transition: 'border-radius 200ms ease-in-out',
       }
     },
     requiredDisplayNumber: function () {
@@ -583,20 +543,20 @@ export default {
     },
     displayMergableFields: function () {
       return this.shouldHideMergableField
-        ? this.mergableFields.slice(0, this.requiredDisplayNumber)
-        : this.mergableFields
+          ? this.mergableFields.slice(0, this.requiredDisplayNumber)
+          : this.mergableFields
     },
     mergableFields: function () {
       const res = this.formField
-        .filter(item =>
-          [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
-        .filter(item => item.merge)
-        .map(item => {
-          return {
-            ...item,
-            name: 'item.' + item.value
-          }
-        })
+          .filter(item =>
+              [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+          .filter(item => item.merge)
+          .map(item => {
+            return {
+              ...item,
+              name: 'item.' + item.value,
+            }
+          })
       console.log('mergableFields', res)
       return res
     },
@@ -604,11 +564,11 @@ export default {
       if (this.filterItem) {
         const res = this.items.filter(i => {
           return Object.keys(this.filterItem).filter(k => this.filterItem[k] != null).every(
-            t => {
-              const org = i[t]
-              const oth = this.filterItem[t]
-              return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(ot => org.includes(ot)))))
-            })
+              t => {
+                const org = i[t]
+                const oth = this.filterItem[t]
+                return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(ot => org.includes(ot)))))
+              })
         })
         return res
       }
@@ -624,18 +584,18 @@ export default {
           return {
             key: k,
             name: field.text,
-            value: [this.filterItem[k]].flat().map(k => selectionGroup[k][0][field.type.itemText]).join(', ')
+            value: [this.filterItem[k]].flat().map(k => selectionGroup[k][0][field.type.itemText]).join(', '),
           }
         } else if (field.dataType === IKDataEntity.Types.Boolean) {
           const selectionGroup = groupBy(field.type._selectItems, field.type.itemValue)
           return {
             key: k,
             name: field.text,
-            value: this.filterItem[k] ? 'Yes' : 'No'
+            value: this.filterItem[k] ? 'Yes' : 'No',
           }
         }
       })
-    }
+    },
   },
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
@@ -647,7 +607,7 @@ export default {
         text: 'action',
         width: '240px',
         value: 'action',
-        sortable: false
+        sortable: false,
       })
     }
 
@@ -664,16 +624,17 @@ export default {
   methods: {
     getAdvancedItems: function () {
       return this.headers
-        .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
-          IKDataEntity.Types.Date,
-          IKDataEntity.Types.Option, IKDataEntity.Types.Group, IKDataEntity.Types.Color
-        ].includes(item.dataType))
-        .map(item => {
-          return {
-            ...item,
-            name: 'item.' + item.value
-          }
-        })
+          .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
+            IKDataEntity.Types.Date,
+            IKDataEntity.Types.Option, IKDataEntity.Types.Group,
+            IKDataEntity.Types.Color, IKDataEntity.Types.Float,
+          ].includes(item.dataType))
+          .map(item => {
+            return {
+              ...item,
+              name: 'item.' + item.value,
+            }
+          })
     },
     getRealHeaders: function () {
       return this.headers.map(item => {
@@ -683,13 +644,13 @@ export default {
     },
     getSlottedItems: function () {
       return this.headers
-        .filter(item => item.overwrite)
-        .map(item => {
-          return {
-            ...item,
-            name: 'item.' + item.value
-          }
-        })
+          .filter(item => item.overwrite)
+          .map(item => {
+            return {
+              ...item,
+              name: 'item.' + item.value,
+            }
+          })
     },
     async dialogChange (save, remove = false) {
       if (remove) {
@@ -756,30 +717,26 @@ export default {
         })
       }
     },
-    clear () {
-      this.datePickerMenu = false
-      this.dates = null
-    },
     async deleteItem (item, promt = true) {
       if (promt) {
         const res = await IKUtils.showConfirmAsyn(
-          this.$i18n.t('Are you sure?'),
-          this.$i18n.t('you want to delete this item?')
+            this.$i18n.t('Are you sure?'),
+            this.$i18n.t('you want to delete this item?'),
         )
         console.log(res)
         if (res.isConfirmed) {
           IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+              .then(() => {
+                IKUtils.toast(this.$i18n.t('删除成功'))
+                this.reload()
+              })
+        }
+      } else {
+        IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
             .then(() => {
               IKUtils.toast(this.$i18n.t('删除成功'))
               this.reload()
             })
-        }
-      } else {
-        IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-          .then(() => {
-            IKUtils.toast(this.$i18n.t('删除成功'))
-            this.reload()
-          })
       }
     },
 
@@ -800,8 +757,8 @@ export default {
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
       this.loading = false
       this.$emit('reloaded')
-    }
-  }
+    },
+  },
 }
 </script>
 <style>

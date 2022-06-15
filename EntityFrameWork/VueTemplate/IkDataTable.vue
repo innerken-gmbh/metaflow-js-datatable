@@ -355,7 +355,7 @@
     </v-dialog>
   </v-container>
 </template>
- 
+
 <script>
 
 import GeneralForm from './GeneralForm'

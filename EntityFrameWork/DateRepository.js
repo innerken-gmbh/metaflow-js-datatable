@@ -1,5 +1,4 @@
 import dayjs from 'dayjs'
-import i18n from '@/i18n'
 
 function standardFormatter (dayObj) {
   return dayObj.format('YYYY-MM-DD')
@@ -46,7 +45,7 @@ export const predefinedDateRangeList = [{
 }]
 
 export function getNiceLabel (dateRange) {
-  return i18n.t(predefinedDateRangeList.find(s => s.dateRange().join(',') === dateRange.join(','))?.label) ?? (dateRange[0] === dateRange[1] ? dateRange[0] : dateRange.join(' ~ '))
+  return predefinedDateRangeList.find(s => s.dateRange().join(',') === dateRange.join(','))?.label ?? (dateRange[0] === dateRange[1] ? dateRange[0] : dateRange.join(' ~ '))
 }
 
 const stripeDateFormat = 'ddd, DD MMM YYYY HH:mm:ss '

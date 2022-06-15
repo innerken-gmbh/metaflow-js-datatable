@@ -35,8 +35,9 @@
 
         </div>
         <v-form ref="form" v-model="valid" lazy-validation>
-          <div style="display: grid;grid-template-columns: auto 400px;grid-gap: 20px">
-            <div>
+          <div style="display: flex;"
+          >
+            <div class="flex-grow-1">
               <template v-for="(field,index) in groupedFields">
                 <v-card flat :key="field.value+index+'group'" height="fit-content" class="pa-4 px-6 my-4">
                   <h2 class="mb-6">
@@ -88,7 +89,6 @@
 
               </template>
 
-
               <v-card flat height="fit-content" class="pa-4 px-6 my-4">
                 <h2 class="mb-6"> {{ $t('必填信息') }}</h2>
                 <div>
@@ -105,14 +105,13 @@
                       />
                     </div>
 
-
                   </template>
 
                 </div>
               </v-card>
             </div>
 
-            <v-card flat height="fit-content" class="pa-4 px-6 my-4">
+            <v-card width="360px" v-if="notRequiredFields.length>0" flat height="fit-content" class="pa-4 px-6 my-4 ml-6">
               <h2 class="mb-6">{{ $t('选填信息') }}</h2>
               <div>
                 <template v-for="(field,index) in notRequiredFields">
@@ -149,26 +148,26 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Form',
+      default: 'Form'
     },
     formField: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     editedItem: {
       type: Object,
       default: () => {
-      },
+      }
     },
     editedIndex: {
       type: Number,
-      default: -1,
+      default: -1
     },
     dialog: {
       type: Boolean,
-      default: false,
+      default: false
     },
-    useDeleteAction: { default: false },
+    useDeleteAction: { default: false }
 
   },
   data: function () {
@@ -176,7 +175,7 @@ export default {
       realDialog: this.dialog,
       valid: true,
       tab: null,
-      IKDataEntity: IKDataEntity,
+      IKDataEntity: IKDataEntity
 
     }
   },
@@ -195,7 +194,7 @@ export default {
     },
     notGroupedFields: function () {
       return this.formField.filter(f => f.dataType !== IKDataEntity.Types.Group)
-    },
+    }
   },
   watch: {
     realDialog (val) {
@@ -205,8 +204,8 @@ export default {
       immediate: true,
       handler: function (val) {
         this.realDialog = val
-      },
-    },
+      }
+    }
   },
   methods: {
     findLangEntityInLangArr (lang, arr) {
@@ -214,7 +213,6 @@ export default {
     },
 
     copyToAll (field, arr) {
-
       const [de, zh, en] = [this.findLangEntityInLangArr('DE', arr),
         this.findLangEntityInLangArr('ZH', arr),
         this.findLangEntityInLangArr('EN', arr)]
@@ -228,12 +226,11 @@ export default {
           key[fieldKey] = target
         }
       }
-
     },
     fieldIsRequired (field) {
       return field.required && (
-          (field.requiredEdit && this.editedIndex !== -1) ||
-          (field.requiredNew && this.editedIndex === -1))
+        (field.requiredEdit && this.editedIndex !== -1) ||
+            (field.requiredNew && this.editedIndex === -1))
     },
 
     close () {
@@ -251,8 +248,8 @@ export default {
       if (this.$refs.form.validate()) {
         this.$emit('change-general-form', true)
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

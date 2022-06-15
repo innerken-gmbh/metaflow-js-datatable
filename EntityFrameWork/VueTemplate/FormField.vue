@@ -15,6 +15,9 @@
       />
     </template>
     <template v-else-if="type.name==='select'">
+      <div v-if="!onToolbar">
+        <div class="text-overline">{{ $t(text) }}</div>
+      </div>
       <v-select
           :outlined="!solo"
           :placeholder="$t(text)"
@@ -28,7 +31,6 @@
           :item-text="type.itemText"
           :item-value="type.itemValue"
           :multiple="type.multiple"
-          :label="$t(text)"
           :rules="rules"
           :solo="solo"
       >
@@ -37,7 +39,7 @@
               v-if="index==0"
               class="grey--text text-caption"
           >
-          (+{{ editedItem[value].length || 1 }})
+          {{$t(text)}}(+{{ editedItem[value].length || 1 }})
         </span>
         </template>
       </v-select>
@@ -54,7 +56,6 @@
             v-model="editedItem[value]"
             :disabled="shouldDisable"
             :items="[{text:$t('yes'),value:true},{text:$t('no'),value:false}]"
-            :label="$t(text)"
             :rules="rules"
         />
       </template>
@@ -94,10 +95,10 @@
           prepend-icon=""
           prepend-inner-icon="mdi-file"
           :hide-details="noDetails"
-          :placeholder="$t(texxt)"
+          :placeholder="$t(text)"
           v-model="editedItem[type.fileStorage]"
           :disabled="shouldDisable"
-          :label="$t(texxt)"
+          :label="$t(text)"
           :rules="rules"
           show-size
           counter
@@ -154,10 +155,10 @@
       >
         <template v-slot:activator="{ on }">
           <v-text-field
-              :placeholder="$t(texxt)"
+              :placeholder="$t(text)"
               :dense="!fullHeight"
               v-model="editedItem[value]"
-              :label="$t(texxt)"
+              :label="$t(text)"
               prepend-icon="mdi-clock-outline"
               readonly
               v-on="on"
@@ -244,35 +245,35 @@ export default {
     field: {
       type: Object,
       default: () => {
-      },
+      }
     },
     editedItem: {
       type: Object,
       default: () => {
-      },
+      }
     },
     currentState: {
       type: Number,
-      default: -1,
+      default: -1
     },
     noDetails: {
       type: Boolean,
-      default: false,
+      default: false
     },
     onToolbar: {
       type: Boolean,
-      default: false,
+      default: false
     },
     fullHeight: { default: false },
     hideSelect: { default: false },
-    solo: { default: false },
+    solo: { default: false }
   },
   data: function () {
     return {
       timePickerShow: false,
       datePickerShow: false,
       colorPickerShow: false,
-      ...this.field,
+      ...this.field
     }
   },
   computed: {
@@ -287,7 +288,7 @@ export default {
         borderColor: '#c1c1c1',
         borderWidth: '1px',
         borderRadius: colorPickerShow ? '50%' : '4px',
-        transition: 'border-radius 200ms ease-in-out',
+        transition: 'border-radius 200ms ease-in-out'
       }
     },
     selectItemsIsDynamic: function () {
@@ -302,7 +303,7 @@ export default {
         } else {
           result = items.map(item => ({
             ...item,
-            disabled: false,
+            disabled: false
           }))
         }
         return result
@@ -324,7 +325,7 @@ export default {
     },
     shouldDisable: function () {
       return (this.disableNew && this.isNew) ||
-          (this.disableEdit && !this.isNew)
+            (this.disableEdit && !this.isNew)
     },
     rules: function () {
       let rules = this.rule
@@ -345,7 +346,7 @@ export default {
     },
     root: function () {
       return typeof this.type.root === 'function' ? this.type.root() : this.type.root
-    },
+    }
   },
   watch: {
     editedItem: {
@@ -353,8 +354,8 @@ export default {
       handler: function (val) {
         // console.log("type flag 3 editedItem",this.editedItem)
         this.preProcessOptions()
-      },
-    },
+      }
+    }
   },
   methods: {
     async preProcessOptions () {
@@ -367,11 +368,11 @@ export default {
           this.$set(this.type, '_selectItems', this.type.selectItems())
         }
       }
-    },
+    }
   },
   mounted () {
     this.preProcessOptions()
-  },
+  }
 }
 </script>
 

@@ -32,7 +32,6 @@
 
       </template>
 
-
       <v-btn
           v-if="useDefaultAction && useAddAction"
           color="green darken-4"
@@ -149,7 +148,8 @@
       </template>
       <div v-if="Object.keys(filterItem).length>0">
         <div class="px-4 pb-2">
-          <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)" label close
+          <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)"
+                  label close
                   @click:close="$delete(filterItem,item.key)"
                   class="mr-2"
                   v-for="item in filterDisplayChips"
@@ -159,7 +159,7 @@
                 item.name
               }}
             </span>
-            {{ item.value }}
+            {{ $t(item.value) }}
           </v-chip>
         </div>
       </div>
@@ -194,7 +194,9 @@
               <div class="display-2"> {{ $t('time') }}: {{ items.group }} {{ $t('hour') }}</div>
             </td>
           </template>
-
+          <template #item.action>
+            <slot name="item.action"></slot>
+          </template>
           <template
               v-for="slottedItem in slottedItems"
               v-slot:[slottedItem.name]="{ item }"
@@ -262,7 +264,7 @@
             >
               <template v-if="adItem.type.color">
                  <span
-                     class="pa-1 px-3 white--text rounded-pill"
+                     class="pa-1 px-3 white--text rounded-pill text-no-wrap"
                      :class="
                        adItem.type.color
                      .find(c=>{return parseInt(item[adItem.value])===c.id}).color"
@@ -274,6 +276,13 @@
                 <span>{{ item['opt' + adItem.value].join(', ') }}</span>
 
               </template>
+
+            </template>
+            <template
+                v-else-if="
+            adItem.dataType===Types.Date"
+            >
+              <div>{{item[adItem.value] | beautifulTime}}</div>
 
             </template>
           </template>
@@ -301,7 +310,6 @@
         <v-dialog v-model="massEditDialog" max-width="600px">
           <v-card class="pa-4 px-6">
             <h4>{{ selectedItems.length }} {{ $t('Item') }} {{ $t('已经选中') }}</h4>
-
 
             <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
 
@@ -390,104 +398,105 @@ export default {
   components: {
     ImgTemplate,
     GeneralForm,
-    FormField,
+    FormField
   },
   props: {
     model: {
       type: Object,
       default: () => {
-      },
+      }
     },
     addText: {
       type: String,
-      default: 'Add',
+      default: 'Add'
     },
     entityName: {
       type: String,
-      default: '',
+      default: ''
     },
     filter: {
       type: [Object, Function],
       default: () => {
-      },
+      }
     },
     icon: {
       type: String,
-      default: '',
+      default: ''
     },
     showExpand: {
       type: Boolean,
-      default: false,
+      default: false
     },
     singleExpand: {
       type: Boolean,
-      default: false,
+      default: false
     },
     useSelect: {
       type: Boolean,
-      default: true,
+      default: true
     },
     useDefaultAction: {
       type: Boolean,
-      default: true,
+      default: true
     },
     useAddFilter: {
       type: Boolean,
-      default: true,
+      default: true
     },
     useEditAction: {
       type: Boolean,
-      default: true,
+      default: true
     },
     useDeleteAction: {
       type: Boolean,
-      default: true,
+      default: true
     },
     onePageArrangement: {
       type: Boolean,
-      default: false,
+      default: false
     },
     useDateFilter: {
       type: Boolean,
-      default: false,
+      default: false
     },
     useCustomerActionOnly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     useAddAction: {
       type: Boolean,
-      default: true,
+      default: true
     },
     requiredDateValue: {},
     groupBy: {},
     useSingleDate: {
       type: Boolean,
-      default: false,
+      default: false
     },
     onePageArrangementHeight: {
       type: String,
-      default: '',
+      default: ''
     },
     hideDefaultFooter: {
       type: Boolean,
-      dafault: false,
+      dafault: false
     },
     hideIkdatatableHeader: {
       type: Boolean,
-      default: false,
+      default: false
     },
     hideSelectedAction: {
       type: Boolean,
-      default: false,
+      default: false
     },
+    customOnRowClick: {}
 
   },
   watch: {
     realFilter: {
       handler () {
         this.reload()
-      },
+      }
     },
     requiredDateValue: {
       immediate: true,
@@ -496,8 +505,8 @@ export default {
         if (val?.length === 2 || val?.length === 1) {
           this.dates = val
         }
-      },
-    },
+      }
+    }
   },
   data: function () {
     return {
@@ -526,7 +535,7 @@ export default {
       showFilterDialog: false,
       datePickerMenu: false,
       dates: null,
-      formDisc: {},
+      formDisc: {}
 
     }
   },
@@ -552,7 +561,6 @@ export default {
         res.dateFilter = this.okDates
       }
       return res
-
     },
     swatchStyle () {
       return {
@@ -562,7 +570,7 @@ export default {
         borderStyle: 'solid',
         borderColor: '#c1c1c1',
         borderWidth: '1px',
-        transition: 'border-radius 200ms ease-in-out',
+        transition: 'border-radius 200ms ease-in-out'
       }
     },
     requiredDisplayNumber: function () {
@@ -574,35 +582,33 @@ export default {
       return res
     },
     displayMergableFields: function () {
-      return this.shouldHideMergableField ?
-          this.mergableFields.slice(0, this.requiredDisplayNumber) :
-          this.mergableFields
+      return this.shouldHideMergableField
+        ? this.mergableFields.slice(0, this.requiredDisplayNumber)
+        : this.mergableFields
     },
     mergableFields: function () {
       const res = this.formField
-          .filter(item =>
-              [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
-          .filter(item => item.merge)
-          .map(item => {
-            return {
-              ...item,
-              name: 'item.' + item.value,
-            }
-          })
+        .filter(item =>
+          [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+        .filter(item => item.merge)
+        .map(item => {
+          return {
+            ...item,
+            name: 'item.' + item.value
+          }
+        })
       console.log('mergableFields', res)
       return res
     },
     tableItem: function () {
-
       if (this.filterItem) {
         const res = this.items.filter(i => {
           return Object.keys(this.filterItem).filter(k => this.filterItem[k] != null).every(
-              t => {
-                const org = i[t]
-                const oth = this.filterItem[t]
-                return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(ot => org.includes(ot)))))
-
-              })
+            t => {
+              const org = i[t]
+              const oth = this.filterItem[t]
+              return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(ot => org.includes(ot)))))
+            })
         })
         return res
       }
@@ -618,19 +624,18 @@ export default {
           return {
             key: k,
             name: field.text,
-            value: [this.filterItem[k]].flat().map(k => selectionGroup[k][0][field.type.itemText]).join(', '),
+            value: [this.filterItem[k]].flat().map(k => selectionGroup[k][0][field.type.itemText]).join(', ')
           }
         } else if (field.dataType === IKDataEntity.Types.Boolean) {
           const selectionGroup = groupBy(field.type._selectItems, field.type.itemValue)
           return {
             key: k,
             name: field.text,
-            value: this.filterItem[k] ? 'Yes' : 'No',
+            value: this.filterItem[k] ? 'Yes' : 'No'
           }
         }
-
       })
-    },
+    }
   },
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
@@ -642,7 +647,7 @@ export default {
         text: 'action',
         width: '240px',
         value: 'action',
-        sortable: false,
+        sortable: false
       })
     }
 
@@ -659,16 +664,16 @@ export default {
   methods: {
     getAdvancedItems: function () {
       return this.headers
-          .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
-            IKDataEntity.Types.Date,
-            IKDataEntity.Types.Option, IKDataEntity.Types.Group, IKDataEntity.Types.Color,
-          ].includes(item.dataType))
-          .map(item => {
-            return {
-              ...item,
-              name: 'item.' + item.value,
-            }
-          })
+        .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
+          IKDataEntity.Types.Date,
+          IKDataEntity.Types.Option, IKDataEntity.Types.Group, IKDataEntity.Types.Color
+        ].includes(item.dataType))
+        .map(item => {
+          return {
+            ...item,
+            name: 'item.' + item.value
+          }
+        })
     },
     getRealHeaders: function () {
       return this.headers.map(item => {
@@ -678,13 +683,13 @@ export default {
     },
     getSlottedItems: function () {
       return this.headers
-          .filter(item => item.overwrite)
-          .map(item => {
-            return {
-              ...item,
-              name: 'item.' + item.value,
-            }
-          })
+        .filter(item => item.overwrite)
+        .map(item => {
+          return {
+            ...item,
+            name: 'item.' + item.value
+          }
+        })
     },
     async dialogChange (save, remove = false) {
       if (remove) {
@@ -713,7 +718,6 @@ export default {
         this.mergeItem = {}
         newItem = {}
         IKUtils.toast(this.$i18n.t('编辑成功'))
-
       }
       this.massEditDialog = false
       this.selectedItems = []
@@ -759,32 +763,34 @@ export default {
     async deleteItem (item, promt = true) {
       if (promt) {
         const res = await IKUtils.showConfirmAsyn(
-            this.$i18n.t('Are you sure?'),
-            this.$i18n.t('you want to delete this item?'),
+          this.$i18n.t('Are you sure?'),
+          this.$i18n.t('you want to delete this item?')
         )
         console.log(res)
-        if(res.isConfirmed){
+        if (res.isConfirmed) {
           IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-              .then(() => {
-                IKUtils.toast(this.$i18n.t('删除成功'))
-                this.reload()
-              })
-        }
-
-
-      } else {
-        IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
             .then(() => {
               IKUtils.toast(this.$i18n.t('删除成功'))
               this.reload()
             })
+        }
+      } else {
+        IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+          .then(() => {
+            IKUtils.toast(this.$i18n.t('删除成功'))
+            this.reload()
+          })
       }
     },
 
     editItem (item) {
-      this.editedIndex = this.tableItem.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.$refs.gf.realDialog = true
+      if (this.useDefaultAction && this.useEditAction) {
+        this.editedIndex = this.tableItem.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.$refs.gf.realDialog = true
+      } else if (this.customOnRowClick) {
+        this.customOnRowClick(item)
+      }
     },
 
     async reload () {
@@ -794,8 +800,8 @@ export default {
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
       this.loading = false
       this.$emit('reloaded')
-    },
-  },
+    }
+  }
 }
 </script>
 <style>

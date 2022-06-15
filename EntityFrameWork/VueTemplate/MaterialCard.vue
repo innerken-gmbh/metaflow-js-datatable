@@ -1,83 +1,83 @@
 <template>
   <v-card
-    :class="classes"
-    class="v-card--material pa-3"
-    v-bind="$attrs"
+      :class="classes"
+      class="v-card--material pa-3"
+      v-bind="$attrs"
   >
     <div class="d-flex grow flex-wrap">
       <v-avatar
-        v-if="avatar"
-        class="mx-auto v-card--material__avatar elevation-6"
-        color="grey"
-        size="128"
+          v-if="avatar"
+          class="mx-auto v-card--material__avatar elevation-6"
+          color="grey"
+          size="128"
       >
         <v-img :src="avatar"/>
       </v-avatar>
 
       <v-sheet
-        v-else
-        :class="{
+          v-else
+          :class="{
           'pa-7': !$slots.image
         }"
-        :color="color"
-        :max-height="icon ? 90 : undefined"
-        :width="inline || icon ? 'auto' : '100%'"
-        class="text-start v-card--material__heading mb-n6"
-        dark
-        elevation="6"
+          :color="color"
+          :max-height="icon ? 90 : undefined"
+          :width="inline || icon ? 'auto' : '100%'"
+          class="text-start v-card--material__heading mb-n6"
+          dark
+          elevation="6"
       >
         <slot
-          v-if="$slots.heading"
-          name="heading"
+            v-if="$slots.heading"
+            name="heading"
         />
 
         <slot
-          v-else-if="$slots.image"
-          name="image"
+            v-else-if="$slots.image"
+            name="image"
         />
 
         <div
-          v-else-if="title && !icon"
-          class="display-1 font-weight-light"
-          v-text="title"
+            v-else-if="title && !icon"
+            class="display-1 font-weight-light"
+            v-text="title"
         />
 
         <v-icon
-          v-else-if="icon"
-          size="32"
-          v-text="icon"
+            v-else-if="icon"
+            size="32"
+            v-text="icon"
         />
 
         <div
-          v-if="text"
-          class="headline font-weight-thin"
-          v-text="text"
+            v-if="text"
+            class="headline font-weight-thin"
+            v-text="text"
         />
       </v-sheet>
 
       <div
-        v-if="$slots['after-heading']"
-        class="ml-6"
+          v-if="$slots['after-heading']"
+          class="ml-6"
       >
         <slot name="after-heading"/>
       </div>
 
       <v-col
-        v-if="hoverReveal"
-        class="text-center py-0 mt-n12"
-        cols="12"
+          v-if="hoverReveal"
+          class="text-center py-0 mt-n12"
+          cols="12"
       >
         <slot name="reveal-actions"/>
       </v-col>
 
       <div
-        v-else-if="icon && title"
-        class="ml-4"
+          v-else-if="icon && title"
+          class="ml-4"
       >
         <div
 
-          class="card-title font-weight-light"
-          v-text="title"
+            class="card-title font-weight-light"
+            v-text="title"
         />
       </div>
     </div>
@@ -150,19 +150,19 @@ export default {
 </script>
 
 <style lang="sass">
-  .v-card--material
-    &__avatar
-      position: relative
-      top: -64px
-      margin-bottom: -32px
+.v-card--material
+  &__avatar
+    position: relative
+    top: -64px
+    margin-bottom: -32px
 
-    &__heading
-      position: relative
-      top: -40px
-      transition: .3s ease
-      z-index: 1
+  &__heading
+    position: relative
+    top: -40px
+    transition: .3s ease
+    z-index: 1
 
-    &.v-card--material--hover-reveal:hover
-      .v-card--material__heading
-        transform: translateY(-40px)
+  &.v-card--material--hover-reveal:hover
+    .v-card--material__heading
+      transform: translateY(-40px)
 </style>

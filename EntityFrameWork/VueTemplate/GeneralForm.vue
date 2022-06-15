@@ -230,7 +230,7 @@ export default {
     fieldIsRequired (field) {
       return field.required && (
         (field.requiredEdit && this.editedIndex !== -1) ||
-            (field.requiredNew && this.editedIndex === -1))
+          (field.requiredNew && this.editedIndex === -1))
     },
 
     close () {

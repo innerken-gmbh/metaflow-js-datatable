@@ -325,7 +325,7 @@ export default {
     },
     shouldDisable: function () {
       return (this.disableNew && this.isNew) ||
-            (this.disableEdit && !this.isNew)
+          (this.disableEdit && !this.isNew)
     },
     rules: function () {
       let rules = this.rule

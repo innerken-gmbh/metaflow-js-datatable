@@ -1,6 +1,7 @@
 <template>
 
   <v-dialog
+      persistent
       fullscreen
       v-model="realDialog"
   >
@@ -136,7 +137,7 @@
 <script>
 import FormField from './FormField'
 import { IKDataEntity } from '../../index'
-import IkDataTable  from './IkDataTable'
+import IkDataTable from './IkDataTable'
 
 export default {
   name: 'GeneralForm',

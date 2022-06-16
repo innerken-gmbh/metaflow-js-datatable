@@ -4,8 +4,9 @@
       <div style="height: 37px;"
            class="d-flex align-center "
       >
+        <slot name="navigation"></slot>
         <v-icon size="24" class="mr-2">{{ icon }}</v-icon>
-        <span class="text-h3 font-weight-bold">{{ entityName||model.name() }}</span>
+        <span class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
       </div>
       <v-spacer></v-spacer>
       <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer"
@@ -315,7 +316,6 @@
         :edited-index="editedIndex"
         :form-field="formField"
         :use-delete-action="useDefaultAction&&useDeleteAction"
-        :detail-model="detailModel"
         @change-general-form="dialogChange"
     />
     <v-dialog max-width="400px" v-model="datePickerMenu">
@@ -462,7 +462,7 @@ export default {
       default: false,
     },
     customOnRowClick: {},
-
+    fixedFilter: {},
   },
   watch: {
     realFilter: {
@@ -557,7 +557,6 @@ export default {
               name: 'item.' + item.value,
             }
           })
-      console.log('mergableFields', res)
       return res
     },
     tableItem: function () {
@@ -577,24 +576,35 @@ export default {
     filterDisplayChips: function () {
       const keys = Object.keys(this.filterItem)
 
-      return keys.map((k) => {
-        const field = this.formDisc[k][0]
-        if (field.dataType === IKDataEntity.Types.Option) {
-          const selectionGroup = groupBy(field.type._selectItems, field.type.itemValue)
-          return {
-            key: k,
-            name: field.text,
-            value: [this.filterItem[k]].flat().map(k => selectionGroup[k][0][field.type.itemText]).join(', '),
-          }
-        } else if (field.dataType === IKDataEntity.Types.Boolean) {
-          const selectionGroup = groupBy(field.type._selectItems, field.type.itemValue)
-          return {
-            key: k,
-            name: field.text,
-            value: this.filterItem[k] ? 'Yes' : 'No',
-          }
-        }
-      })
+      return keys.filter(k => (!this.fixedFilter || !Object.keys(this.fixedFilter).includes(k)) && [this.filterItem[k]].flat().length > 0)
+          .map((k) => {
+            const field = this.formDisc[k][0]
+            if (field.dataType === IKDataEntity.Types.Option) {
+              const selectionGroup = groupBy(field.type._selectItems, field.type.itemValue)
+              console.log(selectionGroup, 'groupContent')
+              if (selectionGroup) {
+                return {
+                  key: k,
+                  name: field.text,
+                  value: [this.filterItem[k]].flat().map(t => selectionGroup[t][0][field.type.itemText]).join(', '),
+                }
+              } else {
+                return {
+                  key: k,
+                  name: field.text,
+                  value: [this.filterItem[k]].flat().join(','),
+                }
+              }
+
+            } else if (field.dataType === IKDataEntity.Types.Boolean) {
+              const selectionGroup = groupBy(field.type._selectItems, field.type.itemValue)
+              return {
+                key: k,
+                name: field.text,
+                value: this.filterItem[k] ? 'Yes' : 'No',
+              }
+            }
+          })
     },
   },
   mounted () {
@@ -611,6 +621,10 @@ export default {
       })
     }
 
+    if (this.fixedFilter) {
+      this.defaultItem = Object.assign({}, this.defaultItem, this.fixedFilter)
+    }
+
     this.realHeaders = this.getRealHeaders()
     this.advancedItems = this.getAdvancedItems()
     this.slottedItems = this.getSlottedItems()
@@ -622,13 +636,16 @@ export default {
     })
   },
   methods: {
+    resetFilterItem () {
+      this.filterItem = this.fixedFilter ?? {}
+    },
     getAdvancedItems: function () {
       return this.headers
           .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
             IKDataEntity.Types.Date,
             IKDataEntity.Types.Option, IKDataEntity.Types.Group,
             IKDataEntity.Types.Color, IKDataEntity.Types.Float,
-          ].includes(item.dataType))
+          ].includes(item.dataType) && !item.overwrite)
           .map(item => {
             return {
               ...item,
@@ -753,9 +770,10 @@ export default {
     async reload () {
       const model = this.model
       this.loading = true
-
+      this.filterItem = this.fixedFilter ?? {}
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
       this.loading = false
+      this.$refs.gf.realDialog = false
       this.$emit('reloaded')
     },
   },

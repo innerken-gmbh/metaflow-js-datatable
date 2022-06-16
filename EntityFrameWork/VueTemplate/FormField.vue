@@ -285,6 +285,7 @@ export default {
       timePickerShow: false,
       datePickerShow: false,
       colorPickerShow: false,
+      textArea:false,
       ...this.field,
     }
   },

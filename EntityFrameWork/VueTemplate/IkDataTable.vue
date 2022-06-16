@@ -142,7 +142,6 @@
             :show-expand="showExpand"
             :single-expand="singleExpand"
             :show-select="useSelect"
-            :fixed-header="true"
             :headers="realHeaders"
             :items="tableItem"
             :loading="loading"

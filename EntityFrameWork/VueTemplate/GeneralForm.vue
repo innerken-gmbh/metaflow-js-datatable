@@ -1,121 +1,106 @@
 <template>
 
-  <v-dialog
-      persistent
-      fullscreen
+  <v-navigation-drawer
+      width="580px"
+      color="#eeeeee"
+      temporary
+      right
+      app
+      touchless
       v-model="realDialog"
   >
-    <v-card tile color="#f6f6f6">
-      <v-container style="max-width: 1024px">
-        <div class="d-flex align-center mb-4">
-          <v-btn @click="close" class="mr-4 rounded" height="36px" width="36px" outlined tile icon>
-            <v-icon size="24">mdi-arrow-left</v-icon>
-          </v-btn>
-          <div class="text-h3">
-            {{ (editedItem['name'] || editedItem['dishName'] || title) }}
-          </div>
-          <v-spacer></v-spacer>
-          <v-btn
-              v-if="useDeleteAction"
-              color="error darken-4"
-              elevation="0"
-              class="mr-4"
-              @click="remove"
-          >
-            {{ $t('删除') }}
-          </v-btn>
-          <v-btn
-              color="primary"
-              elevation="0"
-              class="mr-0"
-              :disabled="!valid"
-              @click="save"
-          >
-            {{ $t('Save') }}
-          </v-btn>
-
+    <v-container>
+      <div class="d-flex align-center mb-4">
+        <v-btn @click="close" class="mr-4 rounded" height="36px" width="36px" outlined tile icon>
+          <v-icon size="24">mdi-arrow-left</v-icon>
+        </v-btn>
+        <div class="text-h3">
+          {{ (editedItem['name'] || editedItem['dishName'] || title) }}
         </div>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <div
-          >
-            <div class="flex-grow-1">
-              <template v-for="(field,index) in groupedFields">
-                <v-card flat :key="field.value+index+'group'" height="fit-content" class="pa-4 px-6 my-4">
-                  <h2 class="mb-6">
-                    {{ $t('' + field.groupName) }}
-                  </h2>
-                  <div class="d-flex">
-                    <div>
-                      <v-tabs height="36px" v-model="tab">
-                        <v-tab v-for="(child,i) in field.children"
-                               :key="field.value+'c'+editedItem[field.value][i][field.childLabelKey]+'tab'"
-                        >
-                          {{ $t(editedItem[field.value][i][field.childLabelKey].toLowerCase()) }}
-                        </v-tab>
-                      </v-tabs>
-                    </div>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                        @click="copyToAll(field,editedItem[field.value])"
-                        color="info"
-                        class="mr-0"
-                        elevation="0"
-                        small
-                        text
-                        depressed
-                    >
-                      <v-icon left>mdi-content-copy</v-icon>
-                      自动填充其他语言
-                    </v-btn>
-                  </div>
-                  <v-card class="pa-4 py-3" outlined>
-                    <v-tabs-items v-model="tab">
-                      <v-tab-item v-for="(child,i) in field.children">
-                        <template v-for="(c,t) in child">
-                          <div :key="field.id+'t'+t+'c'+i">
-                            <form-field
-                                v-if="editedItem[field.value]"
-                                :field="c"
-                                :current-state="editedIndex"
-                                :edited-item="editedItem[field.value][i]"
-                                no-details
-                            />
-                          </div>
-                        </template>
-                      </v-tab-item>
-                    </v-tabs-items>
-                  </v-card>
+        <v-spacer></v-spacer>
+        <v-btn
+            v-if="useDeleteAction"
+            color="error darken-4"
+            elevation="0"
+            class="mr-4"
+            @click="remove"
+        >
+          {{ $t('删除') }}
+        </v-btn>
+        <v-btn
+            color="primary"
+            elevation="0"
+            class="mr-0"
+            :disabled="!valid"
+            @click="save"
+        >
+          {{ $t('Save') }}
+        </v-btn>
 
+      </div>
+      <v-form ref="form" v-model="valid" lazy-validation>
+        <div
+        >
+          <div class="flex-grow-1">
+            <template v-for="(field,index) in groupedFields">
+              <v-card flat :key="field.value+index+'group'" height="fit-content" class="pa-4 px-6 my-4">
+                <h2 class="mb-6">
+                  {{ $t('' + field.groupName) }}
+                </h2>
+                <div class="d-flex">
+                  <div>
+                    <v-tabs height="36px" v-model="tab">
+                      <v-tab v-for="(child,i) in field.children"
+                             :key="field.value+'c'+editedItem[field.value][i][field.childLabelKey]+'tab'"
+                      >
+                        {{ $t(editedItem[field.value][i][field.childLabelKey].toLowerCase()) }}
+                      </v-tab>
+                    </v-tabs>
+                  </div>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                      @click="copyToAll(field,editedItem[field.value])"
+                      color="info"
+                      class="mr-0"
+                      elevation="0"
+                      small
+                      text
+                      depressed
+                  >
+                    <v-icon left>mdi-content-copy</v-icon>
+                    自动填充其他语言
+                  </v-btn>
+                </div>
+                <v-card class="pa-4 py-3" outlined>
+                  <v-tabs-items v-model="tab">
+                    <v-tab-item v-for="(child,i) in field.children">
+                      <template v-for="(c,t) in child">
+                        <div :key="field.id+'t'+t+'c'+i">
+                          <form-field
+                              v-if="editedItem[field.value]"
+                              :field="c"
+                              :current-state="editedIndex"
+                              :edited-item="editedItem[field.value][i]"
+                              no-details
+                          />
+                        </div>
+                      </template>
+                    </v-tab-item>
+                  </v-tabs-items>
                 </v-card>
 
-              </template>
-
-              <v-card flat height="fit-content" class="pa-4 px-6 my-4">
-                <h2 class="mb-6"> {{ $t('必填信息') }}</h2>
-                <div>
-                  <template v-for="(field,index) in requiredFields">
-
-                    <div :key="'f1'+index"
-                         class="my-4"
-                    >
-                      <form-field
-                          :field="field"
-                          :current-state="editedIndex"
-                          :edited-item="editedItem"
-                          no-details
-                      />
-                    </div>
-
-                  </template>
-
-                </div>
               </v-card>
-            </div>
-            <v-card v-if="notRequiredFields.length>0" flat height="fit-content" class="pa-4 px-6 my-4">
-              <h2 class="mb-6">{{ $t('选填信息') }}</h2>
+
+            </template>
+
+            <v-card flat height="fit-content" class="pa-4 px-6 my-4">
+              <h2 class="mb-6"> {{ $t('必填信息') }}</h2>
               <div>
-                <template v-for="(field,index) in notRequiredFields">
-                  <div :key="'f2'+index" class="my-4">
+                <template v-for="(field,index) in requiredFields">
+
+                  <div :key="'f1'+index"
+                       class="my-4"
+                  >
                     <form-field
                         :field="field"
                         :current-state="editedIndex"
@@ -123,14 +108,31 @@
                         no-details
                     />
                   </div>
+
                 </template>
+
               </div>
             </v-card>
           </div>
-        </v-form>
-      </v-container>
-    </v-card>
-  </v-dialog>
+          <v-card v-if="notRequiredFields.length>0" flat height="fit-content" class="pa-4 px-6 my-4">
+            <h2 class="mb-6">{{ $t('选填信息') }}</h2>
+            <div>
+              <template v-for="(field,index) in notRequiredFields">
+                <div :key="'f2'+index" class="my-4">
+                  <form-field
+                      :field="field"
+                      :current-state="editedIndex"
+                      :edited-item="editedItem"
+                      no-details
+                  />
+                </div>
+              </template>
+            </div>
+          </v-card>
+        </div>
+      </v-form>
+    </v-container>
+  </v-navigation-drawer>
 
 </template>
 

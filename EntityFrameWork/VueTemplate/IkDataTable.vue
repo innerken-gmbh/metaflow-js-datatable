@@ -20,7 +20,8 @@
             color="primary darken-4"
         >
           <v-icon left color="white">mdi-pencil</v-icon>
-          批量编辑
+          {{$t('批量编辑')}}
+
         </v-btn>
         <v-btn
             elevation="0"
@@ -28,7 +29,8 @@
             @click="updateAll(null,true)"
         >
           <v-icon left color="white">mdi-delete</v-icon>
-          批量删除
+          {{$t('批量删除')}}
+
         </v-btn>
 
       </template>
@@ -92,19 +94,10 @@
 
 
             <div style="max-width: 300px; height: 54px;" class="d-flex align-center">
-              <v-text-field
-                  @click="datePickerMenu=true"
-                  class="ma-0 pa-0"
-                  v-model="dates"
-                  hide-details
-                  :label="$t('日期筛选')"
-                  outlined
-                  dense
-                  prepend-inner-icon="mdi-calendar"
-                  readonly
-                  single-line
-                  append-icon="mdi-close"
-              />
+              <v-btn   @click="datePickerMenu=true" color="primary" elevation="0" outlined>
+                <v-icon left>mdi-calendar</v-icon>
+                {{$t('日期筛选')+' | '+ getNiceLabel(dates)}}
+              </v-btn>
             </div>
 
 
@@ -159,8 +152,8 @@
               <div class="display-2"> {{ $t('time') }}: {{ items.group }} {{ $t('hour') }}</div>
             </td>
           </template>
-          <template #item.action>
-            <slot name="item.action"></slot>
+          <template #item.action="{item}">
+            <slot name="item.action" :item="item"></slot>
           </template>
           <template
               v-for="slottedItem in slottedItems"
@@ -234,11 +227,11 @@
                        adItem.type.color
                      .find(c=>{return parseInt(item[adItem.value])===c.id}).color"
                  >
-                {{ item['opt' + adItem.value].join(', ') }}
+                {{ [item['opt' + adItem.value]].flat().join(', ') }}
               </span>
               </template>
               <template v-else>
-                <span>{{ item['opt' + adItem.value].join(', ') }}</span>
+                <span>{{ [item['opt' + adItem.value]].flat().join(', ') }}</span>
 
               </template>
 
@@ -365,6 +358,7 @@ import IKUtils from 'innerken-js-utils'
 import { groupBy } from 'lodash'
 import DateRangePicker from './DateRangePicker'
 import PriceTableDisplay from './PriceTableDisplay'
+import {getNiceLabel} from '../DateRepository'
 
 export default {
   name: 'IkDataTable',
@@ -635,6 +629,7 @@ export default {
     })
   },
   methods: {
+    getNiceLabel,
     resetFilterItem () {
       this.filterItem = this.fixedFilter ?? {}
     },

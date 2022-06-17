@@ -455,7 +455,7 @@ export function parseField (model) {
         if ((typeof item.form === 'undefined') || (item.form === true)) {
             formField.push(item)
             if (item.value) {
-                map[item.value] = item.default ? item.default : Types.getTypeDefault(item.dataType)
+                map[item.value] = typeof item.default !=='undefined' ? item.default : Types.getTypeDefault(item.dataType)
             }
             if (item.type) {
                 if (item.type.name === 'file') {

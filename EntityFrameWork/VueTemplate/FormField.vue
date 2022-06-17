@@ -127,9 +127,10 @@
         <template v-slot:activator="{ on }">
           <div class="text-overline">{{ $t(text) }}</div>
           <v-text-field
+              outlined
               :dense="!fullHeight"
               v-model="editedItem[value]"
-              prepend-icon="mdi-clock-outline"
+              prepend-inner-icon="mdi-clock-outline"
               readonly
               v-on="on"
           />

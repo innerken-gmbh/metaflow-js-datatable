@@ -49,7 +49,7 @@
     <v-card class="mt-4" style="position: sticky;top: 0;z-index: 2" elevation="0">
       <template v-if="!hideIkdatatableHeader">
         <div style="background: white" class="d-flex ma-0 pa-4 align-center">
-          <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1">
+          <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1">
             <v-text-field
                 class=""
                 v-model="search"
@@ -64,7 +64,7 @@
           </div>
           <template v-if="displayMergableFields.length>0">
             <template v-for="(field) in displayMergableFields">
-              <div :key="field.value" style="max-width: 164px; height: 100%" class="mr-2">
+              <div :key="field.value" style="max-width: 180px; height: 100%" class="mr-2">
                 <form-field
                     :full-height="false"
                     :hide-select="true"

@@ -15,7 +15,7 @@
           <v-icon size="24">mdi-arrow-left</v-icon>
         </v-btn>
         <div class="text-h3">
-          {{ (editedItem['name'] || editedItem['dishName'] || title) }}
+          {{ name }}
         </div>
         <v-spacer></v-spacer>
         <v-btn
@@ -198,6 +198,9 @@ export default {
     notGroupedFields: function () {
       return this.formField.filter(f => f.dataType !== IKDataEntity.Types.Group)
     },
+    name(){
+      return (this?.editedItem ?.name ?? this.editedItem?.dishName ?? this.title)
+    }
   },
   watch: {
     realDialog (val) {

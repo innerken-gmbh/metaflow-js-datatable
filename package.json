@@ -6,7 +6,7 @@
   "scripts": {
     "test": "node test.js",
     "lint": "eslint --fix",
-    "update": "npm run lint  && git add . && dotenv -- release-it --ci"
+    "update": "npm run lint  && git add . && release-it --ci"
   },
   "repository": {
     "type": "git",

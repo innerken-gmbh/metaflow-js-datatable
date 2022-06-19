@@ -185,12 +185,10 @@ export default {
 
   computed: {
     requiredFields: function () {
-      const res = this.notGroupedFields.filter(f => this.fieldIsRequired(f))
-      return res
+      return this.notGroupedFields.filter(f => this.fieldIsRequired(f))
     },
     notRequiredFields: function () {
-      const res = this.notGroupedFields.filter(f => !this.fieldIsRequired(f))
-      return res
+      return this.notGroupedFields.filter(f => !this.fieldIsRequired(f))
     },
     groupedFields: function () {
       return this.formField.filter(f => f.dataType === IKDataEntity.Types.Group)

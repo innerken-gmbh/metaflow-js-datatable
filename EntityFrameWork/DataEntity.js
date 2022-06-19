@@ -241,6 +241,7 @@ const ImageFormConfig = {
         name: 'image',
         root: () => '/',
         fileStorage: 'file',
+        hint:''
     },
 }
 

@@ -115,6 +115,9 @@
           show-size
           counter
       />
+      <template v-if="hint">
+        <div class="text-overline">{{ $t(hint) }}</div>
+      </template>
     </template>
     <template v-else-if="type.name==='time'">
       <v-dialog
@@ -203,42 +206,34 @@
     </template>
     <template v-else-if="type.name==='color'">
       <div class="text-overline">{{ $t(text) }}</div>
-      <v-text-field
-          outlined
-          :hide-details="noDetails"
-          :dense="!fullHeight"
-          v-model=editedItem[value]
-          class="pb-1"
+      <v-dialog
+          max-width="300px"
+          v-model="colorPickerShow"
+          :close-on-content-click="false"
       >
-        <template
-            v-slot:append
-        >
-          <v-menu
-              v-model="colorPickerShow"
-              top
-              nudge-bottom="105"
-              nudge-left="16"
-              :close-on-content-click="false"
+        <template v-slot:activator="{ on }">
+          <v-text-field
+              :dark="colorIsDark(editedItem[value])"
+              :background-color="editedItem[value]"
+              v-on="on"
+              outlined
+              :hide-details="noDetails"
+              :dense="!fullHeight"
+              v-model=editedItem[value]
+              class="pb-1"
           >
-            <template v-slot:activator="{ on }">
-              <div
-                  :style="swatchStyle"
-                  v-on="on"
-              />
-            </template>
-            <v-card>
-              <v-card-text
-                  class="pa-0"
-              >
-                <v-color-picker
-                    v-model="editedItem[value]"
-                    flat
-                />
-              </v-card-text>
-            </v-card>
-          </v-menu>
+          </v-text-field>
         </template>
-      </v-text-field>
+        <div style="width: fit-content">
+          <v-color-picker
+              show-swatches
+              v-model="editedItem[value]"
+              flat
+          />
+        </div>
+
+      </v-dialog>
+
     </template>
     <template v-else>
       <slot/>
@@ -250,7 +245,20 @@
 
 import ImgWithLoading from './ImgWithLoading'
 import Utils from 'innerken-js-utils'
-
+export function getColorLightness (c) {
+  if (c?.startsWith('#')) {
+    if (c.length < 5) {
+      c += 'fff'
+    }
+    const rgb = parseInt(c.substring(1), 16) // convert rrggbb to decimal
+    const r = (rgb >> 16) & 0xff // extract red
+    const g = (rgb >> 8) & 0xff // extract green
+    const b = (rgb >> 0) & 0xff // extract blue
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+  } else {
+    return 0
+  }
+}
 export default {
   name: 'FormField',
   components: { ImgWithLoading },
@@ -286,25 +294,12 @@ export default {
       timePickerShow: false,
       datePickerShow: false,
       colorPickerShow: false,
-      textArea:false,
+      textArea: false,
       ...this.field,
     }
   },
   computed: {
-    swatchStyle () {
-      const { colorPickerShow } = this
-      return {
-        backgroundColor: this.editedItem.color,
-        cursor: 'pointer',
-        height: '30px',
-        width: '30px',
-        borderStyle: 'solid',
-        borderColor: '#c1c1c1',
-        borderWidth: '1px',
-        borderRadius: colorPickerShow ? '50%' : '4px',
-        transition: 'border-radius 200ms ease-in-out',
-      }
-    },
+
     selectItemsIsDynamic: function () {
       return typeof this.type.selectItems === 'function'
     },
@@ -372,6 +367,9 @@ export default {
     },
   },
   methods: {
+    colorIsDark(color){
+      return getColorLightness(color)<128
+    },
     async preProcessOptions () {
       // console.log("type flag 2")
       if (this.selectItemsIsDynamic) {

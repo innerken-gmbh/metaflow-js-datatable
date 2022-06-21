@@ -3,40 +3,54 @@
       v-if="(currentState===-1&&inNew)||(currentState>-1&&inEdit)"
   >
     <template v-if="type.name==='text'">
-      <div class="text-overline">{{ $t(text) }}</div>
+      <div class="text-overline">{{ $t(text) }}
+        <span v-if="required" class="red--text text-body-1">*</span>
+      </div>
       <v-text-field
           v-if="!textArea"
           outlined
-          single-line
-          :dense="!fullHeight"
-          :hide-details="noDetails"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
           :rules="rules"
       />
       <v-textarea
           v-else
+          auto-grow
           outlined
-          single-line
-          :dense="!fullHeight"
-          :hide-details="noDetails"
+          counter
+          rows="1"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
           :rules="rules"
           :counter="maxLength||''"
       />
     </template>
+    <template v-if="type.name==='float'">
+      <div class="text-overline">{{ $t(text) }}
+        <span v-if="required" class="red--text text-body-1">*</span>
+      </div>
+      <v-text-field
+          outlined
+          v-model="editedItem[value]"
+          :disabled="shouldDisable"
+          :rules="rules"
+          type="number"
+          step="0.01"
+      >
+        <template #append>€</template>
+      </v-text-field>
+    </template>
     <template v-else-if="type.name==='select'">
-      <div v-if="!onToolbar">
-        <div class="text-overline">{{ $t(text) }}</div>
+      <div>
+        <div class="text-overline">{{ $t(text) }}
+          <span v-if="required" class="red--text text-body-1">*</span>
+        </div>
       </div>
       <v-select
-          :outlined="!solo"
+          outlined
           :placeholder="$t(text)"
-          :menu-props="{offsetY:true}"
-          :dense="true"
+          :menu-props="{offsetY:true, outlined:true,contentClass:'elevation-2 ikRounded',nudgeBottom:'16px'}"
           @click:clear="$emit('clear')"
-          :hide-details="noDetails"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
           :items="selectItemList"
@@ -44,7 +58,6 @@
           :item-value="type.itemValue"
           :multiple="type.multiple"
           :rules="rules"
-          :solo="solo"
       >
         <template v-if="hideSelect" v-slot:selection="{ item, index }">
           <span
@@ -84,40 +97,46 @@
       </template>
     </template>
     <template v-else-if="type.name==='image'">
-      <v-card flat color="#eeeeee" class="d-flex justify-center align-center"
-      >
-        <img-with-loading
-            v-if="editedItem[type.fileStorage]"
-            :height="'160px'"
-            :img-src="uploadUrl"
-        />
-        <template
-            v-else-if="currentState>-1"
+      <div class="d-flex flex-column align-center">
+        <v-card @click="startUpload" width="160px" flat color="#eeeeee" class="d-flex justify-center align-center"
         >
           <img-with-loading
+              v-if="editedItem[type.fileStorage]"
               :height="'160px'"
-              :img-src="root + editedItem[value]"
+              :img-src="uploadUrl"
           />
+          <template
+              v-else-if="currentState>-1"
+          >
+            <img-with-loading
+                :height="'160px'"
+                :img-src="root + editedItem[value]"
+            />
+          </template>
+          <v-btn absolute style="right: -12px" bottom fab x-small color="primary"><v-icon>mdi-plus</v-icon></v-btn>
+        </v-card>
+        <v-file-input
+            outlined
+            dense
+            ref="file"
+            style="height: 0px;opacity: 0"
+            class="mt-2"
+            prepend-icon=""
+            prepend-inner-icon="mdi-file"
+            :hide-details="noDetails"
+            :placeholder="$t(text)"
+            v-model="editedItem[type.fileStorage]"
+            :disabled="shouldDisable"
+            :label="$t(text)"
+            :rules="rules"
+            show-size
+            counter
+        />
+        <template v-if="hint">
+          <div class="text-overline">{{ $t(hint) }}</div>
         </template>
-      </v-card>
-      <v-file-input
-          outlined
-          dense
-          class="mt-2"
-          prepend-icon=""
-          prepend-inner-icon="mdi-file"
-          :hide-details="noDetails"
-          :placeholder="$t(text)"
-          v-model="editedItem[type.fileStorage]"
-          :disabled="shouldDisable"
-          :label="$t(text)"
-          :rules="rules"
-          show-size
-          counter
-      />
-      <template v-if="hint">
-        <div class="text-overline">{{ $t(hint) }}</div>
-      </template>
+      </div>
+
     </template>
     <template v-else-if="type.name==='time'">
       <v-dialog
@@ -206,33 +225,28 @@
     </template>
     <template v-else-if="type.name==='color'">
       <div class="text-overline">{{ $t(text) }}</div>
-      <v-dialog
-          max-width="300px"
-          v-model="colorPickerShow"
-          :close-on-content-click="false"
-      >
-        <template v-slot:activator="{ on }">
-          <v-text-field
-              :dark="colorIsDark(editedItem[value])"
-              :background-color="editedItem[value]"
-              v-on="on"
-              outlined
-              :hide-details="noDetails"
-              :dense="!fullHeight"
-              v-model=editedItem[value]
-              class="pb-1"
+      <v-item-group mandatory v-model="editedItem[value]">
+        <div style="display: grid;
+        grid-template-columns: repeat(auto-fill,48px);
+        grid-gap: 4px;"
+        >
+          <v-item
+              :key="color"
+              v-for="color in colorList"
+              :value="color"
+              v-slot="{active,toggle}"
           >
-          </v-text-field>
-        </template>
-        <div style="width: fit-content">
-          <v-color-picker
-              show-swatches
-              v-model="editedItem[value]"
-              flat
-          />
+            <v-card
+                @click="toggle" :color="color"
+                width="48px" height="48px"
+                class="d-flex align-center justify-center"
+            >
+              <v-icon v-if="active">mdi-check</v-icon>
+            </v-card>
+          </v-item>
         </div>
 
-      </v-dialog>
+      </v-item-group>
 
     </template>
     <template v-else>
@@ -242,9 +256,15 @@
 </template>
 
 <script>
-
+export const colorList = ['#FFCDD2', '#F8BBD0', '#E1BEE7',
+  '#D1C4E9', '#C5CAE9', '#BBDEFB',
+  '#B3E5FC', '#B2EBF2', '#B2DFDB',
+  '#C8E6C9', '#DCEDC8', '#F0F4C3',
+  '#FFF9C4', '#FFECB3', '#FFE0B2',
+  '#FFCCBC', '#D7CCC8', '#CFD8DC']
 import ImgWithLoading from './ImgWithLoading'
 import Utils from 'innerken-js-utils'
+
 export function getColorLightness (c) {
   if (c?.startsWith('#')) {
     if (c.length < 5) {
@@ -259,6 +279,7 @@ export function getColorLightness (c) {
     return 0
   }
 }
+
 export default {
   name: 'FormField',
   components: { ImgWithLoading },
@@ -291,9 +312,9 @@ export default {
   },
   data: function () {
     return {
+      colorList,
       timePickerShow: false,
       datePickerShow: false,
-      colorPickerShow: false,
       textArea: false,
       ...this.field,
     }
@@ -301,7 +322,7 @@ export default {
   computed: {
 
     selectItemsIsDynamic: function () {
-      return typeof this.type.selectItems === 'function'
+      return typeof this?.type?.selectItems === 'function'
     },
     selectItemList: function () {
       let selectItems = []
@@ -367,8 +388,12 @@ export default {
     },
   },
   methods: {
-    colorIsDark(color){
-      return getColorLightness(color)<128
+    startUpload(){
+      console.log(this.$refs.file.$refs.input)
+      this.$refs.file.$refs.input.click()
+    },
+    colorIsDark (color) {
+      return getColorLightness(color) < 128
     },
     async preProcessOptions () {
       // console.log("type flag 2")

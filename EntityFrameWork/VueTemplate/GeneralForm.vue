@@ -1,78 +1,63 @@
 <template>
 
   <v-navigation-drawer
-      width="580px"
-      color="#eeeeee"
+      width="min(900px,calc(100vw - 300px))"
+      color="#fafbfc"
       temporary
       right
       app
       touchless
       v-model="realDialog"
   >
-    <v-container>
-      <div class="d-flex align-center mb-4">
-        <v-btn @click="close" class="mr-4 rounded" height="36px" width="36px" outlined tile icon>
+    <v-container class="pa-6">
+      <div class="d-flex align-center mb-8">
+        <v-btn @click="close" class="mr-5 rounded" height="36px" width="36px" tile icon>
           <v-icon size="24">mdi-arrow-left</v-icon>
         </v-btn>
-        <div class="text-h3">
-          {{ name }}
+        <div class="text-h3 font-weight-bold">
+          {{ editedIndex === -1 ? '新增' : '编辑/' }}{{ name }}
         </div>
         <v-spacer></v-spacer>
-        <v-btn
-            v-if="useDeleteAction"
-            color="error darken-4"
-            elevation="0"
-            class="mr-4"
-            @click="remove"
-        >
-          {{ $t('删除') }}
-        </v-btn>
-        <v-btn
-            color="primary"
-            elevation="0"
-            class="mr-0"
-            :disabled="!valid"
-            @click="save"
-        >
-          {{ $t('Save') }}
-        </v-btn>
+
 
       </div>
       <v-form ref="form" v-model="valid" lazy-validation>
         <div
         >
+          <div v-if="imageField">
+            <form-field
+                :field="imageField[0]"
+                :current-state="editedIndex"
+                :edited-item="editedItem"
+                no-details
+            />
+          </div>
           <div class="flex-grow-1">
-            <template v-for="(field,index) in groupedFields">
-              <v-card flat :key="field.value+index+'group'" height="fit-content" class="pa-4 px-6 my-4">
-                <h2 class="mb-6">
-                  {{ $t('' + field.groupName) }}
-                </h2>
-                <div class="d-flex">
-                  <div>
-                    <v-tabs height="36px" v-model="tab">
-                      <v-tab v-for="(child,i) in field.children"
-                             :key="field.value+'c'+editedItem[field.value][i][field.childLabelKey]+'tab'"
-                      >
-                        {{ $t(editedItem[field.value][i][field.childLabelKey].toLowerCase()) }}
-                      </v-tab>
-                    </v-tabs>
+            <v-card outlined height="fit-content" class="pa-4 px-6 my-4">
+              <template v-for="(field,index) in groupedFields">
+                <div outlined :key="field.value+index+'group'">
+                  <div class="d-flex align-center">
+                    <div class="text-h4 font-weight-medium">
+                      {{ $t('' + field.groupName) }}
+                    </div>
+                    <v-spacer/>
+                    <div class="d-flex">
+                      <div>
+                        <v-tabs color="#232123" height="36px" v-model="tab">
+                          <v-tab v-for="(child,i) in field.children"
+                                 :key="field.value+'c'+editedItem[field.value][i][field.childLabelKey]+'tab'"
+                          >
+                            {{ $t(editedItem[field.value][i][field.childLabelKey].toLowerCase()) }}
+                            <span class="red--text" v-if="i===0"
+                            > * </span>
+                          </v-tab>
+                        </v-tabs>
+                      </div>
+                    </div>
                   </div>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                      @click="copyToAll(field,editedItem[field.value])"
-                      color="info"
-                      class="mr-0"
-                      elevation="0"
-                      small
-                      text
-                      depressed
-                  >
-                    <v-icon left>mdi-content-copy</v-icon>
-                    自动填充其他语言
-                  </v-btn>
-                </div>
-                <v-card class="pa-4 py-3" outlined>
-                  <v-tabs-items v-model="tab">
+
+
+                  <v-tabs-items v-model="tab" class="mt-8">
                     <v-tab-item v-for="(child,i) in field.children">
                       <template v-for="(c,t) in child">
                         <div :key="field.id+'t'+t+'c'+i">
@@ -87,36 +72,38 @@
                       </template>
                     </v-tab-item>
                   </v-tabs-items>
-                </v-card>
 
-              </v-card>
 
-            </template>
+                </div>
 
-            <v-card flat height="fit-content" class="pa-4 px-6 my-4">
-              <h2 class="mb-6"> {{ $t('必填信息') }}</h2>
+              </template>
               <div>
-                <template v-for="(field,index) in requiredFields">
-
-                  <div :key="'f1'+index"
-                       class="my-4"
-                  >
-                    <form-field
-                        :field="field"
-                        :current-state="editedIndex"
-                        :edited-item="editedItem"
-                        no-details
-                    />
-                  </div>
-
-                </template>
-
+                <div style="display: grid;grid-template-columns: repeat(2,1fr);grid-gap: 24px">
+                  <template v-for="(field,index) in requiredFields">
+                    <div :key="'f1'+index"
+                    >
+                      <form-field
+                          :field="field"
+                          :current-state="editedIndex"
+                          :edited-item="editedItem"
+                          no-details
+                      />
+                    </div>
+                  </template>
+                </div>
               </div>
             </v-card>
           </div>
-          <v-card v-if="notRequiredFields.length>0" flat height="fit-content" class="pa-4 px-6 my-4">
-            <h2 class="mb-6">{{ $t('选填信息') }}</h2>
-            <div>
+          <v-card v-if="notRequiredFields.length>0" outlined height="fit-content" class="pa-4 px-6 mt-8">
+            <div class="d-flex  mt-2 ">
+              <div class="text-h4 font-weight-medium">{{ $t('选填信息') }}</div>
+              <v-spacer></v-spacer>
+              <v-btn outlined style="border-radius: 8px" icon @click="showOptionalField=!showOptionalField">
+                <v-icon v-if="!showOptionalField">mdi-chevron-down</v-icon>
+                <v-icon v-else>mdi-chevron-up</v-icon>
+              </v-btn>
+            </div>
+            <div class="mt-6" v-if="showOptionalField">
               <template v-for="(field,index) in notRequiredFields">
                 <div :key="'f2'+index" class="my-4">
                   <form-field
@@ -128,7 +115,47 @@
                 </div>
               </template>
             </div>
+            <div class="mt-6 text-body-2" v-else>
+              以下的内容并不是必需填写的。我们会为您自动准备好相应的内容。点击以编辑。<br><br>
+              <template v-for="(field,index) in notRequiredFields">
+                <v-chip outlined
+                        @click="showOptionalField=true"
+                        label
+                        :key="'f2'+index"
+                        class="text-body-1 font-weight-bold mb-1 mr-1"
+                >
+                  {{ $t(field.text) }}
+                  <template v-if="editedItem[field.value]&&field.dataType!==IKDataEntity.Types.Color"> :
+                    {{
+                      Array.isArray(editedItem[field.value]) ? editedItem[field.value].length + '个' : editedItem[field.value]
+                    }}
+                  </template>
+                </v-chip>
+              </template>
+            </div>
           </v-card>
+          <div class="mt-8 pl-1">
+            <v-btn
+                color="primary"
+                elevation="0"
+                class="mr-4"
+                :disabled="!valid"
+                @click="save"
+            >
+              {{ $t('保存改动') }}
+            </v-btn>
+            <v-btn
+                outlined
+                v-if="editedIndex===-1"
+                elevation="0"
+                class="mr-0"
+                :disabled="!valid"
+                @click="save(false)"
+            >
+              {{ $t('保存并继续添加') }}
+            </v-btn>
+          </div>
+
         </div>
       </v-form>
     </v-container>
@@ -169,17 +196,16 @@ export default {
       type: Boolean,
       default: false,
     },
-    useDeleteAction: { default: false },
 
   },
+
   data: function () {
     return {
       realDialog: this.dialog,
       valid: true,
       tab: null,
       IKDataEntity: IKDataEntity,
-      detailModel: null,
-      detailRefKey: null,
+      showOptionalField: false,
     }
   },
 
@@ -191,17 +217,27 @@ export default {
       return this.notGroupedFields.filter(f => !this.fieldIsRequired(f))
     },
     groupedFields: function () {
-      return this.formField.filter(f => f.dataType === IKDataEntity.Types.Group)
+      return this.notImageField.filter(f => f.dataType === IKDataEntity.Types.Group)
     },
     notGroupedFields: function () {
-      return this.formField.filter(f => f.dataType !== IKDataEntity.Types.Group)
+      return this.notImageField.filter(f => f.dataType !== IKDataEntity.Types.Group)
     },
-    name(){
-      return (this?.editedItem ?.name ?? this.editedItem?.dishName ?? this.title)
-    }
+    imageField: function () {
+      return this.formField.filter(f => f.dataType === IKDataEntity.Types.Image)
+    },
+    notImageField: function () {
+      return this.formField.filter(f => f.dataType
+          !== IKDataEntity.Types.Image)
+    },
+    name () {
+      return (this?.editedItem?.name ?? this.editedItem?.dishName ?? this.title)
+    },
   },
   watch: {
     realDialog (val) {
+      if (val) {
+        this.$refs.form.resetValidation()
+      }
       val || this.close()
     },
     dialog: {
@@ -241,11 +277,8 @@ export default {
       this.realDialog = false
       this.$emit('change-general-form', false)
     },
-    remove () {
-      this.$emit('change-general-form', null, true)
-    },
 
-    save () {
+    save (close=true) {
       for (const f of this.groupedFields) {
         this.copyToAll(f, this.editedItem[f.value])
       }

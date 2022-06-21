@@ -1,16 +1,24 @@
 <template>
   <v-container style="position: relative">
     <div class="d-flex">
-      <div style="height: 37px;"
-           class="d-flex align-center "
-      >
+      <div class="d-flex align-center py-4 pb-6">
         <slot name="navigation"></slot>
-        <v-icon size="24" class="mr-2">{{ icon }}</v-icon>
-        <span class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
+        <span class="text-h2 font-weight-bold">{{ entityName || model.name() }}</span>
       </div>
-      <v-spacer></v-spacer>
-      <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer"
-      ></slot>
+
+
+    </div>
+    <div class="d-flex filterBar mb-6">
+      <v-btn
+          color="primary"
+          v-if="useDefaultAction && useAddAction"
+          class="mr-0"
+          elevation="0"
+          @click="$refs.gf.realDialog=true"
+      >
+
+        {{ $t('新增') }}{{entityName}}
+      </v-btn>
       <template
           v-if="selectedItems.length>0 && !hideSelectedAction"
       >
@@ -20,7 +28,7 @@
             color="primary darken-4"
         >
           <v-icon left color="white">mdi-pencil</v-icon>
-          {{$t('批量编辑')}}
+          {{ $t('批量编辑') }}
 
         </v-btn>
         <v-btn
@@ -29,198 +37,208 @@
             @click="updateAll(null,true)"
         >
           <v-icon left color="white">mdi-delete</v-icon>
-          {{$t('批量删除')}}
+          {{ $t('批量删除') }}
 
         </v-btn>
 
       </template>
+      <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer"
+      ></slot>
+      <v-spacer></v-spacer>
+      <div >
+        <template v-if="!hideIkdatatableHeader">
+          <div class="d-flex ma-0  align-center">
+            <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1">
+              <v-text-field
+                  class="white"
+                  v-model="search"
+                  prepend-inner-icon="mdi-magnify"
+                  outlined
+                  dense
+                  hide-details
+                  clearable
+                  :label="$t('Search')"
+                  single-line
+              />
+            </div>
+            <v-dialog>
+              <template #activator="{on}">
+                <v-btn style="background: white" v-on="on" outlined>
+                  <v-icon left>mdi-filter-outline</v-icon>
+                  筛选
+                </v-btn>
+              </template>
+              <v-card>
+                <template v-if="displayMergableFields.length>0">
+                  <template v-for="(field) in displayMergableFields">
+                    <div :key="field.value" style="max-width: 180px; height: 100%" class="mr-2">
+                      <form-field
+                          :full-height="false"
+                          :hide-select="true"
+                          :on-toolbar="true"
+                          :no-details="true"
+                          :field="field"
+                          :edited-item="filterItem"
+                      />
+                    </div>
+                  </template>
+                  <div v-if="shouldHideMergableField" style="width: 80px">
+                    <v-card
+                        dark
+                        color="warning"
+                        style="height: 100%"
+                        class="d-flex align-center justify-center"
+                        @click.stop="showFilterDialog=true"
+                    >
+                      <v-icon left>mdi-filter-variant</v-icon>
+                      {{ $t('filter') }}
+                    </v-card>
+                  </div>
 
-      <v-btn
-          v-if="useDefaultAction && useAddAction"
-          color="green darken-4"
-          class="mr-0"
-          elevation="0"
-          @click="$refs.gf.realDialog=true"
-      >
+                </template>
+                <template v-if="useDateFilter">
 
-        {{ $t('新增') }}
-      </v-btn>
-    </div>
-    <v-card class="mt-4" style="position: sticky;top: 0;z-index: 2" elevation="0">
-      <template v-if="!hideIkdatatableHeader">
-        <div style="background: white" class="d-flex ma-0 pa-4 align-center">
-          <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1">
-            <v-text-field
-                class=""
-                v-model="search"
-                prepend-inner-icon="mdi-magnify"
-                outlined
-                dense
-                hide-details
-                clearable
-                :label="$t('Search')"
-                single-line
-            />
-          </div>
-          <template v-if="displayMergableFields.length>0">
-            <template v-for="(field) in displayMergableFields">
-              <div :key="field.value" style="max-width: 180px; height: 100%" class="mr-2">
-                <form-field
-                    :full-height="false"
-                    :hide-select="true"
-                    :on-toolbar="true"
-                    :no-details="true"
-                    :field="field"
-                    :edited-item="filterItem"
-                />
-              </div>
-            </template>
-            <div v-if="shouldHideMergableField" style="width: 80px">
-              <v-card
-                  dark
-                  color="warning"
-                  style="height: 100%"
-                  class="d-flex align-center justify-center"
-                  @click.stop="showFilterDialog=true"
-              >
-                <v-icon left>mdi-filter-variant</v-icon>
-                {{ $t('filter') }}
+
+                  <div style="max-width: 300px; height: 54px;" class="d-flex align-center">
+                    <v-btn @click="datePickerMenu=true" color="primary" elevation="0" outlined>
+                      <v-icon left>mdi-calendar</v-icon>
+                      {{ $t('日期筛选') + ' | ' + getNiceLabel(dates) }}
+                    </v-btn>
+                  </div>
+
+
+                </template>
               </v-card>
-            </div>
+            </v-dialog>
 
-          </template>
-
-          <template v-if="useDateFilter">
-
-
-            <div style="max-width: 300px; height: 54px;" class="d-flex align-center">
-              <v-btn   @click="datePickerMenu=true" color="primary" elevation="0" outlined>
-                <v-icon left>mdi-calendar</v-icon>
-                {{$t('日期筛选')+' | '+ getNiceLabel(dates)}}
-              </v-btn>
-            </div>
-
-
-          </template>
-        </div>
-      </template>
-      <div v-if="Object.keys(filterItem).length>0">
-        <div class="px-4 pb-2">
-          <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)"
-                  label close
-                  @click:close="$delete(filterItem,item.key)"
-                  class="mr-2"
-                  v-for="item in filterDisplayChips"
-          >
+          </div>
+        </template>
+        <div v-if="Object.keys(filterItem).length>0">
+          <div class="px-4 pb-2">
+            <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)"
+                    label close
+                    @click:close="$delete(filterItem,item.key)"
+                    class="mr-2"
+                    v-for="item in filterDisplayChips"
+            >
             <span class="mr-2">
                 {{
                 item.name
               }}
             </span>
-            {{ $t(item.value) }}
-          </v-chip>
+              {{ $t(item.value) }}
+            </v-chip>
+          </div>
         </div>
       </div>
+    </div>
+    <v-card>
+      <v-data-table
+          v-model="selectedItems"
+          :show-expand="showExpand"
+          :single-expand="singleExpand"
+          :headers="realHeaders"
+          :items="tableItem"
+          :loading="loading"
+          :search.sync="search"
+          :items-per-page="30"
+          :footer-props="{itemsPerPageOptions:[30,-1]}"
+          :hide-default-footer="hideDefaultFooter"
+          @click:row.self="editItem"
+      >
+        <template #item.action="{item}">
+          <v-menu close-on-content-click rounded left offset-y offset-overflow>
+            <template #activator="{on,attrs}">
+              <v-btn v-on="on" v-bind="attrs" style="border-radius: 12px"
+                     large icon
+              >
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+            <v-list width="200px" outlined>
+              <v-list-item-group>
+                <v-list-item @click="editItem(item)">
+                  <v-list-item-title>打开</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="deleteItem(item)">
+                  <v-list-item-title>删除</v-list-item-title>
+                </v-list-item>
+                <slot name="item.action" :item="item"></slot>
+              </v-list-item-group>
 
-      <template v-if="displayMergableFields.length>0 || useDateFilter">
-        <v-divider/>
-      </template>
-    </v-card>
-    <v-card rounded>
+            </v-list>
+          </v-menu>
 
-
-      <div class="ma-0" style="position: sticky">
-        <v-data-table
-            v-model="selectedItems"
-            :show-expand="showExpand"
-            :single-expand="singleExpand"
-            :show-select="useSelect"
-            :headers="realHeaders"
-            :items="tableItem"
-            :loading="loading"
-            :search.sync="search"
-            :items-per-page="30"
-            :footer-props="{itemsPerPageOptions:[30,-1]}"
-            multi-sort
-            :group-by="groupBy"
-            :hide-default-footer="hideDefaultFooter"
-            @click:row="editItem"
+        </template>
+        <template
+            v-for="slottedItem in slottedItems"
+            v-slot:[slottedItem.name]="{ item }"
         >
+          <slot
+              :name="slottedItem.name"
+              :item="item"
+          />
+        </template>
 
-          <template v-slot:group.header="items" v-if="groupBy">
-            <td colspan="100%">
-              <div class="display-2"> {{ $t('time') }}: {{ items.group }} {{ $t('hour') }}</div>
-            </td>
-          </template>
-          <template #item.action="{item}">
-            <slot name="item.action" :item="item"></slot>
-          </template>
+        <template
+            v-for="adItem in advancedItems"
+            v-slot:[adItem.name]="{ item }"
+        >
           <template
-              v-for="slottedItem in slottedItems"
-              v-slot:[slottedItem.name]="{ item }"
+              v-if="
+            adItem.dataType===Types.Image"
           >
-            <slot
-                :name="slottedItem.name"
+            <img-template
+                :key="adItem.name"
+                :model="adItem.value"
                 :item="item"
+                :root="adItem.type.root()"
             />
           </template>
+          <template
+              v-else-if="adItem.dataType===Types.Group"
+          >
+            <div
+                v-bind:key="'_'+adItem.value+c"
+                v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
+            >
+              {{ item['_' + adItem.value + c] }}
+            </div>
+          </template>
 
           <template
-              v-for="adItem in advancedItems"
-              v-slot:[adItem.name]="{ item }"
-          >
-            <template
-                v-if="
-            adItem.dataType===Types.Image"
-            >
-              <img-template
-                  :key="adItem.name"
-                  :model="adItem.value"
-                  :item="item"
-                  :root="adItem.type.root()"
-              />
-            </template>
-            <template
-                v-else-if="adItem.dataType===Types.Group"
-            >
-              <div
-                  v-bind:key="'_'+adItem.value+c"
-                  v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
-              >
-                {{ item['_' + adItem.value + c] }}
-              </div>
-            </template>
-
-            <template
-                v-else-if="
+              v-else-if="
               adItem.dataType===Types.Boolean"
-            >
+          >
+            <div>
               <v-simple-checkbox
                   :value="!!item[adItem.value]"
                   dense
-                  color="success darken-4"
-                  v-ripple
+                  class="ma-0"
+                  color="primary"
                   @click="toggleProperty(item,adItem.value)"
                   :key="adItem.name"
               />
-            </template>
+            </div>
 
-            <template
-                v-else-if="
+          </template>
+
+          <template
+              v-else-if="
             adItem.dataType===Types.Color"
-            >
-              <v-chip
-                  :key="adItem.name"
-                  :color="item[adItem.value]"
-                  label
-                  :style="swatchStyle"
-              />
-            </template>
-            <template
-                v-else-if="
+          >
+            <v-chip
+                :key="adItem.name"
+                :color="item[adItem.value]"
+                label
+                :style="swatchStyle"
+            />
+          </template>
+          <template
+              v-else-if="
             adItem.dataType===Types.Option"
-            >
-              <template v-if="adItem.type.color">
+          >
+            <template v-if="adItem.type.color">
                  <span
                      class="pa-1 px-3 white--text rounded-pill text-no-wrap"
                      :class="
@@ -229,49 +247,50 @@
                  >
                 {{ [item['opt' + adItem.value]].flat().join(', ') }}
               </span>
-              </template>
-              <template v-else>
-                <span>{{ [item['opt' + adItem.value]].flat().join(', ') }}</span>
-
-              </template>
+            </template>
+            <template v-else>
+              <span>{{ [item['opt' + adItem.value]].flat().join(', ') }}</span>
 
             </template>
-            <template
-                v-else-if="
+
+          </template>
+          <template
+              v-else-if="
             adItem.dataType===Types.Date"
-            >
-              <div>{{ item[adItem.value] | beautifulTime }}</div>
+          >
+            <div>{{ item[adItem.value] | beautifulTime }}</div>
 
-            </template>
-            <template
-                v-else-if="
+          </template>
+          <template
+              v-else-if="
             adItem.dataType===Types.Float"
+          >
+            <price-table-display :price="item[adItem.value]"/>
+          </template>
+        </template>
+        <template v-slot:no-data>
+          <slot name="no-data">
+            <v-btn
+                color="primary"
+                @click="reload"
             >
-              <price-table-display :price="item[adItem.value]"/>
-            </template>
-          </template>
-          <template v-slot:no-data>
-            <slot name="no-data">
-              <v-btn
-                  color="primary"
-                  @click="reload"
-              >
-                {{ $t('重新加载') }}
-              </v-btn>
-            </slot>
-          </template>
+              {{ $t('重新加载') }}
+            </v-btn>
+          </slot>
+        </template>
 
-          <template v-slot:expanded-item="{ item }">
-            <td :colspan="headers.length">
-              <slot
-                  name="expanded-item"
-                  :item="item"
-              />
-            </td>
-          </template>
-        </v-data-table>
-      </div>
+        <template v-slot:expanded-item="{ item }">
+          <td :colspan="headers.length">
+            <slot
+                name="expanded-item"
+                :item="item"
+            />
+          </td>
+        </template>
+      </v-data-table>
     </v-card>
+
+
     <v-dialog v-model="massEditDialog" max-width="600px">
       <v-card class="pa-4 px-6">
         <h4>{{ selectedItems.length }} {{ $t('Item') }} {{ $t('已经选中') }}</h4>
@@ -358,7 +377,7 @@ import IKUtils from 'innerken-js-utils'
 import { groupBy } from 'lodash'
 import DateRangePicker from './DateRangePicker'
 import PriceTableDisplay from './PriceTableDisplay'
-import {getNiceLabel} from '../DateRepository'
+import { getNiceLabel } from '../DateRepository'
 
 export default {
   name: 'IkDataTable',
@@ -605,10 +624,10 @@ export default {
     console.log(this.formField)
     this.formDisc = _.groupBy(this.formField, 'value')
     console.log(this.formDisc)
-    if (this.useCustomerActionOnly) {
+    if (this.useCustomerActionOnly || this.useDefaultAction && (this.useEditAction || this.useDeleteAction)) {
       this.headers.push({
-        text: 'action',
-        width: '240px',
+        text: ' ',
+        width: '60px',
         value: 'action',
         sortable: false,
       })
@@ -664,10 +683,7 @@ export default {
           })
     },
     async dialogChange (save, remove = false) {
-      if (remove) {
-        await this.deleteItem(this.editedItem)
-        return
-      }
+
       if (save) {
         this.save()
       } else {
@@ -700,7 +716,7 @@ export default {
       this.editedItem = IKUtils.deepCopy(this.defaultItem)
       this.editedIndex = -1
       this.dialog = false
-      this.$refs.gf.realDialog = false
+      this.$refs.gf.realDialog=false
       this.reload()
     },
 
@@ -755,7 +771,7 @@ export default {
       if (this.useDefaultAction && this.useEditAction) {
         this.editedIndex = this.tableItem.indexOf(item)
         this.editedItem = Object.assign({}, item)
-        this.$refs.gf.realDialog = true
+        this.dialog=true
       } else if (this.customOnRowClick) {
         this.customOnRowClick(item)
       }
@@ -767,7 +783,7 @@ export default {
       this.filterItem = this.fixedFilter ?? {}
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
       this.loading = false
-      this.$refs.gf.realDialog = false
+      this.dialog = false
       this.$emit('reloaded')
     },
   },
@@ -777,4 +793,8 @@ export default {
 .breakWord {
   word-break: break-all;
 }
+th{
+  font-size: 16px !important;
+}
+
 </style>

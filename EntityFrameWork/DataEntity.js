@@ -257,6 +257,12 @@ const ColorFormConfig = {
     },
 }
 
+const FloatFormConfig = {
+    type: {
+        name: 'float',
+    },
+}
+
 /**
  * @param {*} _field
  * @param {string} key
@@ -326,6 +332,15 @@ function generateField (_field, key) {
         if (!_field.tableConfig.displayChild) {
             _field.tableConfig.displayChild = GroupTableConfig.displayChild
         }
+    }
+    if (_field.type === Types.Float) {
+        if (_field.formConfig) {
+            if (_field.formConfig.type) {
+                _field.formConfig.type = IKUtils.extend(FloatFormConfig.type, _field.formConfig.type)
+            }
+        }
+
+        _field.formConfig = IKUtils.extend(FloatFormConfig, _field.formConfig)
     }
     _field.formConfig = IKUtils.extend(DefaultEntity.formConfig, _field.formConfig)
     const field = IKUtils.extend(DefaultEntity, _field)

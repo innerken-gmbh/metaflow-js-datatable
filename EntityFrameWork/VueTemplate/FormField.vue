@@ -70,35 +70,24 @@
       </v-select>
     </template>
     <template v-else-if="type.name==='switch'">
-      <template v-if="onToolbar">
-        <v-select
-            outlined
-            :placeholder="$t(text)"
-            :menu-props="{offsetY:true}"
-            :dense="true"
-            @click:clear="$emit('clear')"
-            :hide-details="noDetails"
-            v-model="editedItem[value]"
-            :disabled="shouldDisable"
-            :items="[{text:$t('yes'),value:true},{text:$t('no'),value:false}]"
-            :rules="rules"
-        />
-      </template>
-      <template v-else>
-        <v-checkbox
-            :placeholder="$t(text)"
-            :dense="!fullHeight"
-            hide-details
-            v-model="editedItem[value]"
-            :disabled="shouldDisable"
-            :label="$t(text)"
-            :rules="rules"
-        />
-      </template>
+      <div class="text-overline">{{ $t(text) }}
+        <span v-if="required" class="red--text text-body-1">*</span>
+      </div>
+      <v-select
+          outlined
+          :placeholder="$t(text)"
+          :menu-props="{offsetY:true}"
+          @click:clear="$emit('clear')"
+          v-model="editedItem[value]"
+          :disabled="shouldDisable"
+          :items="[{text:$t('yes'),value:true},{text:$t('no'),value:false}]"
+          :rules="rules"
+      />
+
     </template>
     <template v-else-if="type.name==='image'">
       <div class="d-flex flex-column align-center">
-        <v-card @click="startUpload" width="160px" flat color="#eeeeee" class="d-flex justify-center align-center"
+        <v-card @click="startUpload" width="160px" height="160px" flat color="#eeeeee" class="d-flex justify-center align-center"
         >
           <img-with-loading
               v-if="editedItem[type.fileStorage]"
@@ -113,7 +102,9 @@
                 :img-src="root + editedItem[value]"
             />
           </template>
-          <v-btn absolute style="right: -12px" bottom fab x-small color="primary"><v-icon>mdi-plus</v-icon></v-btn>
+          <v-btn absolute style="right: -12px" bottom fab x-small color="primary">
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
         </v-card>
         <v-file-input
             outlined
@@ -388,7 +379,7 @@ export default {
     },
   },
   methods: {
-    startUpload(){
+    startUpload () {
       console.log(this.$refs.file.$refs.input)
       this.$refs.file.$refs.input.click()
     },

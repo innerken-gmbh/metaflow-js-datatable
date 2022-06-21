@@ -1,5 +1,5 @@
 <template>
-  <v-container style="position: relative">
+  <v-container class="px-6" style="position: relative">
     <div class="d-flex">
       <div class="d-flex align-center py-4 pb-6">
         <slot name="navigation"></slot>
@@ -8,7 +8,7 @@
 
 
     </div>
-    <div class="d-flex filterBar mb-6">
+    <div class="d-flex filterBar align-center mb-6">
       <v-btn
           color="primary"
           v-if="useDefaultAction && useAddAction"
@@ -17,120 +17,73 @@
           @click="$refs.gf.realDialog=true"
       >
 
-        {{ $t('新增') }}{{entityName}}
+        {{ $t('新增') }}{{ entityName }}
       </v-btn>
-      <template
-          v-if="selectedItems.length>0 && !hideSelectedAction"
-      >
-        <v-btn
-            elevation="0"
-            @click="massEditDialog=true"
-            color="primary darken-4"
-        >
-          <v-icon left color="white">mdi-pencil</v-icon>
-          {{ $t('批量编辑') }}
-
-        </v-btn>
-        <v-btn
-            elevation="0"
-            color="error darken-4"
-            @click="updateAll(null,true)"
-        >
-          <v-icon left color="white">mdi-delete</v-icon>
-          {{ $t('批量删除') }}
-
-        </v-btn>
-
-      </template>
       <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer"
-      ></slot>
-      <v-spacer></v-spacer>
-      <div >
-        <template v-if="!hideIkdatatableHeader">
-          <div class="d-flex ma-0  align-center">
-            <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1">
-              <v-text-field
-                  class="white"
-                  v-model="search"
-                  prepend-inner-icon="mdi-magnify"
-                  outlined
-                  dense
-                  hide-details
-                  clearable
-                  :label="$t('Search')"
-                  single-line
-              />
-            </div>
-            <v-dialog>
-              <template #activator="{on}">
-                <v-btn style="background: white" v-on="on" outlined>
-                  <v-icon left>mdi-filter-outline</v-icon>
-                  筛选
-                </v-btn>
-              </template>
-              <v-card>
-                <template v-if="displayMergableFields.length>0">
-                  <template v-for="(field) in displayMergableFields">
-                    <div :key="field.value" style="max-width: 180px; height: 100%" class="mr-2">
-                      <form-field
-                          :full-height="false"
-                          :hide-select="true"
-                          :on-toolbar="true"
-                          :no-details="true"
-                          :field="field"
-                          :edited-item="filterItem"
-                      />
-                    </div>
-                  </template>
-                  <div v-if="shouldHideMergableField" style="width: 80px">
-                    <v-card
-                        dark
-                        color="warning"
-                        style="height: 100%"
-                        class="d-flex align-center justify-center"
-                        @click.stop="showFilterDialog=true"
-                    >
-                      <v-icon left>mdi-filter-variant</v-icon>
-                      {{ $t('filter') }}
-                    </v-card>
-                  </div>
+      >
 
-                </template>
-                <template v-if="useDateFilter">
+      </slot>
+      <v-spacer/>
 
-
-                  <div style="max-width: 300px; height: 54px;" class="d-flex align-center">
-                    <v-btn @click="datePickerMenu=true" color="primary" elevation="0" outlined>
-                      <v-icon left>mdi-calendar</v-icon>
-                      {{ $t('日期筛选') + ' | ' + getNiceLabel(dates) }}
-                    </v-btn>
-                  </div>
-
-
-                </template>
-              </v-card>
-            </v-dialog>
-
-          </div>
-        </template>
-        <div v-if="Object.keys(filterItem).length>0">
-          <div class="px-4 pb-2">
-            <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)"
-                    label close
-                    @click:close="$delete(filterItem,item.key)"
-                    class="mr-2"
-                    v-for="item in filterDisplayChips"
-            >
-            <span class="mr-2">
-                {{
-                item.name
-              }}
-            </span>
-              {{ $t(item.value) }}
-            </v-chip>
-          </div>
+      <div class="d-flex ma-0 mr-2  align-center">
+        <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1">
+          <v-text-field
+              class="white"
+              v-model="search"
+              prepend-inner-icon="mdi-magnify"
+              outlined
+              dense
+              hide-details
+              clearable
+              :label="$t('Search')"
+              single-line
+          />
         </div>
+        <v-dialog v-model="showFilter" max-width="300px">
+          <template #activator="{on}">
+            <v-btn :color="filterDisplayChips.length>0?'primary':''"
+                   v-if="mergableFields.length>0" style="background: white" v-on="on" outlined
+            >
+              <v-icon left>mdi-filter-outline</v-icon>
+              筛选
+            </v-btn>
+          </template>
+          <v-card class="pa-4">
+            <template>
+              <template v-for="(field) in mergableFields">
+                <div :key="field.value" style="height: 100%" class="mr-2">
+                  <form-field
+                      :hide-select="true"
+                      :field="field"
+                      :edited-item="filterItem"
+                  />
+                </div>
+              </template>
+            </template>
+            <v-btn class="mb-2" v-if="Object.keys(filterItem).length>0" elevation="0"
+                   @click="showFilter=false;filterItem={}" block style="background: white" outlined>
+              {{ $t('清空筛选器') }}
+            </v-btn>
+            <v-btn elevation="0" @click="showFilter=false" block color="primary">{{ $t('确定') }}</v-btn>
+          </v-card>
+        </v-dialog>
+
       </div>
+      <template v-if="useDateFilter">
+        <div style="max-width: 300px; height: 54px;"
+             class="d-flex align-center"
+        >
+          <v-btn @click="datePickerMenu=true"
+                 style="background: white"
+                 elevation="0"
+                 outlined
+          >
+            <v-icon left>mdi-calendar</v-icon>
+            {{ $t('日期筛选') + ' | ' + getNiceLabel(dates) }}
+          </v-btn>
+        </div>
+      </template>
+
     </div>
     <v-card>
       <v-data-table
@@ -141,8 +94,9 @@
           :items="tableItem"
           :loading="loading"
           :search.sync="search"
+          @update:page="pageUpdate"
           :items-per-page="30"
-          :footer-props="{itemsPerPageOptions:[30,-1]}"
+          :footer-props="{itemsPerPageOptions:[50],disableItemsPerPage:true}"
           :hide-default-footer="hideDefaultFooter"
           @click:row.self="editItem"
       >
@@ -465,10 +419,6 @@ export default {
       type: Boolean,
       dafault: false,
     },
-    hideIkdatatableHeader: {
-      type: Boolean,
-      default: false,
-    },
     hideSelectedAction: {
       type: Boolean,
       default: false,
@@ -520,6 +470,7 @@ export default {
       datePickerMenu: false,
       dates: null,
       formDisc: {},
+      showFilter: false,
 
     }
   },
@@ -548,16 +499,7 @@ export default {
     requiredDisplayNumber: function () {
       return this.onePageArrangement ? 0 : this.useDateFilter ? 4 : 5
     },
-    shouldHideMergableField: function () {
-      const res = this.mergableFields.length > this.requiredDisplayNumber
 
-      return res
-    },
-    displayMergableFields: function () {
-      return this.shouldHideMergableField
-          ? this.mergableFields.slice(0, this.requiredDisplayNumber)
-          : this.mergableFields
-    },
     mergableFields: function () {
       const res = this.formField
           .filter(item =>
@@ -572,7 +514,7 @@ export default {
       return res
     },
     tableItem: function () {
-      if (this.filterItem) {
+      if (this.filterItem && !this.showFilter) {
         const res = this.items.filter(i => {
           return Object.keys(this.filterItem).filter(k => this.filterItem[k] != null).every(
               t => {
@@ -586,7 +528,7 @@ export default {
       return this.items
     },
     filterDisplayChips: function () {
-      const keys = Object.keys(this.filterItem)
+      const keys = !this.showFilter ? Object.keys(this.filterItem) : []
 
       return keys.filter(k => (!this.fixedFilter || !Object.keys(this.fixedFilter).includes(k)) && [this.filterItem[k]].flat().length > 0)
           .map((k) => {
@@ -682,12 +624,15 @@ export default {
             }
           })
     },
-    async dialogChange (save, remove = false) {
+    async dialogChange (save, needClose = true) {
 
       if (save) {
-        this.save()
-      } else {
+        this.save(needClose)
+      } else if (needClose) {
         this.closeDialog()
+      }
+      if (!needClose) {
+        this.editedItem = IKUtils.deepCopy(this.defaultItem)
       }
     },
     async updateAll (newItem = null, remove = false) {
@@ -716,7 +661,7 @@ export default {
       this.editedItem = IKUtils.deepCopy(this.defaultItem)
       this.editedIndex = -1
       this.dialog = false
-      this.$refs.gf.realDialog=false
+      this.$refs.gf.realDialog = false
       this.reload()
     },
 
@@ -732,16 +677,18 @@ export default {
       return await IKUtils.safeCallFunction(this.model, this.model.edit, item)
     },
 
-    async save () {
+    async save (needClose) {
       if (this.editedIndex > -1) {
         await this.updateItem(this.editedItem)
         IKUtils.toast(this.$i18n.t('编辑成功'))
         this.closeDialog()
       } else {
-        IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem).then(() => {
-          IKUtils.toast(this.$i18n.t('添加成功'))
+        await IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem)
+        IKUtils.toast(this.$i18n.t('添加成功'))
+        if (needClose) {
           this.closeDialog()
-        })
+        }
+
       }
     },
     async deleteItem (item, promt = true) {
@@ -771,7 +718,7 @@ export default {
       if (this.useDefaultAction && this.useEditAction) {
         this.editedIndex = this.tableItem.indexOf(item)
         this.editedItem = Object.assign({}, item)
-        this.dialog=true
+        this.dialog = true
       } else if (this.customOnRowClick) {
         this.customOnRowClick(item)
       }
@@ -786,6 +733,13 @@ export default {
       this.dialog = false
       this.$emit('reloaded')
     },
+    pageUpdate () {
+      console.log('update')
+      this.$vuetify.goTo(0, {
+        container: '#app-container',
+        appOffset: true,
+      })
+    },
   },
 }
 </script>
@@ -793,7 +747,8 @@ export default {
 .breakWord {
   word-break: break-all;
 }
-th{
+
+th {
   font-size: 16px !important;
 }
 

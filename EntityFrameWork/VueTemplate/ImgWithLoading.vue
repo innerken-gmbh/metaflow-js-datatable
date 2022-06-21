@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined elevation="0" width="fit-content">
+  <v-card color="#f6f6f6" elevation="0" width="fit-content">
     <v-img
         :src="imgSrc"
         :height="height"
@@ -8,10 +8,9 @@
     >
       <template v-slot:placeholder>
         <v-card :height="height" :width="width"
-                outlined
+                tile
                 class="d-flex align-center justify-center"
         >
-          <v-icon>mdi-image-refresh</v-icon>
         </v-card>
       </template>
     </v-img>

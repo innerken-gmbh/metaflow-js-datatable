@@ -24,7 +24,7 @@
       <v-form ref="form" v-model="valid" lazy-validation>
         <div
         >
-          <div v-if="imageField">
+          <div v-if="imageField.length>0">
             <form-field
                 :field="imageField[0]"
                 :current-state="editedIndex"
@@ -80,7 +80,7 @@
               <div>
                 <div style="display: grid;grid-template-columns: repeat(2,1fr);grid-gap: 24px">
                   <template v-for="(field,index) in requiredFields">
-                    <div :key="'f1'+index"
+                    <div :key="'f1'+index+field.text"
                     >
                       <form-field
                           :field="field"
@@ -278,12 +278,12 @@ export default {
       this.$emit('change-general-form', false)
     },
 
-    save (close=true) {
+    save (close = true) {
       for (const f of this.groupedFields) {
         this.copyToAll(f, this.editedItem[f.value])
       }
       if (this.$refs.form.validate()) {
-        this.$emit('change-general-form', true)
+        this.$emit('change-general-form', true, close)
       }
     },
   },

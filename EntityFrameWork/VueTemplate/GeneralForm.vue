@@ -5,11 +5,11 @@
       color="#fafbfc"
       temporary
       right
-      app
+      fixed
       touchless
       v-model="realDialog"
   >
-    <v-container class="pa-6">
+    <v-container class="pa-6" style="height: calc(100vh);overflow-y: scroll;overscroll-behavior: contain">
       <div class="d-flex align-center mb-8">
         <v-btn @click="close" class="mr-5 rounded" height="36px" width="36px" tile icon>
           <v-icon size="24">mdi-arrow-left</v-icon>
@@ -134,6 +134,7 @@
               </template>
             </div>
           </v-card>
+          <slot name="extraSheet" :currentState="editedIndex" :currentItem="editedItem"></slot>
           <div class="mt-8 pl-1">
             <v-btn
                 color="primary"

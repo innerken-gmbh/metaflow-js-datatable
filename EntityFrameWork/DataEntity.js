@@ -135,7 +135,6 @@ export function ModelFactory (entity, config) {
                 return await getList()
             }
         }
-
         return list
     }
     const forceGetList = async function (...filter) {
@@ -445,9 +444,14 @@ export async function parseDataForEntity (item, entity, cache = {}) {
                 }
             }
         }
+
+
         if (instruction.type === Types.Option) {
             const opt = generateField(instruction, key)
             item[`opt${key}`] = await getActualOptionValue(opt, item, cache)
+        }
+        if(key==='paymentStr'){
+            console.log(item[`opt${key}`])
         }
     }
     item.__parsed = true

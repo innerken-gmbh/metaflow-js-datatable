@@ -90,9 +90,7 @@
               v-for="item in filterDisplayChips"
       >
             <span class="mr-2">
-                {{
-                item.name
-              }}
+                {{ item.name }}
             </span>
         {{ $t(item.value) }}
       </v-chip>
@@ -204,20 +202,32 @@
               v-else-if="
             adItem.dataType===Types.Option"
           >
-            <template v-if="adItem.type.color">
+            <div class="d-flex">
+
+              <template v-for="(value,i) in [item[adItem.value]].flat().splice(0,2)">
+                <div :key="value+'.'+i">
+                  <template v-if="adItem.type.color">
                  <span
-                     class="pa-1 px-3 white--text rounded-pill text-no-wrap"
+                     class="pa-1 px-3 mr-1 white--text rounded-pill text-no-wrap"
                      :class="
                        adItem.type.color
-                     .find(c=>{return parseInt(item[adItem.value])===c.id}).color"
+                     .find(c=>{return parseInt(value)===c.id}).color"
                  >
-                {{ [item['opt' + adItem.value]].flat().join(', ') }}
+              {{ [item['opt' + adItem.value]].flat()[i] }}
               </span>
-            </template>
-            <template v-else>
-              <span>{{ [item['opt' + adItem.value]].flat().join(', ') }}</span>
+                  </template>
+                  <template v-else>
+                    <span> {{ [item['opt' + adItem.value]].flat()[i] }}</span>
 
-            </template>
+                  </template>
+                </div>
+              </template>
+              <template v-if="[item[adItem.value]].flat().length>2">
+                (+{{[item[adItem.value]].flat().length-2}})
+              </template>
+
+
+            </div>
 
           </template>
           <template

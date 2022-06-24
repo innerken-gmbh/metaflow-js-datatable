@@ -307,6 +307,7 @@ export default {
       timePickerShow: false,
       datePickerShow: false,
       textArea: false,
+      hint:'',
       ...this.field,
     }
   },

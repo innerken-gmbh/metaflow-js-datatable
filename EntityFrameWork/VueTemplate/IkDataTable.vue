@@ -41,8 +41,8 @@
         </div>
         <v-dialog v-model="showFilter" max-width="300px">
           <template #activator="{on}">
-            <v-btn :color="filterDisplayChips.length>0?'primary':''"
-                   v-if="mergableFields.length>0" style="background: white" v-on="on" outlined
+            <v-btn v-if="mergableFields.length>0"
+                   v-on="on" outlined
             >
               <v-icon left>mdi-filter-outline</v-icon>
               筛选
@@ -60,10 +60,6 @@
                 </div>
               </template>
             </template>
-            <v-btn class="mb-2" v-if="Object.keys(filterItem).length>0" elevation="0"
-                   @click="showFilter=false;filterItem={}" block style="background: white" outlined>
-              {{ $t('清空筛选器') }}
-            </v-btn>
             <v-btn elevation="0" @click="showFilter=false" block color="primary">{{ $t('确定') }}</v-btn>
           </v-card>
         </v-dialog>
@@ -85,6 +81,23 @@
       </template>
 
     </div>
+
+    <div class="mb-2 mt-n4" v-if="filterDisplayChips.length>0">
+      <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)"
+              label close
+              @click:close="$delete(filterItem,item.key)"
+              class="mr-2"
+              v-for="item in filterDisplayChips"
+      >
+            <span class="mr-2">
+                {{
+                item.name
+              }}
+            </span>
+        {{ $t(item.value) }}
+      </v-chip>
+    </div>
+
     <v-card>
       <v-data-table
           v-model="selectedItems"
@@ -133,7 +146,6 @@
               :item="item"
           />
         </template>
-
         <template
             v-for="adItem in advancedItems"
             v-slot:[adItem.name]="{ item }"
@@ -282,7 +294,12 @@
         :form-field="formField"
         :use-delete-action="useDefaultAction&&useDeleteAction"
         @change-general-form="dialogChange"
-    />
+    >
+      <template #extraSheet="{currentState,currentItem}">
+        <slot name="extraSheet" :currentState="currentState"></slot>
+      </template>
+
+    </general-form>
     <v-dialog max-width="400px" v-model="datePickerMenu">
       <v-card @click="datePickerMenu=false" color="#efefef" class="pa-2">
         <date-range-picker v-model="dates"></date-range-picker>

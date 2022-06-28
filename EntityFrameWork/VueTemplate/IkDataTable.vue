@@ -323,7 +323,7 @@ import { groupBy } from 'lodash'
 import DateRangePicker from './Base/DateRangePicker'
 import PriceTableDisplay from './Base/PriceTableDisplay'
 import { getNiceLabel } from '../DateRepository'
-
+import { Ripple } from 'vuetify/lib/directives';
 export default {
   name: 'IkDataTable',
   components: {
@@ -332,6 +332,9 @@ export default {
     ImgTemplate,
     GeneralForm,
     FormField,
+  },
+  directives:{
+    Ripple
   },
   props: {
     model: {
@@ -665,7 +668,7 @@ export default {
       this.filterItem = this.fixedFilter ?? {}
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
       this.loading = false
-      this.dialog = false 
+      this.dialog = false
       this.$emit('reloaded')
     },
 

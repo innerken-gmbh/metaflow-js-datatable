@@ -1,6 +1,7 @@
 <template>
   <nice-dialog v-model="realDialog">
-    <v-container class="pa-6">
+    <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
+    <v-container class="pa-6" v-if="editedItem">
       <div class="d-flex align-center mb-8">
         <v-btn @click="close" class="mr-5 rounded" height="36px" width="36px" tile icon>
           <v-icon size="24">mdi-arrow-left</v-icon>
@@ -128,6 +129,7 @@
           <slot name="extraSheet" :currentState="editedIndex" :currentItem="editedItem"></slot>
           <div class="mt-8 pl-1">
             <v-btn
+                :loading="loading"
                 color="primary"
                 elevation="0"
                 class="mr-4"
@@ -137,6 +139,7 @@
               {{ $t('保存改动') }}
             </v-btn>
             <v-btn
+                :loading="loading"
                 outlined
                 v-if="editedIndex===-1"
                 elevation="0"
@@ -168,28 +171,28 @@ export default {
     NiceDialog,
     NoChainScrollContainer,
     FormField,
-    IkDataTable
+    IkDataTable,
   },
   props: {
     model: {
       type: Object,
       default: () => {
-      }
+      },
     },
     title: {
       type: String,
-      default: 'Form'
+      default: 'Form',
     },
     editedIndex: {
       type: Number,
-      default: -1
+      default: -1,
     },
     value: {
       type: Boolean,
-      default: false
+      default: false,
     },
     outSideProperty: {},
-    outSideList: {}
+    outSideList: {},
   },
 
   data: function () {
@@ -204,7 +207,7 @@ export default {
       currentList: [],
       IKDataEntity: IKDataEntity,
       defaultItem: null,
-      editedItem: null
+      editedItem: null,
     }
   },
 
@@ -230,7 +233,7 @@ export default {
     },
     name () {
       return (this?.editedItem?.name ?? this.editedItem?.dishName ?? this.title)
-    }
+    },
   },
   watch: {
     value (val) {
@@ -238,12 +241,15 @@ export default {
     },
     realDialog (val) {
       if (!val) {
+        this.editedItem=false
         this.$emit('input', false)
+      }else{
+        this.wait(this.editedIndexUpdated)
       }
     },
-    editedIndex () {
-      this.editedIndexUpdated()
-    }
+    editedItem (val) {
+      console.log(val, 'item')
+    },
   },
   methods: {
     findLangEntityInLangArr (lang, arr) {
@@ -272,7 +278,6 @@ export default {
           (field.requiredNew && this.editedIndex === -1))
     },
 
-
     async refreshList () {
       this.currentList = this.outSideList ?? await IKUtils.safeCallFunction(this.model, this.model.getList, true)
     },
@@ -286,39 +291,50 @@ export default {
       }
     },
 
+    async wait (action) {
+      this.loading = true
+      try {
+        await action()
+      } catch (e) {
 
+      }
+      this.loading = false
+    },
     async save (close = true) {
       for (const f of this.groupedFields) {
         this.copyToAll(f, this.editedItem[f.value])
       }
-      if(!this.$refs.form.validate()){
+      if (!this.$refs.form.validate()) {
         return
       }
-      if (this.editedIndex > -1) {
-        await this.updateItem(this.editedItem)
-        IKUtils.toast(this.$t('编辑成功'))
-        this.close(true)
-      }else{
-        await IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem)
-        IKUtils.toast(this.$t('添加成功'))
-        if (close) {
+      this.wait(async () => {
+        if (this.editedIndex > -1) {
+          await this.updateItem(this.editedItem)
+          IKUtils.toast(this.$t('编辑成功'))
           this.close(true)
-        }else{
-          await this.editedIndexUpdated()
+        } else {
+          await IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem)
+          IKUtils.toast(this.$t('添加成功'))
+          if (close) {
+            this.close(true)
+          } else {
+            await this.editedIndexUpdated()
+          }
         }
-      }
+      })
+
     },
 
-    close (needRefresh=false) {
+    close (needRefresh = false) {
       this.realDialog = false
-      if(needRefresh){
+      if (needRefresh) {
         this.$emit('need-refresh')
       }
     },
 
     async updateItem (item) {
       return await IKUtils.safeCallFunction(this.model, this.model.edit, item)
-    }
+    },
   },
   mounted () {
     [, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
@@ -326,7 +342,7 @@ export default {
       this.defaultItem = Object.assign({}, this.defaultItem, this.outSideProperty)
     }
 
-  }
+  },
 }
 </script>
 

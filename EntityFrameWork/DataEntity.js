@@ -210,7 +210,7 @@ const DefaultEntity = {
     tableConfig: {
         overwrite: false, // 如果这里为True，
         sortable: false,
-        class:'breakWord',
+        class: 'breakWord',
         displayChild: () => true,
     },
 }
@@ -240,7 +240,7 @@ const ImageFormConfig = {
         name: 'image',
         root: () => '/',
         fileStorage: 'file',
-        hint:''
+        hint: '',
     },
 }
 
@@ -445,12 +445,11 @@ export async function parseDataForEntity (item, entity, cache = {}) {
             }
         }
 
-
         if (instruction.type === Types.Option) {
             const opt = generateField(instruction, key)
             item[`opt${key}`] = await getActualOptionValue(opt, item, cache)
         }
-        if(key==='paymentStr'){
+        if (key === 'paymentStr') {
             console.log(item[`opt${key}`])
         }
     }
@@ -475,7 +474,7 @@ export function parseField (model) {
         if ((typeof item.form === 'undefined') || (item.form === true)) {
             formField.push(item)
             if (item.value) {
-                map[item.value] = typeof item.default !=='undefined' ? item.default : Types.getTypeDefault(item.dataType)
+                map[item.value] = typeof item.default !== 'undefined' ? item.default : Types.getTypeDefault(item.dataType)
             }
             if (item.type) {
                 if (item.type.name === 'file') {

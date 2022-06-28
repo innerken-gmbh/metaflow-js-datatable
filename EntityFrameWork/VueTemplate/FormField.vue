@@ -253,7 +253,7 @@ export const colorList = ['#FFCDD2', '#F8BBD0', '#E1BEE7',
   '#C8E6C9', '#DCEDC8', '#F0F4C3',
   '#FFF9C4', '#FFECB3', '#FFE0B2',
   '#FFCCBC', '#D7CCC8', '#CFD8DC']
-import ImgWithLoading from './ImgWithLoading'
+import ImgWithLoading from './Base/ImgWithLoading'
 import Utils from 'innerken-js-utils'
 
 export function getColorLightness (c) {

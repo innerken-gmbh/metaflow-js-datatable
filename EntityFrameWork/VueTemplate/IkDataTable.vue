@@ -14,7 +14,7 @@
           v-if="useDefaultAction && useAddAction"
           class="mr-0"
           elevation="0"
-          @click="$refs.gf.realDialog=true"
+          @click="addItem"
       >
 
         {{ $t('新增') }}{{ entityName }}
@@ -265,51 +265,15 @@
         </template>
       </v-data-table>
     </v-card>
-
-
-    <v-dialog v-model="massEditDialog" max-width="600px">
-      <v-card class="pa-4 px-6">
-        <h4>{{ selectedItems.length }} {{ $t('Item') }} {{ $t('已经选中') }}</h4>
-
-        <template v-for="field in mergableFields.map(f=>({...f,cols:3,md:3,sm:3}))">
-
-          <form-field
-              :key="field.id"
-              class="my-2"
-              :no-details="true"
-              :field="field"
-              on-toolbar
-              :edited-item="mergeItem"
-
-          />
-        </template>
-        <div class="d-flex">
-          <v-spacer/>
-          <v-btn @click="updateAll(mergeItem,false)"
-                 elevation="0"
-                 class="green darken-4 white--text mr-0"
-          >
-            {{ $t('更新选中') }}
-          </v-btn>
-
-        </div>
-      </v-card>
-    </v-dialog>
     <general-form
         ref="gf"
         :title="entityName"
-        :dialog="dialog"
-        :edited-item="editedItem"
+        v-model="dialog"
         :edited-index="editedIndex"
-        :form-field="formField"
+        :model="model"
         :use-delete-action="useDefaultAction&&useDeleteAction"
-        @change-general-form="dialogChange"
-    >
-      <template #extraSheet="{currentState,currentItem}">
-        <slot name="extraSheet" :currentState="currentState"></slot>
-      </template>
-
-    </general-form>
+        @need-refresh="reload"
+    />
     <v-dialog max-width="400px" v-model="datePickerMenu">
       <v-card @click="datePickerMenu=false" color="#efefef" class="pa-2">
         <date-range-picker v-model="dates"></date-range-picker>
@@ -351,13 +315,13 @@
 <script>
 
 import GeneralForm from './GeneralForm'
-import ImgTemplate from './ImgTemplate'
+import ImgTemplate from './Base/ImgTemplate'
 import FormField from './FormField'
 import { IKDataEntity } from '../../index'
 import IKUtils from 'innerken-js-utils'
 import { groupBy } from 'lodash'
-import DateRangePicker from './DateRangePicker'
-import PriceTableDisplay from './PriceTableDisplay'
+import DateRangePicker from './Base/DateRangePicker'
+import PriceTableDisplay from './Base/PriceTableDisplay'
 import { getNiceLabel } from '../DateRepository'
 
 export default {
@@ -523,10 +487,6 @@ export default {
         transition: 'border-radius 200ms ease-in-out',
       }
     },
-    requiredDisplayNumber: function () {
-      return this.onePageArrangement ? 0 : this.useDateFilter ? 4 : 5
-    },
-
     mergableFields: function () {
       const res = this.formField
           .filter(item =>
@@ -610,7 +570,6 @@ export default {
     this.advancedItems = this.getAdvancedItems()
     this.slottedItems = this.getSlottedItems()
     this.editedItem = IKUtils.deepCopy(this.defaultItem)
-    // console.log('this.editedItem firstStep', this.editedItem)
     this.reload().catch(() => {
       this.loading = false
       this.items = []
@@ -618,9 +577,7 @@ export default {
   },
   methods: {
     getNiceLabel,
-    resetFilterItem () {
-      this.filterItem = this.fixedFilter ?? {}
-    },
+
     getAdvancedItems: function () {
       return this.headers
           .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
@@ -651,100 +608,51 @@ export default {
             }
           })
     },
-    async dialogChange (save, needClose = true) {
 
-      if (save) {
-        this.save(needClose)
-      } else if (needClose) {
-        this.closeDialog()
-      }
-      if (!needClose) {
-        this.editedItem = IKUtils.deepCopy(this.defaultItem)
-      }
-    },
-    async updateAll (newItem = null, remove = false) {
-      if (remove) {
-        this.selectedItems.forEach(item => this.deleteItem(item, false))
-        return
-      }
-      if (newItem) {
-        const update = this.selectedItems.reduce((arr, item) => {
-          const _i = IKUtils.extend(item, newItem)
-          arr.push(this.updateItem(_i))
-          return arr
-        }, [])
-        const result = await Promise.allSettled(update)
-        console.log(result)
-        this.mergeItem = {}
-        newItem = {}
-        IKUtils.toast(this.$i18n.t('编辑成功'))
-      }
-      this.massEditDialog = false
-      this.selectedItems = []
-      this.closeDialog()
-    },
-    closeDialog () {
-      console.log('should close dialog')
-      this.editedItem = IKUtils.deepCopy(this.defaultItem)
-      this.editedIndex = -1
-      this.dialog = false
-      this.$refs.gf.realDialog = false
-      this.reload()
-    },
+
 
     async toggleProperty (item, key) {
       const _item = IKUtils.deepCopy(item)
       _item[key] = !_item[key]
       await this.updateItem(_item)
       IKUtils.toast(this.$i18n.t('编辑成功'))
-      this.closeDialog()
+      await this.reload()
     },
 
     async updateItem (item) {
       return await IKUtils.safeCallFunction(this.model, this.model.edit, item)
     },
 
-    async save (needClose) {
-      if (this.editedIndex > -1) {
-        await this.updateItem(this.editedItem)
-        IKUtils.toast(this.$i18n.t('编辑成功'))
-        this.closeDialog()
-      } else {
-        await IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem)
-        IKUtils.toast(this.$i18n.t('添加成功'))
-        if (needClose) {
-          this.closeDialog()
-        }
 
-      }
-    },
+
     async deleteItem (item, promt = true) {
       if (promt) {
         const res = await IKUtils.showConfirmAsyn(
-            this.$i18n.t('Are you sure?'),
-            this.$i18n.t('you want to delete this item?'),
+            this.$t('Are you sure?'),
+            this.$t('you want to delete this item?'),
         )
-        console.log(res)
         if (res.isConfirmed) {
           IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
               .then(() => {
-                IKUtils.toast(this.$i18n.t('删除成功'))
+                IKUtils.toast(this.$t('删除成功'))
                 this.reload()
               })
         }
       } else {
         IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
             .then(() => {
-              IKUtils.toast(this.$i18n.t('删除成功'))
+              IKUtils.toast(this.$t('删除成功'))
               this.reload()
             })
       }
     },
-
+    addItem(){
+      this.editedIndex = -1
+      this.dialog = true
+    },
     editItem (item) {
       if (this.useDefaultAction && this.useEditAction) {
         this.editedIndex = this.tableItem.indexOf(item)
-        this.editedItem = Object.assign({}, item)
         this.dialog = true
       } else if (this.customOnRowClick) {
         this.customOnRowClick(item)
@@ -757,11 +665,11 @@ export default {
       this.filterItem = this.fixedFilter ?? {}
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
       this.loading = false
-      this.dialog = false
+      this.dialog = false 
       this.$emit('reloaded')
     },
+
     pageUpdate () {
-      console.log('update')
       this.$vuetify.goTo(0, {
         container: '#app-container',
         appOffset: true,

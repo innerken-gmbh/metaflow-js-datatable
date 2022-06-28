@@ -1,15 +1,6 @@
 <template>
-
-  <v-navigation-drawer
-      width="min(900px,calc(100vw - 300px))"
-      color="#fafbfc"
-      temporary
-      right
-      fixed
-      touchless
-      v-model="realDialog"
-  >
-    <v-container class="pa-6" style="height: calc(100vh);overflow-y: scroll;overscroll-behavior: contain">
+  <nice-dialog v-model="realDialog">
+    <v-container class="pa-6">
       <div class="d-flex align-center mb-8">
         <v-btn @click="close" class="mr-5 rounded" height="36px" width="36px" tile icon>
           <v-icon size="24">mdi-arrow-left</v-icon>
@@ -160,53 +151,60 @@
         </div>
       </v-form>
     </v-container>
-  </v-navigation-drawer>
-
+  </nice-dialog>
 </template>
 
 <script>
 import FormField from './FormField'
 import { IKDataEntity } from '../../index'
 import IkDataTable from './IkDataTable'
+import NoChainScrollContainer from './Base/NoChainScrollContainer'
+import NiceDialog from './Base/NiceDialog'
+import IKUtils from 'innerken-js-utils'
 
 export default {
   name: 'GeneralForm',
   components: {
+    NiceDialog,
+    NoChainScrollContainer,
     FormField,
-    IkDataTable,
+    IkDataTable
   },
   props: {
-    title: {
-      type: String,
-      default: 'Form',
-    },
-    formField: {
-      type: Array,
-      default: () => [],
-    },
-    editedItem: {
+    model: {
       type: Object,
       default: () => {
-      },
+      }
+    },
+    title: {
+      type: String,
+      default: 'Form'
     },
     editedIndex: {
       type: Number,
-      default: -1,
+      default: -1
     },
-    dialog: {
+    value: {
       type: Boolean,
-      default: false,
+      default: false
     },
-
+    outSideProperty: {},
+    outSideList: {}
   },
 
   data: function () {
     return {
-      realDialog: this.dialog,
+      realDialog: null,
       valid: true,
+      loading: false,
+
       tab: null,
-      IKDataEntity: IKDataEntity,
       showOptionalField: false,
+      formField: [],
+      currentList: [],
+      IKDataEntity: IKDataEntity,
+      defaultItem: null,
+      editedItem: null
     }
   },
 
@@ -232,21 +230,20 @@ export default {
     },
     name () {
       return (this?.editedItem?.name ?? this.editedItem?.dishName ?? this.title)
-    },
+    }
   },
   watch: {
+    value (val) {
+      this.realDialog = val
+    },
     realDialog (val) {
-      if (val) {
-        this.$refs.form.resetValidation()
+      if (!val) {
+        this.$emit('input', false)
       }
-      val || this.close()
     },
-    dialog: {
-      immediate: true,
-      handler: function (val) {
-        this.realDialog = val
-      },
-    },
+    editedIndex () {
+      this.editedIndexUpdated()
+    }
   },
   methods: {
     findLangEntityInLangArr (lang, arr) {
@@ -268,26 +265,68 @@ export default {
         }
       }
     },
+
     fieldIsRequired (field) {
       return field.required && (
           (field.requiredEdit && this.editedIndex !== -1) ||
           (field.requiredNew && this.editedIndex === -1))
     },
 
-    close () {
-      this.realDialog = false
-      this.$emit('change-general-form', false)
+
+    async refreshList () {
+      this.currentList = this.outSideList ?? await IKUtils.safeCallFunction(this.model, this.model.getList, true)
     },
 
-    save (close = true) {
+    async editedIndexUpdated () {
+      if (this.editedIndex === -1) {
+        this.editedItem = IKUtils.deepCopy(this.defaultItem)
+      } else {
+        await this.refreshList()
+        this.editedItem = IKUtils.deepCopy(this.currentList[this.editedIndex])
+      }
+    },
+
+
+    async save (close = true) {
       for (const f of this.groupedFields) {
         this.copyToAll(f, this.editedItem[f.value])
       }
-      if (this.$refs.form.validate()) {
-        this.$emit('change-general-form', true, close)
+      if(!this.$refs.form.validate()){
+        return
+      }
+      if (this.editedIndex > -1) {
+        await this.updateItem(this.editedItem)
+        IKUtils.toast(this.$t('编辑成功'))
+        this.close(true)
+      }else{
+        await IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem)
+        IKUtils.toast(this.$t('添加成功'))
+        if (close) {
+          this.close(true)
+        }else{
+          await this.editedIndexUpdated()
+        }
       }
     },
+
+    close (needRefresh=false) {
+      this.realDialog = false
+      if(needRefresh){
+        this.$emit('need-refresh')
+      }
+    },
+
+    async updateItem (item) {
+      return await IKUtils.safeCallFunction(this.model, this.model.edit, item)
+    }
   },
+  mounted () {
+    [, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
+    if (this.outSideProperty) {
+      this.defaultItem = Object.assign({}, this.defaultItem, this.outSideProperty)
+    }
+
+  }
 }
 </script>
 

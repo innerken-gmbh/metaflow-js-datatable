@@ -88,7 +88,7 @@
 <script>
 
   import BaseCard from './BaseCard'
-  import { predefinedDateRangeList, today } from '../DateRepository'
+  import { predefinedDateRangeList, today } from '../../DateRepository'
 
   export default {
     name: 'DateRangePicker',

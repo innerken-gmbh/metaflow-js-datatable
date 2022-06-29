@@ -3,7 +3,7 @@
     <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
     <v-container class="pa-6" v-if="editedItem">
       <div class="d-flex align-center mb-8">
-        <v-btn @click="close" class="mr-5 rounded" height="36px" width="36px" tile icon>
+        <v-btn @click="close()" class="mr-5 rounded" height="36px" width="36px" tile icon>
           <v-icon size="24">mdi-arrow-left</v-icon>
         </v-btn>
         <div class="text-h3 font-weight-bold">
@@ -69,7 +69,7 @@
                 </div>
 
               </template>
-              <div>
+              <div v-if="notRequiredFields.length>0">
                 <div style="display: grid;grid-template-columns: repeat(2,1fr);grid-gap: 24px">
                   <template v-for="(field,index) in requiredFields">
                     <div :key="'f1'+index+field.text"
@@ -83,6 +83,19 @@
                     </div>
                   </template>
                 </div>
+              </div>
+              <div v-else>
+                <template v-for="(field,index) in requiredFields">
+                  <div :key="'f1'+index+field.text"
+                  >
+                    <form-field
+                        :field="field"
+                        :current-state="editedIndex"
+                        :edited-item="editedItem"
+                        no-details
+                    />
+                  </div>
+                </template>
               </div>
             </v-card>
           </div>
@@ -126,7 +139,6 @@
               </template>
             </div>
           </v-card>
-          <slot name="extraSheet" :currentState="editedIndex" :currentItem="editedItem"></slot>
           <div class="mt-8 pl-1">
             <v-btn
                 :loading="loading"
@@ -141,7 +153,7 @@
             <v-btn
                 :loading="loading"
                 outlined
-                v-if="editedIndex===-1"
+                v-if="editedIndex===-1&&showAddMoreButton"
                 elevation="0"
                 class="mr-0"
                 :disabled="!valid"
@@ -193,6 +205,10 @@ export default {
     },
     outSideProperty: {},
     outSideList: {},
+    showAddMoreButton:{
+      type:Boolean,
+      default:true
+    },
   },
 
   data: function () {
@@ -207,6 +223,7 @@ export default {
       currentList: [],
       IKDataEntity: IKDataEntity,
       defaultItem: null,
+      calculateDefaultItem:null,
       editedItem: null,
     }
   },
@@ -248,10 +265,21 @@ export default {
       }
     },
     editedItem (val) {
-      console.log(val, 'item')
+
     },
+    outSideProperty(val){
+      this.resetDefaultItem()
+    }
   },
   methods: {
+    resetDefaultItem(){
+      if (this.outSideProperty) {
+        this.defaultItem = Object.assign({}, this.calculateDefaultItem, this.outSideProperty)
+      }else{
+        this.defaultItem=this.calculateDefaultItem
+      }
+
+    },
     findLangEntityInLangArr (lang, arr) {
       return arr.find(d => d.lang.toLowerCase() === lang.toLowerCase()) ?? null
     },
@@ -260,11 +288,11 @@ export default {
       const [de, zh, en] = [this.findLangEntityInLangArr('DE', arr),
         this.findLangEntityInLangArr('ZH', arr),
         this.findLangEntityInLangArr('EN', arr)]
-      console.log(field)
+
       for (const fieldKey of field.childKey) {
         const [deContent, zhContent, enContent] = [de, zh, en].map(it => it[fieldKey])
         const target = deContent || zhContent || enContent
-        console.log(target)
+
         const empty = [de, zh, en].filter(it => !it[fieldKey])
         for (const key of empty) {
           key[fieldKey] = target
@@ -284,6 +312,7 @@ export default {
 
     async editedIndexUpdated () {
       if (this.editedIndex === -1) {
+        this.resetDefaultItem()
         this.editedItem = IKUtils.deepCopy(this.defaultItem)
       } else {
         await this.refreshList()
@@ -337,10 +366,9 @@ export default {
     },
   },
   mounted () {
-    [, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
-    if (this.outSideProperty) {
-      this.defaultItem = Object.assign({}, this.defaultItem, this.outSideProperty)
-    }
+    [, this.formField, this.calculateDefaultItem] = IKDataEntity.parseField(this.model)
+    Object.freeze(this.calculateDefaultItem)
+    this.resetDefaultItem()
 
   },
 }

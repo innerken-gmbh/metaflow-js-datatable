@@ -272,8 +272,8 @@
         :edited-index="editedIndex"
         :model="model"
         :use-delete-action="useDefaultAction&&useDeleteAction"
-        :out-side-property="fixedFilter"
         @need-refresh="reload"
+        :out-side-property="fixedFilter"
     />
     <v-dialog max-width="400px" v-model="datePickerMenu">
       <v-card @click="datePickerMenu=false" color="#efefef" class="pa-2">
@@ -675,7 +675,6 @@ export default {
 
     pageUpdate () {
       this.$vuetify.goTo(0, {
-        container: '#app-container',
         appOffset: true,
       })
     },

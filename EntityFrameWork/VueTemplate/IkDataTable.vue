@@ -272,6 +272,7 @@
         :edited-index="editedIndex"
         :model="model"
         :use-delete-action="useDefaultAction&&useDeleteAction"
+        :out-side-property="fixedFilter"
         @need-refresh="reload"
     />
     <v-dialog max-width="400px" v-model="datePickerMenu">

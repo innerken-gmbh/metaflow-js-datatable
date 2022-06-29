@@ -10,13 +10,13 @@ export const IKDataEntity = {...DataEntity}
 export const IkDataTable = {
   ...InnerKenDataTable
 }
-export const IKDateRangePicker = {
+export const IkDateRangePicker = {
   ...DateRangePicker
 }
-export const IKNiceDialog = {
+export const IkNiceDialog = {
   ...NiceDialog
 }
-export const IKEntityForm = {
+export const IkEntityForm = {
   ...GeneralForm
 }
 

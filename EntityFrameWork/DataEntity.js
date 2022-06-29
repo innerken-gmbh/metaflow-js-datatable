@@ -261,6 +261,11 @@ const FloatFormConfig = {
         name: 'float',
     },
 }
+const IntegerFormConfig = {
+    type: {
+        name: 'integer',
+    },
+}
 
 /**
  * @param {*} _field
@@ -340,6 +345,15 @@ function generateField (_field, key) {
         }
 
         _field.formConfig = IKUtils.extend(FloatFormConfig, _field.formConfig)
+    }
+    if (_field.type === Types.Integer) {
+        if (_field.formConfig) {
+            if (_field.formConfig.type) {
+                _field.formConfig.type = IKUtils.extend(IntegerFormConfig.type, _field.formConfig.type)
+            }
+        }
+
+        _field.formConfig = IKUtils.extend(IntegerFormConfig, _field.formConfig)
     }
     _field.formConfig = IKUtils.extend(DefaultEntity.formConfig, _field.formConfig)
     const field = IKUtils.extend(DefaultEntity, _field)

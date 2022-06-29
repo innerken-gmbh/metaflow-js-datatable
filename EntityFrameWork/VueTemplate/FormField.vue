@@ -40,6 +40,20 @@
         <template #append>€</template>
       </v-text-field>
     </template>
+    <template v-if="type.name==='integer'">
+      <div class="text-overline">{{ $t(text) }}
+        <span v-if="required" class="red--text text-body-1">*</span>
+      </div>
+      <v-text-field
+          outlined
+          v-model="editedItem[value]"
+          :disabled="shouldDisable"
+          :rules="rules"
+          type="number"
+          step="1"
+      >
+      </v-text-field>
+    </template>
     <template v-else-if="type.name==='select'">
       <div>
         <div class="text-overline">{{ $t(text) }}
@@ -138,15 +152,17 @@
           width="290px"
       >
         <template v-slot:activator="{ on }">
-          <div class="text-overline">{{ $t(text) }}</div>
-          <v-text-field
-              outlined
-              :dense="!fullHeight"
-              v-model="editedItem[value]"
-              prepend-inner-icon="mdi-clock-outline"
-              readonly
-              v-on="on"
-          />
+          <div>
+            <div class="text-overline">{{ $t(text) }}</div>
+            <v-text-field
+                outlined
+                v-model="editedItem[value]"
+                prepend-inner-icon="mdi-clock-outline"
+                readonly
+                v-on="on"
+            />
+          </div>
+
         </template>
         <v-time-picker
             v-if="timePickerShow"

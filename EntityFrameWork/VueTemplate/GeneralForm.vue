@@ -328,12 +328,14 @@ export default {
         this.editedItem = IKUtils.deepCopy(this.currentList[this.editedIndex])
       }
       this.keyStore = {}
-      this.keyStore = this.uniqueFieldKeys.reduce((obj, i) => {
-        obj[i] = this.currentList.map(it => it[i]).filter(it => it !== this.editedItem[i])
+      this.keyStore =await this.uniqueField.reduce(async (obj, i) => {
+        const trackingList = i.uniqueTrackingList ? await i.uniqueTrackingList() : this.currentList
+        obj[i.value] = trackingList.map(it => it[i.value]).filter(it => it !== this.editedItem[i.value])
         return obj
       }, {})
-      this.uniqueField.forEach(it=>{
-        const uniqueCheck=val=>!this.keyStore[it.value].includes(val) || this.$t(it.text)+this.$t('重复了')
+      console.log(this.keyStore)
+      this.uniqueField.forEach(it => {
+        const uniqueCheck = val => !this.keyStore[it.value].includes(val) || this.$t(it.text) + this.$t('重复了')
         it.rule.push(uniqueCheck)
       })
     },
@@ -385,6 +387,7 @@ export default {
   },
   mounted () {
     [, this.formField, this.calculateDefaultItem] = IKDataEntity.parseField(this.model)
+    console.log(this.formField)
     Object.freeze(this.calculateDefaultItem)
     this.resetDefaultItem()
 

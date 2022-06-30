@@ -314,7 +314,7 @@ export default {
     },
 
     async refreshList () {
-      this.currentList = this.outSideList ?? await IKUtils.safeCallFunction(this.model, this.model.getList, true)
+      this.currentList = this.outSideList ?? await IKUtils.safeCallFunction(this.model, this.model.getList, true, this.outSideProperty)
     },
 
     async editedIndexUpdated () {
@@ -325,19 +325,22 @@ export default {
       } else {
         this.editedItem = IKUtils.deepCopy(this.currentList[this.editedIndex])
       }
-      this.keyStore = {}
-      this.keyStore =await this.uniqueField.reduce(async (obj, i) => {
-        const trackingList = i.uniqueTrackingList ? await i.uniqueTrackingList() : this.currentList
-        obj[i.value] = trackingList.map(it => it[i.value]).filter(it => it !== this.editedItem[i.value])
-        return obj
-      }, {})
-      this.uniqueField.forEach(it => {
-        if(this.keyStore[it.value]){
-          const uniqueCheck = val => this.keyStore[it.value]&&!this.keyStore[it.value].includes(val) || this.$t(it.text) + this.$t('重复了')
-          it.rule.push(uniqueCheck)
-        }
+      if (this.uniqueField.length > 0) {
+        this.keyStore = {}
+        this.keyStore = await this.uniqueField.reduce(async (obj, i) => {
+          const trackingList = i.uniqueTrackingList ? await i.uniqueTrackingList() : this.currentList
+          obj[i.value] = trackingList.map(it => it[i.value]).filter(it => it !== this.editedItem[i.value])
+          return obj
+        }, {})
+        this.uniqueField.forEach(it => {
+          if (this.keyStore[it.value]) {
+            const uniqueCheck = val => this.keyStore[it.value] && !this.keyStore[it.value].includes(val) || this.$t(it.text) + this.$t('重复了')
+            it.rule.push(uniqueCheck)
+          }
 
-      })
+        })
+      }
+
     },
 
     async wait (action) {

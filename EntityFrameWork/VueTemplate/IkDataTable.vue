@@ -43,6 +43,7 @@
           <template #activator="{on}">
             <v-btn v-if="mergableFields.length>0"
                    v-on="on" outlined
+                   style="background: white"
             >
               <v-icon left>mdi-filter-outline</v-icon>
               筛选
@@ -273,6 +274,7 @@
         :model="model"
         :use-delete-action="useDefaultAction&&useDeleteAction"
         @need-refresh="reload"
+        :out-side-list="tableItem"
         :out-side-property="fixedFilter"
     />
     <v-dialog max-width="400px" v-model="datePickerMenu">
@@ -430,7 +432,6 @@ export default {
     requiredDateValue: {
       immediate: true,
       handler: function (val) {
-        console.log(val)
         if (val?.length === 2 || val?.length === 1) {
           this.dates = val
         }
@@ -554,9 +555,7 @@ export default {
   },
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
-    console.log(this.formField)
     this.formDisc = _.groupBy(this.formField, 'value')
-    console.log(this.formDisc)
     if (this.useCustomerActionOnly || this.useDefaultAction && (this.useEditAction || this.useDeleteAction)) {
       this.headers.push({
         text: ' ',

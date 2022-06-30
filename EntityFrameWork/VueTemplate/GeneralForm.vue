@@ -205,9 +205,9 @@ export default {
     },
     outSideProperty: {},
     outSideList: {},
-    showAddMoreButton:{
-      type:Boolean,
-      default:true
+    showAddMoreButton: {
+      type: Boolean,
+      default: true,
     },
   },
 
@@ -223,8 +223,9 @@ export default {
       currentList: [],
       IKDataEntity: IKDataEntity,
       defaultItem: null,
-      calculateDefaultItem:null,
+      calculateDefaultItem: null,
       editedItem: null,
+      keyStore: {},
     }
   },
 
@@ -244,6 +245,12 @@ export default {
     imageField: function () {
       return this.formField.filter(f => f.dataType === IKDataEntity.Types.Image)
     },
+    uniqueField: function () {
+      return this.formField.filter(f => f.unique)
+    },
+    uniqueFieldKeys: function () {
+      return this.uniqueField.map(it => it.value)
+    },
     notImageField: function () {
       return this.formField.filter(f => f.dataType
           !== IKDataEntity.Types.Image)
@@ -258,25 +265,25 @@ export default {
     },
     realDialog (val) {
       if (!val) {
-        this.editedItem=false
+        this.editedItem = false
         this.$emit('input', false)
-      }else{
+      } else {
         this.wait(this.editedIndexUpdated)
       }
     },
     editedItem (val) {
 
     },
-    outSideProperty(val){
+    outSideProperty (val) {
       this.resetDefaultItem()
-    }
+    },
   },
   methods: {
-    resetDefaultItem(){
+    resetDefaultItem () {
       if (this.outSideProperty) {
         this.defaultItem = Object.assign({}, this.calculateDefaultItem, this.outSideProperty)
-      }else{
-        this.defaultItem=this.calculateDefaultItem
+      } else {
+        this.defaultItem = this.calculateDefaultItem
       }
 
     },
@@ -307,17 +314,28 @@ export default {
     },
 
     async refreshList () {
+
       this.currentList = this.outSideList ?? await IKUtils.safeCallFunction(this.model, this.model.getList, true)
+
     },
 
     async editedIndexUpdated () {
+      await this.refreshList()
       if (this.editedIndex === -1) {
         this.resetDefaultItem()
         this.editedItem = IKUtils.deepCopy(this.defaultItem)
       } else {
-        await this.refreshList()
         this.editedItem = IKUtils.deepCopy(this.currentList[this.editedIndex])
       }
+      this.keyStore = {}
+      this.keyStore = this.uniqueFieldKeys.reduce((obj, i) => {
+        obj[i] = this.currentList.map(it => it[i]).filter(it => it !== this.editedItem[i])
+        return obj
+      }, {})
+      this.uniqueField.forEach(it=>{
+        const uniqueCheck=val=>!this.keyStore[it.value].includes(val) || this.$t(it.text)+this.$t('重复了')
+        it.rule.push(uniqueCheck)
+      })
     },
 
     async wait (action) {

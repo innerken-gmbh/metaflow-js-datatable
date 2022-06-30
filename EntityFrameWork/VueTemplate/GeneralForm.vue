@@ -314,9 +314,7 @@ export default {
     },
 
     async refreshList () {
-
       this.currentList = this.outSideList ?? await IKUtils.safeCallFunction(this.model, this.model.getList, true)
-
     },
 
     async editedIndexUpdated () {
@@ -333,10 +331,12 @@ export default {
         obj[i.value] = trackingList.map(it => it[i.value]).filter(it => it !== this.editedItem[i.value])
         return obj
       }, {})
-      console.log(this.keyStore)
       this.uniqueField.forEach(it => {
-        const uniqueCheck = val => !this.keyStore[it.value].includes(val) || this.$t(it.text) + this.$t('重复了')
-        it.rule.push(uniqueCheck)
+        if(this.keyStore[it.value]){
+          const uniqueCheck = val => this.keyStore[it.value]&&!this.keyStore[it.value].includes(val) || this.$t(it.text) + this.$t('重复了')
+          it.rule.push(uniqueCheck)
+        }
+
       })
     },
 
@@ -387,7 +387,6 @@ export default {
   },
   mounted () {
     [, this.formField, this.calculateDefaultItem] = IKDataEntity.parseField(this.model)
-    console.log(this.formField)
     Object.freeze(this.calculateDefaultItem)
     this.resetDefaultItem()
 

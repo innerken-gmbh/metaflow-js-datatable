@@ -2,8 +2,14 @@
   <div
       v-if="(currentState===-1&&inNew)||(currentState>-1&&inEdit)"
   >
-    <div v-if="type.name!=='image'"  class="text-overline">{{ $t(text) }}
-      <span v-if="required" class="red--text text-body-1">*</span>
+    <div v-if="type.name!=='image'&&text"  class="pb-1">
+      <div  class="text-caption">
+        {{ $t(text) }}
+        <span v-if="text&&required" class="red--text text-body-1">*</span>
+      </div>
+      <template v-if="hint">
+        <div class="text-caption text--secondary">{{ $t(hint) }}</div>
+      </template>
     </div>
     <template v-if="type.name==='text'">
 
@@ -124,6 +130,7 @@
             show-size
             counter
         />
+        <div class="text-caption text--secondary">{{ $t(hint) }}</div>
 
       </div>
 
@@ -242,9 +249,7 @@
     <template v-else>
       <slot/>
     </template>
-    <template v-if="hint">
-      <div class="text-overline">{{ $t(hint) }}</div>
-    </template>
+
   </div>
 </template>
 

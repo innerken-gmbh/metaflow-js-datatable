@@ -24,7 +24,7 @@
                 no-details
             />
           </div>
-          <div class="flex-grow-1">
+          <div v-if="groupedFields.length+requiredFields.length+notRequiredFields.length>0" class="flex-grow-1">
             <v-card outlined height="fit-content" class="pa-4 px-6 my-4">
               <template v-for="(field,index) in groupedFields">
                 <div outlined :key="field.value+index+'group'">

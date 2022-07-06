@@ -1,14 +1,13 @@
 <template>
-  <v-container class="px-6" style="position: relative">
-    <div class="d-flex">
+  <v-container :class="showTitle?'px-6':''" style="position: relative">
+    <div class="d-flex" v-if="showTitle">
       <div class="d-flex align-center py-4 pb-6">
         <slot name="navigation"></slot>
         <span class="text-h2 font-weight-bold">{{ entityName || model.name() }}</span>
       </div>
-
-
     </div>
     <div class="d-flex filterBar align-center mb-6">
+      <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
       <v-btn
           color="primary"
           v-if="useDefaultAction && useAddAction"
@@ -420,6 +419,9 @@ export default {
     },
     customOnRowClick: {},
     fixedFilter: {},
+    showTitle:{
+      default:true
+    }
   },
   watch: {
     realFilter: {

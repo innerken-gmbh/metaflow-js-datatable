@@ -2,10 +2,11 @@
   <div
       v-if="(currentState===-1&&inNew)||(currentState>-1&&inEdit)"
   >
+    <div v-if="type.name!=='image'"  class="text-overline">{{ $t(text) }}
+      <span v-if="required" class="red--text text-body-1">*</span>
+    </div>
     <template v-if="type.name==='text'">
-      <div class="text-overline">{{ $t(text) }}
-        <span v-if="required" class="red--text text-body-1">*</span>
-      </div>
+
       <v-text-field
           v-if="!textArea"
           outlined
@@ -26,9 +27,6 @@
       />
     </template>
     <template v-if="type.name==='float'">
-      <div class="text-overline">{{ $t(text) }}
-        <span v-if="required" class="red--text text-body-1">*</span>
-      </div>
       <v-text-field
           outlined
           v-model="editedItem[value]"
@@ -41,9 +39,6 @@
       </v-text-field>
     </template>
     <template v-if="type.name==='integer'">
-      <div class="text-overline">{{ $t(text) }}
-        <span v-if="required" class="red--text text-body-1">*</span>
-      </div>
       <v-text-field
           outlined
           v-model="editedItem[value]"
@@ -55,11 +50,6 @@
       </v-text-field>
     </template>
     <template v-else-if="type.name==='select'">
-      <div>
-        <div class="text-overline">{{ $t(text) }}
-          <span v-if="required" class="red--text text-body-1">*</span>
-        </div>
-      </div>
       <v-select
           outlined
           :placeholder="$t(text)"
@@ -84,9 +74,6 @@
       </v-select>
     </template>
     <template v-else-if="type.name==='switch'">
-      <div class="text-overline">{{ $t(text) }}
-        <span v-if="required" class="red--text text-body-1">*</span>
-      </div>
       <v-select
           outlined
           :placeholder="$t(text)"
@@ -137,9 +124,7 @@
             show-size
             counter
         />
-        <template v-if="hint">
-          <div class="text-overline">{{ $t(hint) }}</div>
-        </template>
+
       </div>
 
     </template>
@@ -153,7 +138,6 @@
       >
         <template v-slot:activator="{ on }">
           <div>
-            <div class="text-overline">{{ $t(text) }}</div>
             <v-text-field
                 outlined
                 v-model="editedItem[value]"
@@ -231,7 +215,6 @@
       </v-dialog>
     </template>
     <template v-else-if="type.name==='color'">
-      <div class="text-overline">{{ $t(text) }}</div>
       <v-item-group mandatory v-model="editedItem[value]">
         <div style="display: grid;
         grid-template-columns: repeat(auto-fill,48px);
@@ -258,6 +241,9 @@
     </template>
     <template v-else>
       <slot/>
+    </template>
+    <template v-if="hint">
+      <div class="text-overline">{{ $t(hint) }}</div>
     </template>
   </div>
 </template>

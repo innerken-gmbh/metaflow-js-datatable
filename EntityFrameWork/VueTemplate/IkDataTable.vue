@@ -15,13 +15,16 @@
           elevation="0"
           @click="addItem"
       >
-
         {{ $t('新增') }}{{ entityName }}
       </v-btn>
-      <slot :items="items" :selectItems="selectedItems" :tableItems="tableItem" :dateTime="dates" name="footer"
-      >
+      <slot
+          :items="items"
+          :selectItems="selectedItems"
+          :tableItems="tableItem"
+          :dateTime="dates"
+          name="footer"
+      />
 
-      </slot>
       <v-spacer/>
 
       <div class="d-flex ma-0 mr-2  align-center">
@@ -65,6 +68,15 @@
         </v-dialog>
 
       </div>
+
+      <slot
+          :items="items"
+          :selectItems="selectedItems"
+          :tableItems="tableItem"
+          :dateTime="dates"
+          name="right"
+      />
+
       <template v-if="useDateFilter">
         <div style="max-width: 300px; height: 54px;"
              class="d-flex align-center"
@@ -223,7 +235,7 @@
                 </div>
               </template>
               <template v-if="[item[adItem.value]].flat().length>2">
-                (+{{[item[adItem.value]].flat().length-2}})
+                (+{{ [item[adItem.value]].flat().length - 2 }})
               </template>
 
 
@@ -325,7 +337,8 @@ import { groupBy } from 'lodash'
 import DateRangePicker from './Base/DateRangePicker'
 import PriceTableDisplay from './Base/PriceTableDisplay'
 import { getNiceLabel } from '../DateRepository'
-import { Ripple } from 'vuetify/lib/directives';
+import { Ripple } from 'vuetify/lib/directives'
+
 export default {
   name: 'IkDataTable',
   components: {
@@ -335,8 +348,8 @@ export default {
     GeneralForm,
     FormField,
   },
-  directives:{
-    Ripple
+  directives: {
+    Ripple,
   },
   props: {
     model: {
@@ -421,9 +434,9 @@ export default {
     },
     customOnRowClick: {},
     fixedFilter: {},
-    showTitle:{
-      default:true
-    }
+    showTitle: {
+      default: true,
+    },
   },
   watch: {
     realFilter: {
@@ -614,8 +627,6 @@ export default {
           })
     },
 
-
-
     async toggleProperty (item, key) {
       const _item = IKUtils.deepCopy(item)
       _item[key] = !_item[key]
@@ -627,8 +638,6 @@ export default {
     async updateItem (item) {
       return await IKUtils.safeCallFunction(this.model, this.model.edit, item)
     },
-
-
 
     async deleteItem (item, promt = true) {
       if (promt) {
@@ -651,7 +660,7 @@ export default {
             })
       }
     },
-    addItem(){
+    addItem () {
       this.editedIndex = -1
       this.dialog = true
     },

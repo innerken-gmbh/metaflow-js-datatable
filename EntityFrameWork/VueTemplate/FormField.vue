@@ -5,7 +5,7 @@
     <div v-if="type.name!=='image'&&text"  class="pb-1">
       <div  class="text-caption">
         {{ $t(text) }}
-        <span v-if="text&&required" class="red--text text-body-1">*</span>
+        <span v-if="text&&required&&!hideSelect" class="red--text text-body-1">*</span>
       </div>
       <template v-if="hint">
         <div class="text-caption text--secondary">{{ $t(hint) }}</div>
@@ -74,7 +74,7 @@
               v-if="index==0"
               class="grey--text text-caption"
           >
-          {{ $t(text) }}(+{{ editedItem[value].length || 1 }})
+          {{ $t(text) }}({{showText(item)}})
         </span>
         </template>
       </v-select>
@@ -387,6 +387,10 @@ export default {
     },
   },
   methods: {
+    showText(item){
+      const value=this.editedItem[this.value]
+      return Array.isArray(value)?'+'+value.length:item[this.type.itemText]
+    },
     startUpload () {
       console.log(this.$refs.file.$refs.input)
       this.$refs.file.$refs.input.click()

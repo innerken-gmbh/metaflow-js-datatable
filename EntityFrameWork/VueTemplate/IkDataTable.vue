@@ -571,7 +571,8 @@ export default {
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
     this.formDisc = _.groupBy(this.formField, 'value')
-    if (this.useCustomerActionOnly || this.useDefaultAction && (this.useEditAction || this.useDeleteAction)) {
+    if (this.useCustomerActionOnly || this.useDefaultAction &&
+        (this.useEditAction || this.useDeleteAction)) {
       this.headers.push({
         text: ' ',
         width: '60px',

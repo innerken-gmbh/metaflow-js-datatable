@@ -4,6 +4,7 @@ import DateRangePicker from './EntityFrameWork/VueTemplate/Base/DateRangePicker'
 import NiceDialog from './EntityFrameWork/VueTemplate/Base/NiceDialog'
 import GeneralForm from './EntityFrameWork/VueTemplate/GeneralForm'
 import ImgWithLoading from './EntityFrameWork/VueTemplate/Base/ImgWithLoading'
+import BackButton from './EntityFrameWork/VueTemplate/Base/BackButton'
 
 export const IKDataEntity = {...DataEntity}
 
@@ -25,5 +26,5 @@ export const IkEntityForm = {
 }
 
 export default {
-  IkDataTable, IkDateRangePicker, IkNiceDialog, AsyncImage, IkEntityForm
+  IkDataTable, IkDateRangePicker, IkNiceDialog, AsyncImage, IkEntityForm, BackButton
 }

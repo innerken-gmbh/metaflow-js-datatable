@@ -15,7 +15,9 @@
 </template>
 
 <script>
-  import NoChainScrollContainer from '@/components/NoChainScrollContainer'
+
+
+  import NoChainScrollContainer from './NoChainScrollContainer'
 
   export default {
     name: 'NiceDialog',

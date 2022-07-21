@@ -70,14 +70,12 @@
           :rules="rules"
       >
         <template v-if="type.showButton" v-slot:prepend-item>
-          <v-divider class="mb-2"></v-divider>
           <v-list-item @click="$emit('click')">
             <v-list-item-icon color="grey lighten-3">
               <v-icon>
                 mdi-plus-box
               </v-icon>
             </v-list-item-icon>
-            </v-list-item-content>
           </v-list-item>
         </template>
         <template v-if="hideSelect" v-slot:selection="{ item, index }">

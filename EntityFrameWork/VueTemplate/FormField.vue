@@ -67,9 +67,7 @@
           :item-text="type.itemText"
           :item-value="type.itemValue"
           :multiple="type.multiple"
-          :show-button="type.showButton"
           :rules="rules"
-          append-item="append-item"
       >
         <template v-if="type.showButton" v-slot:prepend-item>
           <v-divider class="mb-2"></v-divider>

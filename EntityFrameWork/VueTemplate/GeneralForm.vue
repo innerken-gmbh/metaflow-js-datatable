@@ -367,7 +367,6 @@ export default {
         } else {
           const res = await IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem)
           IKUtils.toast(this.$t('添加成功'))
-          console.log(res,'tagRes')
           if (close) {
             this.close(true, res)
           } else {

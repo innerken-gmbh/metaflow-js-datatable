@@ -361,28 +361,28 @@ export default {
       }
       this.wait(async () => {
         if (this.editedIndex > -1) {
-          await this.updateItem(this.editedItem)
+          const res = await this.updateItem(this.editedItem)
           IKUtils.toast(this.$t('编辑成功'))
-          this.close(true)
+          this.close(true, res)
         } else {
-          await IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem)
+          const res = await IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem)
           IKUtils.toast(this.$t('添加成功'))
+          console.log(res,'tagRes')
           if (close) {
-            this.close(true)
+            this.close(true, res)
           } else {
             await this.editedIndexUpdated()
           }
         }
       })
-
     },
-
-    close (needRefresh = false) {
+    close (needRefresh = false, args) {
       this.realDialog = false
       if (needRefresh) {
-        this.$emit('need-refresh')
+        this.$emit('need-refresh', args)
       }
     },
+
 
     async updateItem (item) {
       return await IKUtils.safeCallFunction(this.model, this.model.edit, item)

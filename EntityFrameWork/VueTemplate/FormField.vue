@@ -59,7 +59,7 @@
       <v-select
           outlined
           :placeholder="$t(text)"
-          :menu-props="{offsetY:true, outlined:true,contentClass:'elevation-2 ikRounded',nudgeBottom:'16px'}"
+          :menu-props="{offsetY:true, outlined:true, contentClass:'elevation-2 ikRounded',nudgeBottom:'16px',closeOnContentClick: true,}"
           @click:clear="$emit('clear')"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
@@ -67,8 +67,21 @@
           :item-text="type.itemText"
           :item-value="type.itemValue"
           :multiple="type.multiple"
+          :show-button="type.showButton"
           :rules="rules"
+          append-item="append-item"
       >
+        <template v-if="type.showButton" v-slot:prepend-item>
+          <v-divider class="mb-2"></v-divider>
+          <v-list-item @click="$emit('click')">
+            <v-list-item-icon color="grey lighten-3">
+              <v-icon>
+                mdi-plus-box
+              </v-icon>
+            </v-list-item-icon>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
         <template v-if="hideSelect" v-slot:selection="{ item, index }">
           <span
               v-if="index==0"

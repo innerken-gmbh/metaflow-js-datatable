@@ -71,12 +71,11 @@
       >
         <template v-if="type.showButton" v-slot:prepend-item>
           <v-list-item @click="$emit('click')">
-            <v-list-item-icon color="grey lighten-3">
-              <v-icon>
-                mdi-plus-box
-              </v-icon>
-            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="primary--text">{{$t('新建其他')}}{{text}}</v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
+          <v-divider></v-divider>
         </template>
         <template v-if="hideSelect" v-slot:selection="{ item, index }">
           <span
@@ -268,7 +267,7 @@ export const colorList = ['#FFCDD2', '#F8BBD0', '#E1BEE7',
   '#B3E5FC', '#B2EBF2', '#B2DFDB',
   '#C8E6C9', '#DCEDC8', '#F0F4C3',
   '#FFF9C4', '#FFECB3', '#FFE0B2',
-  '#FFCCBC', '#D7CCC8', '#CFD8DC']
+  '#FFCCBC', '#D7CCC8', '#CFD8DC','#FFFFFF']
 import ImgWithLoading from './Base/ImgWithLoading'
 import Utils from 'innerken-js-utils'
 

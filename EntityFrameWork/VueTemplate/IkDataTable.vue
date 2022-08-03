@@ -108,7 +108,12 @@
       </v-chip>
     </div>
 
+    <v-tabs style="background: transparent" v-if="realCategoryList" v-model="activeCategoryFilterIndex">
+      <v-tab v-for="c in realCategoryList" :key="c.id">{{ c.name }}</v-tab>
+    </v-tabs>
     <v-card>
+
+      <v-divider></v-divider>
       <v-data-table
           v-model="selectedItems"
           :show-expand="showExpand"
@@ -402,10 +407,6 @@ export default {
       type: Boolean,
       default: true,
     },
-    onePageArrangement: {
-      type: Boolean,
-      default: false,
-    },
     useDateFilter: {
       type: Boolean,
       default: false,
@@ -419,11 +420,6 @@ export default {
       default: true,
     },
     requiredDateValue: {},
-    groupBy: {},
-    onePageArrangementHeight: {
-      type: String,
-      default: '',
-    },
     hideDefaultFooter: {
       type: Boolean,
       dafault: false,
@@ -437,6 +433,9 @@ export default {
     showTitle: {
       default: true,
     },
+    categoryList: {},
+    categoryFilterFunc: {},
+
   },
   watch: {
     realFilter: {
@@ -482,6 +481,7 @@ export default {
       dates: null,
       formDisc: {},
       showFilter: false,
+      activeCategoryFilterIndex: '',
 
     }
   },
@@ -521,8 +521,9 @@ export default {
       return res
     },
     tableItem: function () {
+      let target = this.items
       if (this.filterItem && !this.showFilter) {
-        const res = this.items.filter(i => {
+        target = target.filter(i => {
           return Object.keys(this.filterItem).filter(k => this.filterItem[k] != null).every(
               t => {
                 const org = i[t]
@@ -530,9 +531,17 @@ export default {
                 return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(ot => org.includes(ot)))))
               })
         })
-        return res
       }
-      return this.items
+      if (this.activeCategoryFilterIndex > 0 && this.categoryList && this.categoryFilterFunc) {
+        target = target.filter(it => this.categoryFilterFunc(it, this.realCategoryList[this.activeCategoryFilterIndex]))
+      }
+      return target
+    },
+    realCategoryList () {
+      return this.categoryList ? [{
+        id: -1,
+        name: this.$t('全部'),
+      }, ...this.categoryList] : []
     },
     filterDisplayChips: function () {
       const keys = !this.showFilter ? Object.keys(this.filterItem) : []

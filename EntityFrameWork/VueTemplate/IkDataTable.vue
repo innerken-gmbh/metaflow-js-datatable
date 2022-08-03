@@ -451,6 +451,9 @@ export default {
         }
       },
     },
+    activeCategoryFilterIndex (val) {
+      this.$emit('index-update', val, this.realCategoryList)
+    },
   },
   data: function () {
     return {

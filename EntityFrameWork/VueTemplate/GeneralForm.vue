@@ -70,19 +70,19 @@
 
               </template>
               <div v-if="notRequiredFields.length>0">
-                <div style="display: grid;grid-template-columns: repeat(2,1fr);grid-gap: 24px">
-                  <template v-for="(field,index) in requiredFields">
-                    <div :key="'f1'+index+field.text"
-                    >
-                      <form-field
-                          :field="field"
-                          :current-state="editedIndex"
-                          :edited-item="editedItem"
-                          no-details
-                      />
-                    </div>
-                  </template>
-                </div>
+
+                <template v-for="(field,index) in requiredFields">
+                  <div :key="'f1'+index+field.text"
+                  >
+                    <form-field
+                        :field="field"
+                        :current-state="editedIndex"
+                        :edited-item="editedItem"
+                        no-details
+                    />
+                  </div>
+                </template>
+
               </div>
               <div v-else>
                 <template v-for="(field,index) in requiredFields">
@@ -381,7 +381,6 @@ export default {
         this.$emit('need-refresh', args)
       }
     },
-
 
     async updateItem (item) {
       return await IKUtils.safeCallFunction(this.model, this.model.edit, item)

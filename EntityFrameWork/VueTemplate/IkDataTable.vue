@@ -108,12 +108,14 @@
       </v-chip>
     </div>
 
-    <v-tabs style="background: transparent" v-if="realCategoryList" v-model="activeCategoryFilterIndex">
-      <v-tab v-for="c in realCategoryList" :key="c.id">{{ c.name }}</v-tab>
-    </v-tabs>
-    <v-card>
-
+    <template v-if="realCategoryList.length>0">
+      <v-tabs style="background: transparent"  v-model="activeCategoryFilterIndex">
+        <v-tab v-for="c in realCategoryList" :key="c.id">{{ c.name }}</v-tab>
+      </v-tabs>
       <v-divider></v-divider>
+    </template>
+
+    <v-card>
       <v-data-table
           v-model="selectedItems"
           :show-expand="showExpand"

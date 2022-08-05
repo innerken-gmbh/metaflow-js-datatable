@@ -209,7 +209,7 @@ const DefaultEntity = {
     },
     tableConfig: {
         overwrite: false, // 如果这里为True，
-        sortable: false,
+        sortable: true,
         class: 'breakWord',
         displayChild: () => true,
     },

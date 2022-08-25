@@ -93,6 +93,9 @@ export async function generalGetOne (asyncListFunc, conditionFunc) {
     return _list.find((item) => conditionFunc(item))
 }
 
+let counter = 1
+let loadingIndicator = {}
+
 export function ModelFactory (entity, config) {
     let list = config.list || null
 
@@ -108,12 +111,14 @@ export function ModelFactory (entity, config) {
     const remove = function () {
         return new Promise.reject('remove is not Definded')
     }
-    let loading = false
+    const myCounter=counter++
+    loadingIndicator[myCounter] = false
 
     const getList = async function (force = false, ...filter) {
         if (!list || force) {
-            if (!loading) {
-                loading = true
+            if (!loadingIndicator[myCounter]) {
+
+                loadingIndicator[myCounter] = true
                 try {
                     list = await load(filter)
                 } catch (e) {
@@ -129,8 +134,9 @@ export function ModelFactory (entity, config) {
                     }
                 }
 
-                loading = false
+                loadingIndicator[myCounter] = false
             } else {
+
                 await IKUtils.wait(0.5)
                 return await getList()
             }

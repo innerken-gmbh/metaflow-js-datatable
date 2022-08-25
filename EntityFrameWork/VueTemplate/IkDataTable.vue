@@ -142,11 +142,14 @@
             <v-list width="200px" outlined>
               <v-list-item-group>
                 <v-list-item @click="editItem(item)">
-                  <v-list-item-title>打开</v-list-item-title>
+                  <v-list-item-title>{{$t('edit')}}</v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="deleteItem(item)">
-                  <v-list-item-title>删除</v-list-item-title>
-                </v-list-item>
+                <template v-if="useDeleteAction">
+                  <v-list-item @click="deleteItem(item)">
+                    <v-list-item-title>{{$t('delete')}}</v-list-item-title>
+                  </v-list-item>
+                </template>
+
                 <slot name="item.action" :item="item"></slot>
               </v-list-item-group>
 
@@ -222,7 +225,6 @@
             adItem.dataType===Types.Option"
           >
             <div class="d-flex">
-
               <template v-for="(value,i) in [item[adItem.value]].flat().splice(0,2)">
                 <div :key="value+'.'+i">
                   <template v-if="adItem.type.color">
@@ -244,10 +246,7 @@
               <template v-if="[item[adItem.value]].flat().length>2">
                 (+{{ [item[adItem.value]].flat().length - 2 }})
               </template>
-
-
             </div>
-
           </template>
           <template
               v-else-if="
@@ -594,7 +593,6 @@ export default {
         sortable: false,
       })
     }
-
     if (this.fixedFilter) {
       this.defaultItem = Object.assign({}, this.defaultItem, this.fixedFilter)
     }
@@ -693,9 +691,12 @@ export default {
       this.loading = true
       this.filterItem = this.fixedFilter ?? {}
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
-      this.loading = false
-      this.dialog = false
-      this.$emit('reloaded')
+      this.$nextTick(()=>{
+        this.loading = false
+        this.dialog = false
+        this.$emit('reloaded')
+      })
+
     },
 
     pageUpdate () {

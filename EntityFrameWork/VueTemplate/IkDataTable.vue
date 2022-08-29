@@ -142,14 +142,11 @@
             <v-list width="200px" outlined>
               <v-list-item-group>
                 <v-list-item @click="editItem(item)">
-                  <v-list-item-title>{{$t('edit')}}</v-list-item-title>
+                  <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
                 </v-list-item>
-                <template v-if="useDeleteAction">
-                  <v-list-item @click="deleteItem(item)">
-                    <v-list-item-title>{{$t('delete')}}</v-list-item-title>
-                  </v-list-item>
-                </template>
-
+                <v-list-item v-if="useDeleteAction" @click="deleteItem(item)">
+                  <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
+                </v-list-item>
                 <slot name="item.action" :item="item"></slot>
               </v-list-item-group>
 
@@ -225,6 +222,7 @@
             adItem.dataType===Types.Option"
           >
             <div class="d-flex">
+
               <template v-for="(value,i) in [item[adItem.value]].flat().splice(0,2)">
                 <div :key="value+'.'+i">
                   <template v-if="adItem.type.color">
@@ -246,7 +244,10 @@
               <template v-if="[item[adItem.value]].flat().length>2">
                 (+{{ [item[adItem.value]].flat().length - 2 }})
               </template>
+
+
             </div>
+
           </template>
           <template
               v-else-if="
@@ -476,7 +477,6 @@ export default {
       editedItem: null,
       defaultItem: null,
       selectedItems: [],
-      realHeaders: [],
       advancedItems: [],
       slottedItems: [],
       massEditDialog: false,
@@ -580,6 +580,12 @@ export default {
             }
           })
     },
+    realHeaders(){
+      return this.headers.map(item => {
+        item.text = this.$i18n.t(item.text)
+        return item
+      })
+    }
   },
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
@@ -593,11 +599,11 @@ export default {
         sortable: false,
       })
     }
+
     if (this.fixedFilter) {
       this.defaultItem = Object.assign({}, this.defaultItem, this.fixedFilter)
     }
 
-    this.realHeaders = this.getRealHeaders()
     this.advancedItems = this.getAdvancedItems()
     this.slottedItems = this.getSlottedItems()
     this.editedItem = IKUtils.deepCopy(this.defaultItem)
@@ -622,12 +628,6 @@ export default {
               name: 'item.' + item.value,
             }
           })
-    },
-    getRealHeaders: function () {
-      return this.headers.map(item => {
-        item.text = this.$i18n.t(item.text)
-        return item
-      })
     },
     getSlottedItems: function () {
       return this.headers
@@ -696,7 +696,6 @@ export default {
         this.dialog = false
         this.$emit('reloaded')
       })
-
     },
 
     pageUpdate () {

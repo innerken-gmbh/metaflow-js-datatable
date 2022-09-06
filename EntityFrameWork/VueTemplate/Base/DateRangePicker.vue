@@ -92,8 +92,9 @@
 <script>
 
 
-import { predefinedDateRangeList, today } from '@/common/Repository/DateRepository'
+
 import SmallBaseCard from './SmallBaseCard'
+import { predefinedDateRangeList, today } from '../../DateRepository'
 
 export default {
   name: 'DateRangePicker',

@@ -48,7 +48,7 @@
                    style="background: white"
             >
               <v-icon left>mdi-filter-outline</v-icon>
-              筛选
+              {{ $t('筛选') }}
             </v-btn>
           </template>
           <v-card class="pa-4">

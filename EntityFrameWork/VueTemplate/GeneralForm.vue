@@ -7,7 +7,7 @@
           <v-icon size="24">mdi-arrow-left</v-icon>
         </v-btn>
         <div class="text-h3 font-weight-bold">
-          {{ editedIndex === -1 ? '新增' : '编辑/' }}{{ name }}
+          {{ editedIndex === -1 ? $t('新增') : $t('编辑')+'/' }}{{ name }}
         </div>
         <v-spacer></v-spacer>
 
@@ -121,7 +121,7 @@
               </template>
             </div>
             <div class="mt-6 text-body-2" v-else>
-              以下的内容并不是必需填写的。我们会为您自动准备好相应的内容。点击以编辑。<br><br>
+              {{ $t('以下的内容并不是必需填写的。我们会为您自动准备好相应的内容。点击以编辑。') }}<br><br>
               <template v-for="(field,index) in notRequiredFields">
                 <v-chip outlined
                         @click="showOptionalField=true"
@@ -132,7 +132,7 @@
                   {{ $t(field.text) }}
                   <template v-if="editedItem[field.value]&&field.dataType!==IKDataEntity.Types.Color"> :
                     {{
-                      Array.isArray(editedItem[field.value]) ? editedItem[field.value].length + '个' : editedItem[field.value]
+                      Array.isArray(editedItem[field.value]) ? editedItem[field.value].length + $t('个') : editedItem[field.value]
                     }}
                   </template>
                 </v-chip>

@@ -69,7 +69,7 @@
 
     <div
         class="mt-4"
-        style="display: grid;grid-template-columns: repeat(4,1fr);grid-gap: 8px"
+        style="display: grid;grid-template-columns: repeat(3,1fr);grid-gap: 8px"
     >
       <small-base-card
           v-for="d in predefinedTimeList"

@@ -87,7 +87,7 @@
                  outlined
           >
             <v-icon left>mdi-calendar</v-icon>
-            {{ $t('日期筛选') + ' | ' + getNiceLabel(dates) }}
+            {{ getNiceLabel(dates) }}
           </v-btn>
         </div>
       </template>

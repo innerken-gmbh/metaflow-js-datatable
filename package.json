@@ -1,6 +1,6 @@
 {
   "name": "metaflow-js",
-  "version": "1.10.35",
+  "version": "1.10.36",
   "description": "EntityFramework for Metaflow",
   "main": "index.js",
   "scripts": {

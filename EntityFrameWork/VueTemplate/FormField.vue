@@ -59,7 +59,8 @@
       <v-select
           outlined
           :placeholder="$t(text)"
-          :menu-props="{offsetY:true, outlined:true, contentClass:'elevation-2 ikRounded',nudgeBottom:'16px',closeOnContentClick: true,}"
+          :menu-props="{offsetY:true, outlined:true, contentClass:'elevation-2 ikRounded',
+          nudgeBottom:'16px',closeOnContentClick: type.multiple,}"
           @click:clear="$emit('clear')"
           v-model="editedItem[value]"
           :disabled="shouldDisable"

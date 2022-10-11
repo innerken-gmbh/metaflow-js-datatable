@@ -150,7 +150,7 @@ export function ModelFactory (entity, config) {
     return generalGetOne(getList, conditionFunc)
   }
   const nameBuilder = (item) => {
-    return item._langsname ?? item.name ?? item.dishName ??'No Name'
+    return item._langsname || item.name || item.dishName || 'No Name'
   }
 
   const DefaultConfig = {

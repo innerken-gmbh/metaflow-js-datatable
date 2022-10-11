@@ -45,10 +45,10 @@
           <template #activator="{on}">
             <v-btn v-if="mergableFields.length>0"
                    v-on="on" outlined
+                   icon
                    style="background: white"
             >
-              <v-icon left>mdi-filter-outline</v-icon>
-              {{ $t('筛选') }}
+              <v-icon>mdi-filter-outline</v-icon>
             </v-btn>
           </template>
           <v-card class="pa-4">
@@ -66,7 +66,11 @@
             <v-btn elevation="0" @click="showFilter=false" block color="primary">{{ $t('确定') }}</v-btn>
           </v-card>
         </v-dialog>
-
+        <v-btn v-if="mergableFields.length>0" @click="startMassEdit" class="ml-2" style="background: white" icon
+               outlined
+        >
+          <v-icon>mdi-format-list-checks</v-icon>
+        </v-btn>
       </div>
 
       <slot
@@ -109,7 +113,7 @@
     </div>
 
     <template v-if="realCategoryList.length>0">
-      <v-tabs style="background: transparent"  v-model="activeCategoryFilterIndex">
+      <v-tabs style="background: transparent" v-model="activeCategoryFilterIndex">
         <v-tab v-for="c in realCategoryList" :key="c.id">{{ c.name }}</v-tab>
       </v-tabs>
       <v-divider></v-divider>
@@ -117,7 +121,6 @@
 
     <v-card>
       <v-data-table
-          v-model="selectedItems"
           :show-expand="showExpand"
           :single-expand="singleExpand"
           :headers="realHeaders"
@@ -330,6 +333,226 @@
         </div>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="showMultipleEditDialog" max-width="800px">
+
+      <v-card v-if="massEditStep===0" color="#f6f6f6">
+        <div style="display: grid;grid-template-columns: 300px 1fr">
+          <v-card class="pa-4" style="overflow-y: scroll;overscroll-behavior: contain">
+            <div class="text-h4 mb-4">
+              {{$t('筛选')}}
+              <div class="text-body-2">
+                {{$t('符合条件')}}:{{filteredEditItem.length}}
+              </div>
+            </div>
+            <template v-for="(field) in mergableFields">
+              <div :key="field.value" class="mr-2">
+                <form-field
+                    :hide-select="true"
+                    :field="field"
+                    :edited-item="searchItem"
+                />
+              </div>
+            </template>
+
+          </v-card>
+          <div>
+            <div class="text-h4 pa-4 px-2 d-flex align-center font-weight-bold"
+                 style="position: sticky;top: 0;background: #f0f0f0;z-index: 1"
+            >
+              <v-text-field
+                  clearable
+                  hide-details
+                  outlined
+                  :placeholder="$t('在这里搜索要批量修改的条目....')"
+                  v-model="massEditSearch"
+                  append-icon="mdi-magnify"
+              />
+            </div>
+            <div style="height: 500px;overflow-y: scroll;overscroll-behavior: contain">
+              <div
+                  v-for="item in filteredEditItem"
+              >
+                <v-card elevation="0" color="transparent" class="pa-2 px-4 d-flex align-center"
+                        @click="toggleItem(item)"
+                >
+                  {{ item.code }}.{{ item.dishName }}
+                  <v-spacer></v-spacer>
+                  <v-btn icon>
+                    <v-icon color="primary" v-if="selectedItems.includes(item.id)">mdi-checkbox-marked</v-icon>
+                    <v-icon v-else>mdi-checkbox-blank-outline</v-icon>
+                  </v-btn>
+                </v-card>
+              </div>
+            </div>
+
+            <div style="position: sticky;bottom: 0;background: #f0f0f0;height: 64px"
+                 class="d-flex align-center px-4 pr-0"
+            >
+              <div text @click="toggleAll">
+                <v-icon v-if="selectedState==0" left>mdi-checkbox-blank-outline</v-icon>
+                <v-icon v-else-if=" selectedState==1" left>mdi-minus-box</v-icon>
+                <v-icon left v-else>
+                  mdi-checkbox-marked
+                </v-icon>
+                {{$t('选择全部')}}
+              </div>
+              <v-spacer/>
+              <v-btn :disabled="selectedItems.length===0" @click="massEditStep=1;changeOperationMode(0);" text
+                     color="primary" class="mr-2"
+              >
+                {{$t('批量更改')}}:{{ selectedItems.length }}
+              </v-btn>
+            </div>
+          </div>
+        </div>
+      </v-card>
+      <v-card v-else-if="massEditStep===1">
+        <div style="display: grid;grid-template-columns: 300px 1fr">
+          <v-card class="py-4" style="overflow-y: scroll;overscroll-behavior: contain">
+            <div @click="massEditStep=0" class="text-h4 mb-4 px-4 d-flex align-center">
+              <v-icon left>mdi-arrow-left</v-icon>
+            </div>
+            <div class="text-h4 mb-4 px-4">
+              {{$t('批量修改已经选择的条目')}}
+            </div>
+            <v-card @click="changeOperationMode(0)" elevation="0"
+                    tile
+                    class="px-4 py-4 grey lighten-4 text-body-1"
+            >
+              <div :class="operationMode===0?'font-weight-bold':''">
+                {{$t('批量添加')}}
+              </div>
+              <div class="text-caption">
+                {{$t('为条目批量添加某些可以多选的属性')}}
+              </div>
+            </v-card>
+            <v-divider/>
+            <v-card @click="changeOperationMode(1)" elevation="0"
+                    tile
+                    class="px-4 py-4 grey lighten-4 text-body-1"
+            >
+              <div :class="operationMode===1?'font-weight-bold':''">
+                {{$t('批量设置')}}
+              </div>
+              <div class="text-caption">
+                {{$t('将选中的条目的某些属性设置成另外一种，注意，在此模式下，已经设置的属性会被覆盖')}}
+              </div>
+            </v-card>
+            <v-divider/>
+            <v-card @click="changeOperationMode(2)" elevation="0"
+                    tile
+                    class="px-4 py-4 grey lighten-4 text-body-1"
+            >
+              <div :class="operationMode===2?'font-weight-bold':''">
+                {{$t('批量删除')}}
+              </div>
+              <div class="text-caption">
+                {{$t('批量删除选中的条目')}}
+              </div>
+            </v-card>
+
+            <div class="px-4 mt-4">{{$t('已经选择')}}：{{ selectedItems.length }}</div>
+          </v-card>
+          <div
+              style="height: 600px;overflow-y: scroll;overscroll-behavior: contain;position: relative;background: #f9f9f9"
+          >
+            <template v-if="operationMode===0">
+              <div class="pa-4 mb-4 d-flex align-center"
+                   style="position: sticky;top: 0;z-index: 1"
+              >
+                {{$t('选择需要添加的属性')}}
+              </div>
+              <template v-for="(field) in addableFields">
+                <div :key="field.value" class="px-4">
+                  <form-field
+                      :hide-select="true"
+                      :field="field"
+                      :edited-item="targetItem"
+                  />
+                </div>
+              </template>
+              <div style="position: absolute; width:100%;bottom: 0;background: #f0f0f0;height: 64px"
+                   class="d-flex align-center px-4 pr-0"
+              >
+                <v-spacer/>
+                <v-btn @click="massiveEdit(0)" color="primary" text class="mr-2">
+                  {{$t('批量新增')}}
+                </v-btn>
+              </div>
+            </template>
+            <template v-if="operationMode===1">
+              <div class="pa-4 mb-4 d-flex align-center"
+                   style="position: sticky;top: 0;z-index: 1"
+              >
+                {{$t('选择需要设置的属性')}}
+              </div>
+              <template v-for="(field) in mergableFields">
+                <div :key="field.value" class="px-4">
+                  <form-field
+                      :hide-select="true"
+                      :field="field"
+                      :edited-item="targetItem"
+                  />
+                </div>
+              </template>
+              <div style="
+                position: absolute;
+                 width:100%;
+                bottom: 0;
+                background: #f0f0f0;
+                height: 64px"
+                   class="d-flex align-center px-4 pr-0"
+              >
+                <v-spacer/>
+                <v-btn @click="massiveEdit(1)" color="primary" text class="mr-2">
+                  {{$t('批量设置')}}
+                </v-btn>
+              </div>
+            </template>
+            <template v-if="operationMode===2">
+              <div class="px-4 py-12">
+                <div class="text-h3">
+                  {{$t('请注意！删除后将无法恢复!')}}
+                </div>
+                <div class="mt-4"> {{$t('这是最后一次确认，如果点击下方的删除，那么将无法终止删除，被删除的数据也无法恢复。')}}</div>
+              </div>
+              <div style="position: absolute; width:100%;bottom: 0;background: #f0f0f0;height: 64px"
+                   class="d-flex align-center px-4 pr-0"
+              >
+                <v-spacer/>
+                <v-btn @click="massiveEdit(2)" text color="error" class="mr-2">
+                  {{$t('确认删除')}}
+                </v-btn>
+              </div>
+            </template>
+
+          </div>
+        </div>
+      </v-card>
+      <v-card v-else height="600">
+        <div v-if="massLoading" style="height: 600px"
+             class="d-flex justify-center align-center"
+        >
+          <v-progress-circular></v-progress-circular>
+        </div>
+        <div style="height: 600px"
+             class="d-flex flex-column justify-center align-center"
+             v-else
+        >
+          <div class="text-h3">
+            {{$t('批量操作完成！')}}
+          </div>
+          <div class="mt-4">
+            {{$tc('共进行了',maxProgress,progress,maxProgress-progress)}}
+          </div>
+          <div class="d-flex mt-4">
+            <v-btn outlined @click="massEditStep=1" class="mr-2">{{$t('返回继续批量操作')}}</v-btn>
+            <v-btn outlined @click="showMultipleEditDialog=false">{{$t('完成')}}</v-btn>
+          </div>
+
+        </div>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -344,6 +567,7 @@ import { groupBy } from 'lodash'
 import DateRangePicker from './Base/DateRangePicker'
 import PriceTableDisplay from './Base/PriceTableDisplay'
 import { getNiceLabel } from '../DateRepository'
+import NoChainScrollContainer from './Base/NoChainScrollContainer.vue'
 import { Ripple } from 'vuetify/lib/directives'
 
 export default {
@@ -354,6 +578,7 @@ export default {
     ImgTemplate,
     GeneralForm,
     FormField,
+    NoChainScrollContainer,
   },
   directives: {
     Ripple,
@@ -464,11 +689,10 @@ export default {
       pageCount: 0,
       itemsPerPage: 15,
       filterItem: {},
-      mergeItem: {},
+
       Types: IKDataEntity.Types,
       search: '',
       loading: false,
-      optionCache: {},
       items: [],
       dialog: false,
       headers: [],
@@ -476,16 +700,25 @@ export default {
       editedIndex: -1,
       editedItem: null,
       defaultItem: null,
-      selectedItems: [],
       advancedItems: [],
       slottedItems: [],
-      massEditDialog: false,
       showFilterDialog: false,
       datePickerMenu: false,
       dates: null,
       formDisc: {},
       showFilter: false,
       activeCategoryFilterIndex: '',
+
+      showMultipleEditDialog: false,
+      selectedItems: [],
+      targetItem: {},
+      searchItem: {},
+      massEditSearch: '',
+      massEditStep: 0,
+      operationMode: 0,
+      massLoading: false,
+      progress: 0,
+      maxProgress: 0,
 
     }
   },
@@ -523,6 +756,47 @@ export default {
             }
           })
       return res
+    },
+    addableFields: function () {
+      const res = this.formField
+          .filter(item => [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+          .filter(item => {
+            return item.merge && item.type?.multiple
+          })
+          .map(item => {
+            return {
+              ...item,
+              name: 'item.' + item.value,
+            }
+          })
+      return res
+    },
+    filteredEditItem: function () {
+      let target = this.items
+      if (this.searchItem) {
+        target = target.filter(i => {
+          return Object.keys(this.searchItem).filter(k => this.searchItem[k] != null).every(
+              t => {
+                const org = i[t]
+                const oth = this.searchItem[t]
+                return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(ot => org.includes(ot)))))
+              })
+        }).filter(it => {
+          return !this.massEditSearch || Object.values(it).some(that => (that + '').toLowerCase().includes(this.massEditSearch.toLowerCase()))
+        })
+      }
+      return target
+    },
+    selectedState: function () {
+      const currentDisplayItem = this.filteredEditItem.map(it => it.id)
+      const result = _.xor(currentDisplayItem, this.selectedItems)
+      if (result.length == 0) {
+        return 2
+      } else if (result.length < currentDisplayItem.length) {
+        return 1
+      } else {
+        return 0
+      }
     },
     tableItem: function () {
       let target = this.items
@@ -580,12 +854,12 @@ export default {
             }
           })
     },
-    realHeaders(){
+    realHeaders () {
       return this.headers.map(item => {
         item.text = this.$i18n.t(item.text)
         return item
       })
-    }
+    },
   },
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
@@ -691,13 +965,76 @@ export default {
       this.loading = true
       this.filterItem = this.fixedFilter ?? {}
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.loading = false
         this.dialog = false
         this.$emit('reloaded')
       })
     },
+    toggleItem (item) {
+      if (this.selectedItems.includes(item.id)) {
+        this.selectedItems = this.selectedItems.filter(it => it != item.id)
+      } else {
+        this.selectedItems.push(item.id)
+      }
+    },
+    toggleAll () {
+      if (this.selectedState < 2) {
+        this.selectedItems = _.uniq([...this.selectedItems, ...this.filteredEditItem.map(it => it.id)])
+      } else {
+        this.selectedItems = []
+      }
+    },
+    changeOperationMode (newMode) {
+      this.operationMode = newMode
+      this.targetItem = {}
+    },
+    startMassEdit () {
+      this.selectedItems = []
+      this.targetItem = {}
+      this.searchItem = {}
+      this.massEditSearch = ''
+      this.massEditStep = 0
+      this.operationMode = 0
+      this.massLoading = false
+      this.progress = 0
+      this.showMultipleEditDialog = true
 
+    },
+    async massiveEdit (operationMode) {
+      this.massEditStep = 2
+      this.massLoading = true
+      const selectedItems = this.items.filter(it => this.selectedItems.includes(it.id))
+      const actions = []
+      if (operationMode === 0) {
+        Object.keys(this.targetItem).forEach(key => {
+          if (this.targetItem[key]) {
+            selectedItems.forEach(it => {
+              it[key] = _.uniq([it[key], this.targetItem[key]].flat(3))
+              console.log(it[key], 'after')
+            })
+          }
+        })
+        selectedItems.forEach(item => {
+          actions.push(this.updateItem(item))
+        })
+      } else if (operationMode == 1) {
+        selectedItems.forEach(item => {
+          actions.push(this.updateItem(IKUtils.extend(item, this.targetItem)))
+        })
+      } else {
+        selectedItems.forEach(item => {
+          actions.push(this.deleteItem(item, false))
+        })
+      }
+      const result = await Promise.allSettled(actions)
+      IKUtils.toast('OK')
+      this.maxProgress = result.length
+      this.progress = result.filter(it => it.status === 'fulfilled').length
+      this.targetItem = {}
+      this.massLoading = false
+
+    },
     pageUpdate () {
       this.$vuetify.goTo(0, {
         appOffset: true,

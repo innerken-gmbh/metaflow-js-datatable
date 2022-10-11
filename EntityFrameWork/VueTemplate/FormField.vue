@@ -2,7 +2,7 @@
   <div
       v-if="(currentState===-1&&inNew)||(currentState>-1&&inEdit)"
   >
-    <div v-if="type.name!=='image'&&text"  class="pb-1">
+    <div v-if="type.name!=='image'&&text&&!hideSelect"  class="pb-1">
       <div  class="text-caption">
         {{ $t(text) }}
         <span v-if="text&&required&&!hideSelect" class="red--text text-body-1">*</span>
@@ -69,8 +69,9 @@
           :item-value="type.itemValue"
           :multiple="type.multiple"
           :rules="rules"
+          :clearable="hideSelect"
       >
-        <template v-if="type.showButton" v-slot:prepend-item>
+        <template v-if="type.showButton&&!hideSelect" v-slot:prepend-item>
           <v-list-item @click="$emit('click')">
             <v-list-item-content>
               <v-list-item-title class="primary--text">{{$t('新建其他')}}{{text}}</v-list-item-title>
@@ -91,13 +92,16 @@
     <template v-else-if="type.name==='switch'">
       <v-select
           outlined
+
           :placeholder="$t(text)"
-          :menu-props="{offsetY:true}"
+          :menu-props="{offsetY:true, outlined:true, contentClass:'elevation-2 ikRounded',
+          nudgeBottom:'16px',closeOnContentClick: !type.multiple,}"
           @click:clear="$emit('clear')"
           v-model="editedItem[value]"
           :disabled="shouldDisable"
           :items="[{text:$t('yes'),value:true},{text:$t('no'),value:false}]"
           :rules="rules"
+          :clearable="hideSelect"
       />
 
     </template>
@@ -376,7 +380,7 @@ export default {
           }
         }
       }
-      return rules
+      return this.hideSelect?[]:rules
     },
     locale: function () {
       const locale = this.dateLocale

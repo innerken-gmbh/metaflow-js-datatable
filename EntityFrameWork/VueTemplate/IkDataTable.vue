@@ -375,7 +375,7 @@
                 <v-card elevation="0" color="transparent" class="pa-2 px-4 d-flex align-center"
                         @click="toggleItem(item)"
                 >
-                  {{ item.code }}.{{ item.dishName }}
+                  {{ model.nameBuilder(item) }}
                   <v-spacer></v-spacer>
                   <v-btn icon>
                     <v-icon color="primary" v-if="selectedItems.includes(item.id)">mdi-checkbox-marked</v-icon>

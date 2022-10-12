@@ -339,9 +339,9 @@
         <div style="display: grid;grid-template-columns: 300px 1fr">
           <v-card class="pa-4" style="overflow-y: scroll;overscroll-behavior: contain">
             <div class="text-h4 mb-4">
-              {{$t('筛选')}}
+              {{ $t('筛选') }}
               <div class="text-body-2">
-                {{$t('符合条件')}}:{{filteredEditItem.length}}
+                {{ $t('符合条件') }}:{{ filteredEditItem.length }}
               </div>
             </div>
             <template v-for="(field) in mergableFields">
@@ -369,6 +369,23 @@
               />
             </div>
             <div style="height: 500px;overflow-y: scroll;overscroll-behavior: contain">
+              <horizontal-list class="pa-2" style="position: sticky;top: 0;z-index: 2;background: #f6f6f6">
+                <v-card
+                    elevation="0"
+                    :disabled="selectedItems.length===0" @click="saveCurrent"
+                    width="72"
+                    class="pa-2 d-flex flex-column align-center justify-center"
+                >
+                  <div class="text-body-2">保存筛选</div>
+                </v-card>
+                <v-card @click="useSet(item.idSet)" v-for="item in storageSet" elevation="0" width="72"
+                        class="pa-2 d-flex flex-column"
+                >
+                  <div class="text-truncate">{{ item.name }}</div>
+                  <v-spacer></v-spacer>
+                  <div class="text-caption">{{ item.idSet.length }}</div>
+                </v-card>
+              </horizontal-list>
               <div
                   v-for="item in filteredEditItem"
               >
@@ -394,13 +411,13 @@
                 <v-icon left v-else>
                   mdi-checkbox-marked
                 </v-icon>
-                {{$t('选择全部')}}
+                {{ $t('选择全部') }}
               </div>
               <v-spacer/>
               <v-btn :disabled="selectedItems.length===0" @click="massEditStep=1;changeOperationMode(0);" text
                      color="primary" class="mr-2"
               >
-                {{$t('批量更改')}}:{{ selectedItems.length }}
+                {{ $t('批量更改') }}:{{ selectedItems.length }}
               </v-btn>
             </div>
           </div>
@@ -413,17 +430,17 @@
               <v-icon left>mdi-arrow-left</v-icon>
             </div>
             <div class="text-h4 mb-4 px-4">
-              {{$t('批量修改已经选择的条目')}}
+              {{ $t('批量修改已经选择的条目') }}
             </div>
             <v-card @click="changeOperationMode(0)" elevation="0"
                     tile
                     class="px-4 py-4 grey lighten-4 text-body-1"
             >
               <div :class="operationMode===0?'font-weight-bold':''">
-                {{$t('批量添加')}}
+                {{ $t('批量添加') }}
               </div>
               <div class="text-caption">
-                {{$t('为条目批量添加某些可以多选的属性')}}
+                {{ $t('为条目批量添加某些可以多选的属性') }}
               </div>
             </v-card>
             <v-divider/>
@@ -432,10 +449,10 @@
                     class="px-4 py-4 grey lighten-4 text-body-1"
             >
               <div :class="operationMode===1?'font-weight-bold':''">
-                {{$t('批量设置')}}
+                {{ $t('批量设置') }}
               </div>
               <div class="text-caption">
-                {{$t('将选中的条目的某些属性设置成另外一种，注意，在此模式下，已经设置的属性会被覆盖')}}
+                {{ $t('将选中的条目的某些属性设置成另外一种，注意，在此模式下，已经设置的属性会被覆盖') }}
               </div>
             </v-card>
             <v-divider/>
@@ -444,14 +461,14 @@
                     class="px-4 py-4 grey lighten-4 text-body-1"
             >
               <div :class="operationMode===2?'font-weight-bold':''">
-                {{$t('批量删除')}}
+                {{ $t('批量删除') }}
               </div>
               <div class="text-caption">
-                {{$t('批量删除选中的条目')}}
+                {{ $t('批量删除选中的条目') }}
               </div>
             </v-card>
 
-            <div class="px-4 mt-4">{{$t('已经选择')}}：{{ selectedItems.length }}</div>
+            <div class="px-4 mt-4">{{ $t('已经选择') }}：{{ selectedItems.length }}</div>
           </v-card>
           <div
               style="height: 600px;overflow-y: scroll;overscroll-behavior: contain;position: relative;background: #f9f9f9"
@@ -460,7 +477,7 @@
               <div class="pa-4 mb-4 d-flex align-center"
                    style="position: sticky;top: 0;z-index: 1"
               >
-                {{$t('选择需要添加的属性')}}
+                {{ $t('选择需要添加的属性') }}
               </div>
               <template v-for="(field) in addableFields">
                 <div :key="field.value" class="px-4">
@@ -476,7 +493,7 @@
               >
                 <v-spacer/>
                 <v-btn @click="massiveEdit(0)" color="primary" text class="mr-2">
-                  {{$t('批量新增')}}
+                  {{ $t('批量新增') }}
                 </v-btn>
               </div>
             </template>
@@ -484,7 +501,7 @@
               <div class="pa-4 mb-4 d-flex align-center"
                    style="position: sticky;top: 0;z-index: 1"
               >
-                {{$t('选择需要设置的属性')}}
+                {{ $t('选择需要设置的属性') }}
               </div>
               <template v-for="(field) in mergableFields">
                 <div :key="field.value" class="px-4">
@@ -505,23 +522,25 @@
               >
                 <v-spacer/>
                 <v-btn @click="massiveEdit(1)" color="primary" text class="mr-2">
-                  {{$t('批量设置')}}
+                  {{ $t('批量设置') }}
                 </v-btn>
               </div>
             </template>
             <template v-if="operationMode===2">
               <div class="px-4 py-12">
                 <div class="text-h3">
-                  {{$t('请注意！删除后将无法恢复!')}}
+                  {{ $t('请注意！删除后将无法恢复!') }}
                 </div>
-                <div class="mt-4"> {{$t('这是最后一次确认，如果点击下方的删除，那么将无法终止删除，被删除的数据也无法恢复。')}}</div>
+                <div class="mt-4">
+                  {{ $t('这是最后一次确认，如果点击下方的删除，那么将无法终止删除，被删除的数据也无法恢复。') }}
+                </div>
               </div>
               <div style="position: absolute; width:100%;bottom: 0;background: #f0f0f0;height: 64px"
                    class="d-flex align-center px-4 pr-0"
               >
                 <v-spacer/>
                 <v-btn @click="massiveEdit(2)" text color="error" class="mr-2">
-                  {{$t('确认删除')}}
+                  {{ $t('确认删除') }}
                 </v-btn>
               </div>
             </template>
@@ -540,14 +559,17 @@
              v-else
         >
           <div class="text-h3">
-            {{$t('批量操作完成！')}}
+            {{ $t('批量操作完成！') }}
           </div>
           <div class="mt-4">
-            {{$tc('共进行了',maxProgress,progress,maxProgress-progress)}}
+            {{
+              $t('共进行了') + maxProgress + ',' + $t('其中,')
+              + progress + $t('成功，') + (maxProgress - progress) + $t('失败')
+            }}
           </div>
           <div class="d-flex mt-4">
-            <v-btn outlined @click="massEditStep=1" class="mr-2">{{$t('返回继续批量操作')}}</v-btn>
-            <v-btn outlined @click="showMultipleEditDialog=false">{{$t('完成')}}</v-btn>
+            <v-btn outlined @click="massEditStep=1" class="mr-2">{{ $t('返回继续批量操作') }}</v-btn>
+            <v-btn outlined @click="showMultipleEditDialog=false">{{ $t('完成') }}</v-btn>
           </div>
 
         </div>
@@ -557,7 +579,7 @@
 </template>
 
 <script>
-
+import Swal from 'sweetalert2'
 import GeneralForm from './GeneralForm'
 import ImgTemplate from './Base/ImgTemplate'
 import FormField from './FormField'
@@ -569,10 +591,37 @@ import PriceTableDisplay from './Base/PriceTableDisplay'
 import { getNiceLabel } from '../DateRepository'
 import NoChainScrollContainer from './Base/NoChainScrollContainer.vue'
 import { Ripple } from 'vuetify/lib/directives'
+import HorizontalList from '../../../../src/composable/InK/HorizontalList.vue'
+
+function key (model) {
+  return Object.keys(model).join('/')
+}
+
+function getStorageMassEdit (model) {
+  try {
+    return JSON.parse(localStorage.getItem(key(model))) ?? []
+  } catch (e) {
+    return []
+  }
+}
+
+function setMassEditSet (model, idSet, name) {
+  const current = getStorageMassEdit(model)
+  current.unshift({
+    idSet,
+    name,
+  })
+  if(current.length>6){
+    current.pop()
+  }
+  localStorage.setItem(key(model), JSON.stringify(current))
+  return getStorageMassEdit(model)
+}
 
 export default {
   name: 'IkDataTable',
   components: {
+    HorizontalList,
     PriceTableDisplay,
     DateRangePicker,
     ImgTemplate,
@@ -719,7 +768,7 @@ export default {
       massLoading: false,
       progress: 0,
       maxProgress: 0,
-
+      storageSet: getStorageMassEdit(this.model),
     }
   },
   computed: {
@@ -1032,6 +1081,10 @@ export default {
       this.maxProgress = result.length
       this.progress = result.filter(it => it.status === 'fulfilled').length
       this.targetItem = {}
+      this.reload().catch(() => {
+        this.loading = false
+        this.items = []
+      })
       this.massLoading = false
 
     },
@@ -1039,6 +1092,19 @@ export default {
       this.$vuetify.goTo(0, {
         appOffset: true,
       })
+    },
+    async saveCurrent () {
+      this.showMultipleEditDialog=false
+      const name = (await Swal.fire({
+        title: '请为保存的筛选输入一个名字',
+        input: 'text',
+      })).value
+      console.log(name)
+      this.showMultipleEditDialog=true
+      this.storageSet = setMassEditSet(this.model, this.selectedItems, name)
+    },
+    useSet (set) {
+      this.selectedItems = set
     },
   },
 }

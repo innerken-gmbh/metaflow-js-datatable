@@ -58,6 +58,7 @@
                               :field="c"
                               :current-state="editedIndex"
                               :edited-item="editedItem[field.value][i]"
+                              :outside-disabled="outsideSettedField.includes(field.value)"
                               no-details
                           />
                         </div>
@@ -78,6 +79,7 @@
                         :field="field"
                         :current-state="editedIndex"
                         :edited-item="editedItem"
+                        :outside-disabled="outsideSettedField.includes(field.value)"
                         no-details
                     />
                   </div>
@@ -92,6 +94,7 @@
                         :field="field"
                         :current-state="editedIndex"
                         :edited-item="editedItem"
+                        :outside-disabled="outsideSettedField.includes(field.value)"
                         no-details
                     />
                   </div>
@@ -258,6 +261,9 @@ export default {
     name () {
       return (this?.editedItem?.name ?? this.editedItem?.dishName ?? this.title)
     },
+    outsideSettedField:function () {
+      return Object.keys(this.outSideProperty)
+    }
   },
   watch: {
     value (val) {

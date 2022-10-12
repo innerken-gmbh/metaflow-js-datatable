@@ -2,8 +2,8 @@
   <div
       v-if="(currentState===-1&&inNew)||(currentState>-1&&inEdit)"
   >
-    <div v-if="type.name!=='image'&&text&&!hideSelect"  class="pb-1">
-      <div  class="text-caption">
+    <div v-if="type.name!=='image'&&text&&!hideSelect" class="pb-1">
+      <div class="text-caption">
         {{ $t(text) }}
         <span v-if="text&&required&&!hideSelect" class="red--text text-body-1">*</span>
       </div>
@@ -74,7 +74,7 @@
         <template v-if="type.showButton&&!hideSelect" v-slot:prepend-item>
           <v-list-item @click="$emit('click')">
             <v-list-item-content>
-              <v-list-item-title class="primary--text">{{$t('新建其他')}}{{text}}</v-list-item-title>
+              <v-list-item-title class="primary--text">{{ $t('新建其他') }}{{ text }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
@@ -84,7 +84,7 @@
               v-if="index==0"
               class="grey--text text-caption"
           >
-          {{ $t(text) }}({{showText(item)}})
+          {{ $t(text) }}({{ showText(item) }})
         </span>
         </template>
       </v-select>
@@ -107,7 +107,8 @@
     </template>
     <template v-else-if="type.name==='image'">
       <div class="d-flex flex-column align-center">
-        <v-card @click="startUpload" width="160px" height="160px" flat color="#eeeeee" class="d-flex justify-center align-center"
+        <v-card @click="startUpload" width="160px" height="160px" flat color="#eeeeee"
+                class="d-flex justify-center align-center"
         >
           <img-with-loading
               v-if="editedItem[type.fileStorage]"
@@ -272,7 +273,7 @@ export const colorList = ['#FFCDD2', '#F8BBD0', '#E1BEE7',
   '#B3E5FC', '#B2EBF2', '#B2DFDB',
   '#C8E6C9', '#DCEDC8', '#F0F4C3',
   '#FFF9C4', '#FFECB3', '#FFE0B2',
-  '#FFCCBC', '#D7CCC8', '#CFD8DC','#FFFFFF']
+  '#FFCCBC', '#D7CCC8', '#CFD8DC', '#FFFFFF']
 import ImgWithLoading from './Base/ImgWithLoading'
 import Utils from 'innerken-js-utils'
 
@@ -320,6 +321,7 @@ export default {
     fullHeight: { default: false },
     hideSelect: { default: false },
     solo: { default: false },
+    outsideDisabled: { default: false },
   },
   data: function () {
     return {
@@ -327,7 +329,7 @@ export default {
       timePickerShow: false,
       datePickerShow: false,
       textArea: false,
-      hint:'',
+      hint: '',
       ...this.field,
     }
   },
@@ -366,7 +368,8 @@ export default {
       return this.currentState === -1
     },
     shouldDisable: function () {
-      return (this.disableNew && this.isNew) ||
+      return this.outsideDisabled||
+          (this.disableNew && this.isNew) ||
           (this.disableEdit && !this.isNew)
     },
     rules: function () {
@@ -380,7 +383,7 @@ export default {
           }
         }
       }
-      return this.hideSelect?[]:rules
+      return this.hideSelect ? [] : rules
     },
     locale: function () {
       const locale = this.dateLocale
@@ -400,9 +403,9 @@ export default {
     },
   },
   methods: {
-    showText(item){
-      const value=this.editedItem[this.value]
-      return Array.isArray(value)?'+'+value.length:item[this.type.itemText]
+    showText (item) {
+      const value = this.editedItem[this.value]
+      return Array.isArray(value) ? '+' + value.length : item[this.type.itemText]
     },
     startUpload () {
       console.log(this.$refs.file.$refs.input)

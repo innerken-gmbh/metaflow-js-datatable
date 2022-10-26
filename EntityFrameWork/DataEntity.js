@@ -63,8 +63,8 @@ export const Types = {
       return typeof value === 'boolean' ? value : !!parseInt(value)
     }
     if (type === Types.Option) {
-      if (value.includes(',')) {
-        return value.split(',').map((item) => parseInt(item))
+      if (value.toString().includes(',')) {
+        return value.toString().split(',').map((item) => parseInt(item))
       }
       if (isNaN(parseInt(value))) {
         return value

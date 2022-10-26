@@ -262,7 +262,7 @@ export default {
       return (this?.editedItem?.name ?? this.editedItem?.dishName ?? this.title)
     },
     outsideSettedField:function () {
-      return Object.keys(this.outSideProperty)
+      return this.outSideProperty?Object.keys(this.outSideProperty):[]
     }
   },
   watch: {

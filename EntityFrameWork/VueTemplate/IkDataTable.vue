@@ -591,7 +591,8 @@ import PriceTableDisplay from './Base/PriceTableDisplay'
 import { getNiceLabel } from '../DateRepository'
 import NoChainScrollContainer from './Base/NoChainScrollContainer.vue'
 import { Ripple } from 'vuetify/lib/directives'
-import HorizontalList from '../../../../src/composable/InK/HorizontalList.vue'
+import HorizontalList from "./InK/HorizontalList.vue";
+
 
 function key (model) {
   return Object.keys(model).join('/')

@@ -69,7 +69,6 @@ export default {
   },
   computed: {
     currentLocale() {
-      console.log( this.currentLocaleCode,'locale')
       return this.locales.find(it => it.code === this.currentLocaleCode)
     },
     allLocales() {

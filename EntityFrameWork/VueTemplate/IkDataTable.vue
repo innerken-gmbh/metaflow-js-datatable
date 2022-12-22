@@ -24,7 +24,6 @@
           :dateTime="dates"
           name="footer"
       />
-
       <v-spacer/>
 
       <div class="d-flex ma-0 mr-2  align-center">
@@ -96,6 +95,15 @@
         </div>
       </template>
 
+    </div>
+    <div class="d-flex filterBar align-center mb-6">
+      <slot
+          :items="items"
+          :selectItems="selectedItems"
+          :tableItems="tableItem"
+          :dateTime="dates"
+          name="anotherFooter"
+      />
     </div>
 
     <div class="mb-2 mt-n4" v-if="filterDisplayChips.length>0">

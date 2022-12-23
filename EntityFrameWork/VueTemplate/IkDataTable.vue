@@ -1026,7 +1026,7 @@ export default {
       this.$nextTick(() => {
         this.loading = false
         this.dialog = false
-        this.$emit('reloaded')
+        this.$emit('reloaded', this.items)
       })
     },
     toggleItem (item) {

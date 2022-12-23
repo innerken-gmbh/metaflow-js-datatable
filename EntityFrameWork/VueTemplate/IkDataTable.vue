@@ -102,7 +102,7 @@
           :selectItems="selectedItems"
           :tableItems="tableItem"
           :dateTime="dates"
-          name="anotherFooter"
+          name="topOnTable"
       />
     </div>
 

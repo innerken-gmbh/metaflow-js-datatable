@@ -602,6 +602,7 @@ import NoChainScrollContainer from './Base/NoChainScrollContainer.vue'
 import { Ripple } from 'vuetify/lib/directives'
 import HorizontalList from "./InK/HorizontalList.vue";
 
+import { uniqBy } from 'lodash-es'
 
 function key (model) {
   return Object.keys(model).join('/')

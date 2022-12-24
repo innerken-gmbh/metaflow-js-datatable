@@ -24,6 +24,7 @@
           :dateTime="dates"
           name="footer"
       />
+
       <v-spacer/>
 
       <div class="d-flex ma-0 mr-2  align-center">
@@ -620,7 +621,7 @@ function setMassEditSet (model, idSet, name) {
     idSet,
     name,
   })
-  if(current.length>6){
+  if (current.length > 6) {
     current.pop()
   }
   localStorage.setItem(key(model), JSON.stringify(current))
@@ -803,7 +804,7 @@ export default {
       }
     },
     mergableFields: function () {
-      const res = this.formField
+      const res = uniqBy([this.formField,this.headers].flat(),'value')
           .filter(item =>
               [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
           .filter(item => item.merge)
@@ -1103,13 +1104,13 @@ export default {
       })
     },
     async saveCurrent () {
-      this.showMultipleEditDialog=false
+      this.showMultipleEditDialog = false
       const name = (await Swal.fire({
         title: '请为保存的筛选输入一个名字',
         input: 'text',
       })).value
       console.log(name)
-      this.showMultipleEditDialog=true
+      this.showMultipleEditDialog = true
       this.storageSet = setMassEditSet(this.model, this.selectedItems, name)
     },
     useSet (set) {

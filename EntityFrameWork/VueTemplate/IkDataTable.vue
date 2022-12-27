@@ -15,7 +15,10 @@
           elevation="0"
           @click="addItem"
       >
-        {{ $t('新增') }}{{ entityName }}
+        <v-icon left>
+          mdi-plus
+        </v-icon>
+        {{ entityName }}
       </v-btn>
       <slot
           :items="items"

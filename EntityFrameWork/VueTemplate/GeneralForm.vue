@@ -135,7 +135,7 @@
                   {{ $t(field.text) }}
                   <template v-if="editedItem[field.value]&&field.dataType!==IKDataEntity.Types.Color"> :
                     {{
-                      Array.isArray(editedItem[field.value]) ? editedItem[field.value].length + $t('个') : editedItem[field.value]
+                      Array.isArray(editedItem[field.value]) ? editedItem[field.value].length + $t('individually') : editedItem[field.value]
                     }}
                   </template>
                 </v-chip>
@@ -340,7 +340,7 @@ export default {
         }, {})
         this.uniqueField.forEach(it => {
           if (this.keyStore[it.value]) {
-            const uniqueCheck = val => this.keyStore[it.value] && !this.keyStore[it.value].includes(val) || this.$t(it.text) + this.$t('重复了')
+            const uniqueCheck = val => this.keyStore[it.value] && !this.keyStore[it.value].includes(val) || this.$t(it.text) + this.$t('duplicated')
             it.rule.push(uniqueCheck)
           }
 

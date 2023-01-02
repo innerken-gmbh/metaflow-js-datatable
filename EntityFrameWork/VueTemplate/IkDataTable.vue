@@ -281,7 +281,7 @@
                 color="primary"
                 @click="reload"
             >
-              {{ $t('重新加载') }}
+              {{ $t('reload') }}
             </v-btn>
           </slot>
         </template>
@@ -989,7 +989,7 @@ export default {
     async deleteItem (item, promt = true) {
       if (promt) {
         const res = await IKUtils.showConfirmAsyn(
-            this.$t('Are you sure?'),
+            this.$t('are_you_sure'),
             this.$t('you want to delete this item?'),
         )
         if (res.isConfirmed) {

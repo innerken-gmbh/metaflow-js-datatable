@@ -7,7 +7,7 @@
           <v-icon size="24">mdi-arrow-left</v-icon>
         </v-btn>
         <div class="text-h3 font-weight-bold">
-          {{ editedIndex === -1 ? $t('新增') : $t('编辑')+'/' }}{{ name }}
+          {{ editedIndex === -1 ? $t('new') : $t('edit')+ ' ' + '/' }} {{ name }}
         </div>
         <v-spacer></v-spacer>
 

@@ -104,7 +104,7 @@
           </div>
           <v-card v-if="notRequiredFields.length>0" outlined height="fit-content" class="pa-4 px-6 mt-8">
             <div class="d-flex  mt-2 ">
-              <div class="text-h4 font-weight-medium">{{ $t('选填信息') }}</div>
+              <div class="text-h4 font-weight-medium">{{ $t('option_info') }}</div>
               <v-spacer></v-spacer>
               <v-btn outlined style="border-radius: 8px" icon @click="showOptionalField=!showOptionalField">
                 <v-icon v-if="!showOptionalField">mdi-chevron-down</v-icon>
@@ -124,7 +124,7 @@
               </template>
             </div>
             <div class="mt-6 text-body-2" v-else>
-              {{ $t('以下的内容并不是必需填写的。我们会为您自动准备好相应的内容。点击以编辑。') }}<br><br>
+              {{ $t('AutoContentNotMandatory') }}<br><br>
               <template v-for="(field,index) in notRequiredFields">
                 <v-chip outlined
                         @click="showOptionalField=true"
@@ -151,7 +151,7 @@
                 :disabled="!valid"
                 @click="save"
             >
-              {{ $t('保存改动') }}
+              {{ $t('save_change') }}
             </v-btn>
             <v-btn
                 :loading="loading"
@@ -162,7 +162,7 @@
                 :disabled="!valid"
                 @click="save(false)"
             >
-              {{ $t('保存并继续添加') }}
+              {{ $t('saveAndAdd') }}
             </v-btn>
           </div>
 
@@ -368,11 +368,11 @@ export default {
       this.wait(async () => {
         if (this.editedIndex > -1) {
           const res = await this.updateItem(this.editedItem)
-          IKUtils.toast(this.$t('编辑成功'))
+          IKUtils.toast(this.$t('EditSuccess'))
           this.close(true, res)
         } else {
           const res = await IKUtils.safeCallFunction(this.model, this.model.add, this.editedItem)
-          IKUtils.toast(this.$t('添加成功'))
+          IKUtils.toast(this.$t('addSuccess'))
           if (close) {
             this.close(true, res)
           } else {

@@ -881,7 +881,7 @@ export default {
     realCategoryList () {
       return this.categoryList ? [{
         id: -1,
-        name: this.$t('全部'),
+        name: this.$t('all'),
       }, ...this.categoryList] : []
     },
     filterDisplayChips: function () {
@@ -981,7 +981,7 @@ export default {
       const _item = IKUtils.deepCopy(item)
       _item[key] = !_item[key]
       await this.updateItem(_item)
-      IKUtils.toast(this.$i18n.t('编辑成功'))
+      IKUtils.toast(this.$i18n.t('EditSuccess'))
       await this.reload()
     },
 
@@ -998,14 +998,14 @@ export default {
         if (res.isConfirmed) {
           IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
               .then(() => {
-                IKUtils.toast(this.$t('删除成功'))
+                IKUtils.toast(this.$t('delete_success'))
                 this.reload()
               })
         }
       } else {
         IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
             .then(() => {
-              IKUtils.toast(this.$t('删除成功'))
+              IKUtils.toast(this.$t('delete_success'))
               this.reload()
             })
       }

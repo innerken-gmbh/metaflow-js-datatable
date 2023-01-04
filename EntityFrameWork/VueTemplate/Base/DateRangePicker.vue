@@ -4,7 +4,7 @@
 
 <template>
   <div class="pa-1">
-    <h3>{{ $t('请选择日期范围') }}</h3>
+    <h3>{{ $t('chooseDateRange') }}</h3>
     <div class="mt-2">
       <div style="display: grid;grid-template-columns: repeat(2,1fr);grid-gap: 8px">
         <div>
@@ -15,11 +15,11 @@
           >
             <template #activator="{ on, attrs }">
               <div class="text-overline">
-                {{ $t('从...') }}
+                {{ $t('from') }}
               </div>
               <v-text-field
                   v-model="startDate"
-                  :placeholder="$t('从...')"
+                  :placeholder="$t('from')"
                   hide-details
                   outlined
                   prepend-inner-icon="mdi-calendar"
@@ -43,11 +43,11 @@
           >
             <template #activator="{ on, attrs }">
               <div class="text-overline">
-                {{ $t('到...') }}
+                {{ $t('to') }}
               </div>
               <v-text-field
                   v-model="endDate"
-                  :placeholder="$t('到...')"
+                  :placeholder="$t('to')"
                   hide-details
                   outlined
                   prepend-inner-icon="mdi-calendar"

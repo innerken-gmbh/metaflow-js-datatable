@@ -351,9 +351,9 @@
         <div style="display: grid;grid-template-columns: 300px 1fr">
           <v-card class="pa-4" style="overflow-y: scroll;overscroll-behavior: contain">
             <div class="text-h4 mb-4">
-              {{ $t('筛选') }}
+              {{ $t('Filter') }}
               <div class="text-body-2">
-                {{ $t('符合条件') }}:{{ filteredEditItem.length }}
+                {{ $t('AccordingCriteria') }}:{{ filteredEditItem.length }}
               </div>
             </div>
             <template v-for="(field) in mergableFields">
@@ -375,7 +375,7 @@
                   clearable
                   hide-details
                   outlined
-                  :placeholder="$t('在这里搜索要批量修改的条目....')"
+                  :placeholder="$t('SearchItemsForBatch')"
                   v-model="massEditSearch"
                   append-icon="mdi-magnify"
               />
@@ -388,7 +388,7 @@
                     width="72"
                     class="pa-2 d-flex flex-column align-center justify-center"
                 >
-                  <div class="text-body-2">保存筛选</div>
+                  <div class="text-body-2">{{ $t('SaveFilter') }}</div>
                 </v-card>
                 <v-card @click="useSet(item.idSet)" v-for="item in storageSet" elevation="0" width="72"
                         class="pa-2 d-flex flex-column"
@@ -423,13 +423,13 @@
                 <v-icon left v-else>
                   mdi-checkbox-marked
                 </v-icon>
-                {{ $t('选择全部') }}
+                {{ $t('SelectAll') }}
               </div>
               <v-spacer/>
               <v-btn :disabled="selectedItems.length===0" @click="massEditStep=1;changeOperationMode(0);" text
                      color="primary" class="mr-2"
               >
-                {{ $t('批量更改') }}:{{ selectedItems.length }}
+                {{ $t('SelectedItems') }} : {{ selectedItems.length }}
               </v-btn>
             </div>
           </div>
@@ -442,17 +442,17 @@
               <v-icon left>mdi-arrow-left</v-icon>
             </div>
             <div class="text-h4 mb-4 px-4">
-              {{ $t('批量修改已经选择的条目') }}
+              {{ $t('BatchEditTitle') }}
             </div>
             <v-card @click="changeOperationMode(0)" elevation="0"
                     tile
                     class="px-4 py-4 grey lighten-4 text-body-1"
             >
               <div :class="operationMode===0?'font-weight-bold':''">
-                {{ $t('批量添加') }}
+                {{ $t('BatchInclude') }}
               </div>
               <div class="text-caption">
-                {{ $t('为条目批量添加某些可以多选的属性') }}
+                {{ $t('BatchAddAttributeHint') }}
               </div>
             </v-card>
             <v-divider/>
@@ -461,10 +461,10 @@
                     class="px-4 py-4 grey lighten-4 text-body-1"
             >
               <div :class="operationMode===1?'font-weight-bold':''">
-                {{ $t('批量设置') }}
+                {{ $t('BatchOverwrite') }}
               </div>
               <div class="text-caption">
-                {{ $t('将选中的条目的某些属性设置成另外一种，注意，在此模式下，已经设置的属性会被覆盖') }}
+                {{ $t('BatchApplySetAttributesToElements') }}
               </div>
             </v-card>
             <v-divider/>
@@ -473,14 +473,14 @@
                     class="px-4 py-4 grey lighten-4 text-body-1"
             >
               <div :class="operationMode===2?'font-weight-bold':''">
-                {{ $t('批量删除') }}
+                {{ $t('BatchDelete') }}
               </div>
               <div class="text-caption">
-                {{ $t('批量删除选中的条目') }}
+                {{ $t('PermanentlyDeleteSelectedItems') }}
               </div>
             </v-card>
 
-            <div class="px-4 mt-4">{{ $t('已经选择') }}：{{ selectedItems.length }}</div>
+            <div class="px-4 mt-4">{{ $t('CurrentSelected') }} ： {{ selectedItems.length }}</div>
           </v-card>
           <div
               style="height: 600px;overflow-y: scroll;overscroll-behavior: contain;position: relative;background: #f9f9f9"
@@ -489,7 +489,7 @@
               <div class="pa-4 mb-4 d-flex align-center"
                    style="position: sticky;top: 0;z-index: 1"
               >
-                {{ $t('选择需要添加的属性') }}
+                {{ $t('ChooseAttributes') }}
               </div>
               <template v-for="(field) in addableFields">
                 <div :key="field.value" class="px-4">
@@ -505,7 +505,7 @@
               >
                 <v-spacer/>
                 <v-btn @click="massiveEdit(0)" color="primary" text class="mr-2">
-                  {{ $t('批量新增') }}
+                  {{ $t('BatchInclude') }}
                 </v-btn>
               </div>
             </template>
@@ -513,7 +513,7 @@
               <div class="pa-4 mb-4 d-flex align-center"
                    style="position: sticky;top: 0;z-index: 1"
               >
-                {{ $t('选择需要设置的属性') }}
+                {{ $t('ChooseProperties') }}
               </div>
               <template v-for="(field) in mergableFields">
                 <div :key="field.value" class="px-4">
@@ -534,17 +534,17 @@
               >
                 <v-spacer/>
                 <v-btn @click="massiveEdit(1)" color="primary" text class="mr-2">
-                  {{ $t('批量设置') }}
+                  {{ $t('BatchOverwrite') }}
                 </v-btn>
               </div>
             </template>
             <template v-if="operationMode===2">
               <div class="px-4 py-12">
                 <div class="text-h3">
-                  {{ $t('请注意！删除后将无法恢复!') }}
+                  {{ $t('OnceDeletedCannotRecovered') }}
                 </div>
                 <div class="mt-4">
-                  {{ $t('这是最后一次确认，如果点击下方的删除，那么将无法终止删除，被删除的数据也无法恢复。') }}
+                  {{ $t('PleaseConfirmSelectedItemsDeleted') }}
                 </div>
               </div>
               <div style="position: absolute; width:100%;bottom: 0;background: #f0f0f0;height: 64px"
@@ -552,7 +552,7 @@
               >
                 <v-spacer/>
                 <v-btn @click="massiveEdit(2)" text color="error" class="mr-2">
-                  {{ $t('确认删除') }}
+                  {{ $t('BatchDelete') }}
                 </v-btn>
               </div>
             </template>
@@ -571,17 +571,16 @@
              v-else
         >
           <div class="text-h3">
-            {{ $t('批量操作完成！') }}
+            {{ $t('BatchComplete') }}
           </div>
           <div class="mt-4">
             {{
-              $t('共进行了') + maxProgress + ',' + $t('其中,')
-              + progress + $t('成功，') + (maxProgress - progress) + $t('失败')
+              $t('Finish') + ' ' + progress + ' ' + $t('from') + '  ' + maxProgress + ', ' +  $t('Failed') + ' ' + (maxProgress - progress)
             }}
           </div>
           <div class="d-flex mt-4">
-            <v-btn outlined @click="massEditStep=1" class="mr-2">{{ $t('返回继续批量操作') }}</v-btn>
-            <v-btn outlined @click="showMultipleEditDialog=false">{{ $t('完成') }}</v-btn>
+            <v-btn outlined @click="massEditStep=1" class="mr-2">{{ $t('ContinueBatchProcessing') }}</v-btn>
+            <v-btn outlined @click="showMultipleEditDialog=false">{{ $t('Finish') }}</v-btn>
           </div>
 
         </div>

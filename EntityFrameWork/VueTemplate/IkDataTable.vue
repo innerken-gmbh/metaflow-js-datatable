@@ -458,7 +458,7 @@
                     class="px-4 py-4 grey lighten-4 text-body-1"
             >
               <div :class="operationMode===0?'font-weight-bold':''">
-                {{ $t('BatchAddAttribute') }}
+                {{ $t('BatchInclude') }}
               </div>
               <div class="text-caption">
                 {{ $t('BatchAddAttributeHint') }}
@@ -583,8 +583,7 @@
           </div>
           <div class="mt-4">
             {{
-              $t('TotalOf') + maxProgress + ',' + $t('In')
-              + progress + $t('CurrentProgress') + (maxProgress - progress) + $t('error')
+              $t('Finish') + ' ' + progress + ' ' + $t('from') + '  ' + maxProgress + ', ' +  $t('Failed') + ' ' + (maxProgress - progress)
             }}
           </div>
           <div class="d-flex mt-4">

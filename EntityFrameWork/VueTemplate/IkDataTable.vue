@@ -15,10 +15,19 @@
           elevation="0"
           @click="addItem"
       >
-        <v-icon left>
-          mdi-plus
-        </v-icon>
-        {{ entityName }}
+        <div
+            class="d-flex align-baseline"
+        >
+          <v-icon left>
+            mdi-plus-circle-outline
+          </v-icon>
+          <span
+              class="text-truncate"
+              style="max-width: 170px;"
+          >
+            {{ entityName }}
+          </span>
+        </div>
       </v-btn>
       <slot
           :items="items"
@@ -40,7 +49,7 @@
               dense
               hide-details
               clearable
-              :label="$t('Search')"
+              :label="$t('search')"
               single-line
           />
         </div>
@@ -66,7 +75,7 @@
                 </div>
               </template>
             </template>
-            <v-btn elevation="0" @click="showFilter=false" block color="primary">{{ $t('确定') }}</v-btn>
+            <v-btn elevation="0" @click="showFilter=false" block color="primary">{{ $t('Determine') }}</v-btn>
           </v-card>
         </v-dialog>
         <v-btn v-if="mergableFields.length>0" @click="startMassEdit" class="ml-2" style="background: white" icon
@@ -353,7 +362,7 @@
             <div class="text-h4 mb-4">
               {{ $t('Filter') }}
               <div class="text-body-2">
-                {{ $t('AccordingCriteria') }}:{{ filteredEditItem.length }}
+                {{ $t('AccordingCriteria') }} : {{ filteredEditItem.length }}
               </div>
             </div>
             <template v-for="(field) in mergableFields">
@@ -449,7 +458,7 @@
                     class="px-4 py-4 grey lighten-4 text-body-1"
             >
               <div :class="operationMode===0?'font-weight-bold':''">
-                {{ $t('BatchInclude') }}
+                {{ $t('BatchAddAttribute') }}
               </div>
               <div class="text-caption">
                 {{ $t('BatchAddAttributeHint') }}
@@ -479,8 +488,7 @@
                 {{ $t('PermanentlyDeleteSelectedItems') }}
               </div>
             </v-card>
-
-            <div class="px-4 mt-4">{{ $t('CurrentSelected') }} ： {{ selectedItems.length }}</div>
+            <div class="px-4 mt-4">{{ $t('CurrentSelected') }}：{{ selectedItems.length }}</div>
           </v-card>
           <div
               style="height: 600px;overflow-y: scroll;overscroll-behavior: contain;position: relative;background: #f9f9f9"
@@ -552,7 +560,7 @@
               >
                 <v-spacer/>
                 <v-btn @click="massiveEdit(2)" text color="error" class="mr-2">
-                  {{ $t('BatchDelete') }}
+                  {{ $t('IrrevocablyDelete') }}
                 </v-btn>
               </div>
             </template>
@@ -575,7 +583,8 @@
           </div>
           <div class="mt-4">
             {{
-              $t('Finish') + ' ' + progress + ' ' + $t('from') + '  ' + maxProgress + ', ' +  $t('Failed') + ' ' + (maxProgress - progress)
+              $t('TotalOf') + maxProgress + ',' + $t('In')
+              + progress + $t('CurrentProgress') + (maxProgress - progress) + $t('error')
             }}
           </div>
           <div class="d-flex mt-4">

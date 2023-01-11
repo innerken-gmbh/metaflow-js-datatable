@@ -11,6 +11,7 @@
                 tile
                 class="d-flex align-center justify-center"
         >
+          <v-icon>mdi-image</v-icon>
         </v-card>
       </template>
     </v-img>

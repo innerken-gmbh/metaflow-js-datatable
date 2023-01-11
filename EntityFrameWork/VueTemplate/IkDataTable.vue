@@ -78,10 +78,12 @@
             <v-btn elevation="0" @click="showFilter=false" block color="primary">{{ $t('Determine') }}</v-btn>
           </v-card>
         </v-dialog>
-        <v-btn v-if="mergableFields.length>0" @click="startMassEdit" class="ml-2" style="background: white" icon
+        <v-btn v-if="mergableFields.length>0"
+               @click="startMassEdit" class="ml-2" style="background: white"
                outlined
         >
-          <v-icon>mdi-format-list-checks</v-icon>
+          <v-icon left>mdi-format-list-checks</v-icon>
+          批量操作
         </v-btn>
       </div>
 
@@ -142,8 +144,6 @@
 
     <v-card>
       <v-data-table
-          :show-expand="showExpand"
-          :single-expand="singleExpand"
           :headers="realHeaders"
           :items="tableItem"
           :loading="loading"
@@ -356,41 +356,46 @@
     </v-dialog>
     <v-dialog v-model="showMultipleEditDialog" max-width="800px">
 
-      <v-card v-if="massEditStep===0" color="#f6f6f6">
+      <v-card tile v-if="massEditStep===0" color="#f6f6f6">
         <div style="display: grid;grid-template-columns: 300px 1fr">
-          <v-card class="pa-4" style="overflow-y: scroll;overscroll-behavior: contain">
-            <div class="text-h4 mb-4">
-              {{ $t('Filter') }}
-              <div class="text-body-2">
-                {{ $t('AccordingCriteria') }} : {{ filteredEditItem.length }}
+          <v-card class="pa-4" style="position: relative">
+            <div class="text-h3 mb-4">
+              批量操作
+            </div>
+            <div class="text-body-2 mb-4">
+              <div class="font-weight-bold">筛选</div>
+              <div class="text-caption ">
+                直接按照名称搜索，或者，在下方的选择框中选择需要的筛选条件
               </div>
             </div>
-            <template v-for="(field) in mergableFields">
-              <div :key="field.value" class="mr-2">
-                <form-field
-                    :hide-select="true"
-                    :field="field"
-                    :edited-item="searchItem"
-                />
-              </div>
-            </template>
-
-          </v-card>
-          <div>
-            <div class="text-h4 pa-4 px-2 d-flex align-center font-weight-bold"
-                 style="position: sticky;top: 0;background: #f0f0f0;z-index: 1"
-            >
+            <div style="height: 350px;overflow-y: scroll">
               <v-text-field
+                  class="mr-2"
                   clearable
-                  hide-details
                   outlined
-                  :placeholder="$t('SearchItemsForBatch')"
+                  placeholder="按照名称搜索"
                   v-model="massEditSearch"
                   append-icon="mdi-magnify"
               />
+
+              <template v-for="(field) in mergableFields">
+                <div :key="field.value" class="mr-2">
+                  <form-field
+                      :hide-select="true"
+                      :field="field"
+                      :edited-item="searchItem"
+                  />
+                </div>
+              </template>
             </div>
-            <div style="height: 500px;overflow-y: scroll;overscroll-behavior: contain">
-              <horizontal-list class="pa-2" style="position: sticky;top: 0;z-index: 2;background: #f6f6f6">
+            <v-card color="#f6f6f6" tile elevation="1"
+                    style="position: absolute;bottom: 0;left: 0;right: 0"
+                    class="pa-2"
+            >
+              <div class="text-body-2 pl-2">
+                {{ $t('AccordingCriteria') }} : {{ filteredEditItem.length }}
+              </div>
+              <horizontal-list v-if="selectedItems.length>0||storageSet.length>0" class="pa-2">
                 <v-card
                     elevation="0"
                     :disabled="selectedItems.length===0" @click="saveCurrent"
@@ -399,14 +404,35 @@
                 >
                   <div class="text-body-2">{{ $t('SaveFilter') }}</div>
                 </v-card>
-                <v-card @click="useSet(item.idSet)" v-for="item in storageSet" elevation="0" width="72"
-                        class="pa-2 d-flex flex-column"
+                <v-card
+                    @click="useSet(item.idSet)"
+                    v-for="item in storageSet"
+                    elevation="0" width="72"
+                    class="pa-2 d-flex flex-column"
                 >
                   <div class="text-truncate">{{ item.name }}</div>
                   <v-spacer></v-spacer>
                   <div class="text-caption">{{ item.idSet.length }}</div>
                 </v-card>
               </horizontal-list>
+            </v-card>
+
+
+          </v-card>
+          <div>
+            <v-card dark tile
+                    color="primary"
+                    class="pa-4"
+                    elevation="0"
+            >
+              <div class="text-h4">
+                筛选结果
+              </div>
+              <div class="text-body-2">
+                在下方选择需要进行批量操作的项目
+              </div>
+            </v-card>
+            <div style="height: 500px;overflow-y: scroll;overscroll-behavior: contain">
               <div
                   v-for="item in filteredEditItem"
               >
@@ -423,8 +449,9 @@
               </div>
             </div>
 
-            <div style="position: sticky;bottom: 0;background: #f0f0f0;height: 64px"
-                 class="d-flex align-center px-4 pr-0"
+            <v-card elevation="0" tile dark
+                    style="position: sticky;bottom: 0;height: 64px"
+                    class="d-flex align-center px-4 pr-0 primary"
             >
               <div text @click="toggleAll">
                 <v-icon v-if="selectedState==0" left>mdi-checkbox-blank-outline</v-icon>
@@ -435,12 +462,14 @@
                 {{ $t('SelectAll') }}
               </div>
               <v-spacer/>
-              <v-btn :disabled="selectedItems.length===0" @click="massEditStep=1;changeOperationMode(0);" text
+              <v-btn :disabled="selectedItems.length===0"
+                     elevation="0"
+                     @click="massEditStep=1;changeOperationMode(0);"
                      color="primary" class="mr-2"
               >
-                {{ $t('SelectedItems') }} : {{ selectedItems.length }}
+                批量修改 : {{ selectedItems.length }}
               </v-btn>
-            </div>
+            </v-card>
           </div>
         </div>
       </v-card>
@@ -453,29 +482,32 @@
             <div class="text-h4 mb-4 px-4">
               {{ $t('BatchEditTitle') }}
             </div>
+            <v-divider/>
             <v-card @click="changeOperationMode(0)" elevation="0"
                     tile
                     class="px-4 py-4 grey lighten-4 text-body-1"
             >
               <div :class="operationMode===0?'font-weight-bold':''">
-                {{ $t('BatchInclude') }}
-              </div>
-              <div class="text-caption">
-                {{ $t('BatchAddAttributeHint') }}
-              </div>
-            </v-card>
-            <v-divider/>
-            <v-card @click="changeOperationMode(1)" elevation="0"
-                    tile
-                    class="px-4 py-4 grey lighten-4 text-body-1"
-            >
-              <div :class="operationMode===1?'font-weight-bold':''">
                 {{ $t('BatchOverwrite') }}
               </div>
               <div class="text-caption">
                 {{ $t('BatchApplySetAttributesToElements') }}
               </div>
             </v-card>
+            <v-card v-if="addableFields.length>0"
+                    @click="changeOperationMode(1)"
+                    elevation="0"
+                    tile
+                    class="px-4 py-4 grey lighten-4 text-body-1"
+            >
+              <div :class="operationMode===1?'font-weight-bold':''">
+                {{ $t('BatchInclude') }}
+              </div>
+              <div class="text-caption">
+                {{ $t('BatchAddAttributeHint') }}
+              </div>
+            </v-card>
+
             <v-divider/>
             <v-card @click="changeOperationMode(2)" elevation="0"
                     tile
@@ -493,7 +525,7 @@
           <div
               style="height: 600px;overflow-y: scroll;overscroll-behavior: contain;position: relative;background: #f9f9f9"
           >
-            <template v-if="operationMode===0">
+            <template v-if="operationMode===1">
               <div class="pa-4 mb-4 d-flex align-center"
                    style="position: sticky;top: 0;z-index: 1"
               >
@@ -517,7 +549,7 @@
                 </v-btn>
               </div>
             </template>
-            <template v-if="operationMode===1">
+            <template v-if="operationMode===0">
               <div class="pa-4 mb-4 d-flex align-center"
                    style="position: sticky;top: 0;z-index: 1"
               >
@@ -583,7 +615,7 @@
           </div>
           <div class="mt-4">
             {{
-              $t('Finish') + ' ' + progress + ' ' + $t('from') + '  ' + maxProgress + ', ' +  $t('Failed') + ' ' + (maxProgress - progress)
+              $t('Finish') + ' ' + progress + ' ' + $t('from') + '  ' + maxProgress + ', ' + $t('Failed') + ' ' + (maxProgress - progress)
             }}
           </div>
           <div class="d-flex mt-4">
@@ -610,7 +642,7 @@ import PriceTableDisplay from './Base/PriceTableDisplay'
 import { getNiceLabel } from '../DateRepository'
 import NoChainScrollContainer from './Base/NoChainScrollContainer.vue'
 import { Ripple } from 'vuetify/lib/directives'
-import HorizontalList from "./InK/HorizontalList.vue";
+import HorizontalList from './InK/HorizontalList.vue'
 
 import { uniqBy } from 'lodash-es'
 
@@ -815,7 +847,7 @@ export default {
       }
     },
     mergableFields: function () {
-      const res = uniqBy([this.formField,this.headers].flat(),'value')
+      const res = uniqBy([this.formField, this.headers].flat(), 'value')
           .filter(item =>
               [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
           .filter(item => item.merge)
@@ -852,7 +884,8 @@ export default {
                 return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(ot => org.includes(ot)))))
               })
         }).filter(it => {
-          return !this.massEditSearch || Object.values(it).some(that => (that + '').toLowerCase().includes(this.massEditSearch.toLowerCase()))
+          return !this.massEditSearch || Object.values(it).some(that => (that + '').toLowerCase()
+              .includes(this.massEditSearch.toLowerCase()))
         })
       }
       return target

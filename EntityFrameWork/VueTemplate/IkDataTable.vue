@@ -78,7 +78,7 @@
             <v-btn elevation="0" @click="showFilter=false" block color="primary">{{ $t('Determine') }}</v-btn>
           </v-card>
         </v-dialog>
-        <v-btn v-if="mergableFields.length>0"
+        <v-btn v-if="mergableFields.length>0&&useDefaultAction"
                @click="startMassEdit" class="ml-2" style="background: white"
                outlined
         >
@@ -111,16 +111,6 @@
       </template>
 
     </div>
-    <div class="d-flex filterBar align-center mb-6">
-      <slot
-          :items="items"
-          :selectItems="selectedItems"
-          :tableItems="tableItem"
-          :dateTime="dates"
-          name="topOnTable"
-      />
-    </div>
-
     <div class="mb-2 mt-n4" v-if="filterDisplayChips.length>0">
       <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)"
               label close
@@ -133,6 +123,16 @@
             </span>
         {{ $t(item.value) }}
       </v-chip>
+    </div>
+
+    <div class="d-flex filterBar align-center mb-6">
+      <slot
+          :items="items"
+          :selectItems="selectedItems"
+          :tableItems="tableItem"
+          :dateTime="dates"
+          name="topOnTable"
+      />
     </div>
 
     <template v-if="realCategoryList.length>0">
@@ -927,12 +927,15 @@ export default {
     filterDisplayChips: function () {
       const keys = !this.showFilter ? Object.keys(this.filterItem) : []
 
-      return keys.filter(k => (!this.fixedFilter || !Object.keys(this.fixedFilter).includes(k)) && [this.filterItem[k]].flat().length > 0)
+      return keys.filter(k => (
+              !this.fixedFilter || !Object.keys(this.fixedFilter).includes(k))
+          && [this.filterItem[k]].flat().length > 0)
           .map((k) => {
-            const field = this.formDisc[k][0]
-            if (field.dataType === IKDataEntity.Types.Option) {
-              const selectionGroup = groupBy(field.type._selectItems, field.type.itemValue)
-              console.log(selectionGroup, 'groupContent')
+            const field = this.formDisc[k]
+
+            if (field?.dataType === IKDataEntity.Types.Option) {
+              const selectionGroup = groupBy(field.type?._selectItems??field.type.selectItems, field.type.itemValue)
+
               if (selectionGroup) {
                 return {
                   key: k,
@@ -947,7 +950,7 @@ export default {
                 }
               }
 
-            } else if (field.dataType === IKDataEntity.Types.Boolean) {
+            } else if (field?.dataType === IKDataEntity.Types.Boolean) {
               const selectionGroup = groupBy(field.type._selectItems, field.type.itemValue)
               return {
                 key: k,
@@ -966,7 +969,8 @@ export default {
   },
   mounted () {
     [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
-    this.formDisc = _.groupBy(this.formField, 'value')
+    this.formDisc = _.keyBy([this.formField,this.headers].flat(), 'value')
+
     if (this.useCustomerActionOnly || this.useDefaultAction &&
         (this.useEditAction || this.useDeleteAction)) {
       this.headers.push({
@@ -1066,7 +1070,9 @@ export default {
     async reload () {
       const model = this.model
       this.loading = true
-      this.filterItem = this.fixedFilter ?? {}
+
+      this.filterItem =IKUtils.deepCopy( this.fixedFilter ?? {})
+
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
       this.$nextTick(() => {
         this.loading = false
@@ -1114,7 +1120,7 @@ export default {
           if (this.targetItem[key]) {
             selectedItems.forEach(it => {
               it[key] = _.uniq([it[key], this.targetItem[key]].flat(3))
-              console.log(it[key], 'after')
+
             })
           }
         })
@@ -1153,7 +1159,6 @@ export default {
         title: '请为保存的筛选输入一个名字',
         input: 'text',
       })).value
-      console.log(name)
       this.showMultipleEditDialog = true
       this.storageSet = setMassEditSet(this.model, this.selectedItems, name)
     },

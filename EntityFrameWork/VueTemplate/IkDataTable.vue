@@ -78,7 +78,7 @@
             <v-btn elevation="0" @click="showFilter=false" block color="primary">{{ $t('Determine') }}</v-btn>
           </v-card>
         </v-dialog>
-        <v-btn v-if="mergableFields.length>0&&useDefaultAction"
+        <v-btn v-if="editableFields.length>0&&useDefaultAction"
                @click="startMassEdit" class="ml-2" style="background: white"
                outlined
         >
@@ -555,7 +555,7 @@
               >
                 {{ $t('ChooseProperties') }}
               </div>
-              <template v-for="(field) in mergableFields">
+              <template v-for="(field) in editableFields">
                 <div :key="field.value" class="px-4">
                   <form-field
                       :hide-select="true"
@@ -846,6 +846,19 @@ export default {
         transition: 'border-radius 200ms ease-in-out',
       }
     },
+    editableFields: function () {
+      const res = uniqBy([this.formField, this.headers].flat(), 'value')
+          .filter(item =>
+              [IKDataEntity.Types.Boolean, IKDataEntity.Types.Option].includes(item.dataType))
+          .filter(item => item.editable)
+          .map(item => {
+            return {
+              ...item,
+              name: 'item.' + item.value,
+            }
+          })
+      return res
+    },
     mergableFields: function () {
       const res = uniqBy([this.formField, this.headers].flat(), 'value')
           .filter(item =>
@@ -961,7 +974,7 @@ export default {
           })
     },
     realHeaders () {
-      return this.headers.map(item => {
+      return this.headers.filter(it=>!it.onlyAction).map(item => {
         item.text = this.$i18n.t(item.text)
         return item
       })
@@ -988,6 +1001,7 @@ export default {
     this.advancedItems = this.getAdvancedItems()
     this.slottedItems = this.getSlottedItems()
     this.editedItem = IKUtils.deepCopy(this.defaultItem)
+    this.filterItem =IKUtils.deepCopy( this.fixedFilter ?? {})
     this.reload().catch(() => {
       this.loading = false
       this.items = []
@@ -1071,7 +1085,7 @@ export default {
       const model = this.model
       this.loading = true
 
-      this.filterItem =IKUtils.deepCopy( this.fixedFilter ?? {})
+
 
       this.items = await IKUtils.safeCallFunction(model, model.getList, true, this.realFilter)
       this.$nextTick(() => {

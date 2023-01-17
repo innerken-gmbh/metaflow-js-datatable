@@ -75,13 +75,13 @@ export const Types = {
       return value
     }
     return value
-  }
+  },
 }
 
 Object.freeze(Types)
 
 export async function generalLoad (url, data) {
-  return (await hillo.get(url, {...data}))
+  return (await hillo.get(url, { ...data }))
 }
 
 /**
@@ -160,14 +160,14 @@ export function ModelFactory (entity, config) {
     edit,
     remove,
     getOne,
-    nameBuilder
+    nameBuilder,
   }
 
   config = IKUtils.extend(DefaultConfig, config)
 
   return {
     entity,
-    ...config
+    ...config,
   }
 }
 
@@ -182,8 +182,10 @@ const DefaultEntity = {
     cols: 12,
     md: 6,
     merge: true,
+    editable: true,
+    onlyAction: false,
     sm: 12,
-    type: {name: 'text'},
+    type: { name: 'text' },
     // PossibleValue of types
     /*
     Text:{
@@ -215,24 +217,24 @@ const DefaultEntity = {
     required: true, // 是否必填
     requiredEdit: true, // 在编辑中必填
     requiredNew: true, // 在新增中必填
-    dateLocale: '' //
+    dateLocale: '', //
   },
   tableConfig: {
     overwrite: false, // 如果这里为True，
     sortable: true,
     class: 'breakWord',
-    displayChild: () => true
-  }
+    displayChild: () => true,
+  },
 }
 const GroupTableConfig = {
-  displayChild: () => true
+  displayChild: () => true,
 }
 const TimeFormConfig = {
-  type: {name: 'time'}
+  type: { name: 'time' },
 }
 
 const DateFormConfig = {
-  type: {name: 'date'}
+  type: { name: 'date' },
 }
 
 const OptionFormConfig = {
@@ -241,8 +243,8 @@ const OptionFormConfig = {
     itemText: 'name',
     itemValue: 'id',
     selectItems: [],
-    multiple: false
-  }
+    multiple: false,
+  },
 }
 
 const ImageFormConfig = {
@@ -250,31 +252,31 @@ const ImageFormConfig = {
     name: 'image',
     root: () => '/',
     fileStorage: 'file',
-    hint: ''
-  }
+    hint: '',
+  },
 }
 
 const BooleanFormConfig = {
   type: {
-    name: 'switch'
-  }
+    name: 'switch',
+  },
 }
 
 const ColorFormConfig = {
   type: {
-    name: 'color'
-  }
+    name: 'color',
+  },
 }
 
 const FloatFormConfig = {
   type: {
-    name: 'float'
-  }
+    name: 'float',
+  },
 }
 const IntegerFormConfig = {
   type: {
-    name: 'integer'
-  }
+    name: 'integer',
+  },
 }
 
 /**
@@ -378,7 +380,7 @@ function generateField (_field, key) {
     children: _children,
     childKey: _field.childKey,
     labelKey: _field.labelKey,
-    orgin: _field
+    orgin: _field,
   }
 }
 
@@ -518,5 +520,5 @@ export default {
   Types,
   getFieldFromModel,
   ModelFactory,
-  generalLoad
+  generalLoad,
 }

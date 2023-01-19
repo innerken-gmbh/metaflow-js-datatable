@@ -544,8 +544,8 @@
                   </div>
                 </template>
               </div>
-              <div style="background: #f0f0f0;height: 64px"
-                   class="d-flex align-center px-4 pr-0"
+              <div style="background: #f0f0f0;height: 64px;"
+                   class="d-flex align-center px-4 pr-0 mt-auto mb-0"
               >
                 <v-spacer/>
                 <v-btn @click="massiveEdit(0)" color="primary" text class="mr-2">
@@ -572,8 +572,8 @@
                   </div>
                 </template>
               </div>
-              <div style="background: #f0f0f0;height: 64px;margin-top: auto; margin-bottom: 0;"
-                   class="d-flex align-center px-4 pr-0"
+              <div style="background: #f0f0f0;height: 64px;"
+                   class="d-flex align-center px-4 pr-0 mt-auto mb-0"
               >
                 <v-spacer/>
                 <v-btn @click="massiveEdit(1)" color="primary" text class="mr-2">
@@ -590,8 +590,8 @@
                   {{ $t('PleaseConfirmSelectedItemsDeleted') }}
                 </div>
               </div>
-              <div style="background: #f0f0f0;height: 64px;margin-top: auto; margin-bottom: 0;"
-                   class="d-flex align-center px-4 pr-0"
+              <div style="background: #f0f0f0;height: 64px;"
+                   class="d-flex align-center px-4 pr-0 mt-auto mb-0"
               >
                 <v-spacer/>
                 <v-btn @click="massiveEdit(2)" text color="error" class="mr-2">

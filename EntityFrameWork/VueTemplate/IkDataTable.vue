@@ -1170,7 +1170,7 @@ export default {
     async saveCurrent () {
       this.showMultipleEditDialog = false
       const name = (await Swal.fire({
-        title: '请为保存的筛选输入一个名字',
+        title: this.$i18n.t('BatchSaveFilter'),
         input: 'text',
       })).value
       this.showMultipleEditDialog = true

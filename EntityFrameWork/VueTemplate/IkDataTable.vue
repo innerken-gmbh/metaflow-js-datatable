@@ -83,7 +83,7 @@
                outlined
         >
           <v-icon left>mdi-format-list-checks</v-icon>
-          批量操作
+          {{ $t('Batch') }}
         </v-btn>
       </div>
 
@@ -360,12 +360,12 @@
         <div style="display: grid;grid-template-columns: 300px 1fr">
           <v-card class="pa-4" style="position: relative">
             <div class="text-h3 mb-4">
-              批量操作
+              {{ $t('Batch') }}
             </div>
             <div class="text-body-2 mb-4">
-              <div class="font-weight-bold">筛选</div>
+              <div class="font-weight-bold">{{ $t('Filter') }}</div>
               <div class="text-caption ">
-                直接按照名称搜索，或者，在下方的选择框中选择需要的筛选条件
+                {{ $t('BatchFilterHint') }}
               </div>
             </div>
             <div style="height: 350px;overflow-y: scroll">
@@ -373,7 +373,7 @@
                   class="mr-2"
                   clearable
                   outlined
-                  placeholder="按照名称搜索"
+                  :placeholder="$t('BatchNameSearch')"
                   v-model="massEditSearch"
                   append-icon="mdi-magnify"
               />
@@ -426,10 +426,10 @@
                     elevation="0"
             >
               <div class="text-h4">
-                筛选结果
+                {{ $t('FilterResults') }}
               </div>
               <div class="text-body-2">
-                在下方选择需要进行批量操作的项目
+                {{ $t('FilterResultsHint') }}
               </div>
             </v-card>
             <div style="height: 500px;overflow-y: scroll;overscroll-behavior: contain">
@@ -467,7 +467,7 @@
                      @click="massEditStep=1;changeOperationMode(0);"
                      color="primary" class="mr-2"
               >
-                批量修改 : {{ selectedItems.length }}
+                {{ $t('SelectedItems') }} : {{ selectedItems.length }}
               </v-btn>
             </v-card>
           </div>
@@ -523,7 +523,7 @@
             <div class="px-4 mt-4">{{ $t('CurrentSelected') }}：{{ selectedItems.length }}</div>
           </v-card>
           <div
-              style="height: 600px;overflow-y: scroll;overscroll-behavior: contain;position: relative;background: #f9f9f9"
+              style="height: 600px;position: relative;background: #f9f9f9;display: inherit;"
           >
             <template v-if="operationMode===1">
               <div class="pa-4 mb-4 d-flex align-center"
@@ -531,16 +531,20 @@
               >
                 {{ $t('ChooseAttributes') }}
               </div>
-              <template v-for="(field) in addableFields">
-                <div :key="field.value" class="px-4">
-                  <form-field
-                      :hide-select="true"
-                      :field="field"
-                      :edited-item="targetItem"
-                  />
-                </div>
-              </template>
-              <div style="position: absolute; width:100%;bottom: 0;background: #f0f0f0;height: 64px"
+              <div
+                  style="height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
+              >
+                <template v-for="(field) in addableFields">
+                  <div :key="field.value" class="px-4">
+                    <form-field
+                        :hide-select="true"
+                        :field="field"
+                        :edited-item="targetItem"
+                    />
+                  </div>
+                </template>
+              </div>
+              <div style="background: #f0f0f0;height: 64px"
                    class="d-flex align-center px-4 pr-0"
               >
                 <v-spacer/>
@@ -555,21 +559,20 @@
               >
                 {{ $t('ChooseProperties') }}
               </div>
-              <template v-for="(field) in editableFields">
-                <div :key="field.value" class="px-4">
-                  <form-field
-                      :hide-select="true"
-                      :field="field"
-                      :edited-item="targetItem"
-                  />
-                </div>
-              </template>
-              <div style="
-                position: absolute;
-                 width:100%;
-                bottom: 0;
-                background: #f0f0f0;
-                height: 64px"
+              <div
+                  style="height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
+              >
+                <template v-for="(field) in editableFields">
+                  <div :key="field.value" class="px-4">
+                    <form-field
+                        :hide-select="true"
+                        :field="field"
+                        :edited-item="targetItem"
+                    />
+                  </div>
+                </template>
+              </div>
+              <div style="background: #f0f0f0;height: 64px;margin-top: auto; margin-bottom: 0;"
                    class="d-flex align-center px-4 pr-0"
               >
                 <v-spacer/>
@@ -587,7 +590,7 @@
                   {{ $t('PleaseConfirmSelectedItemsDeleted') }}
                 </div>
               </div>
-              <div style="position: absolute; width:100%;bottom: 0;background: #f0f0f0;height: 64px"
+              <div style="background: #f0f0f0;height: 64px;margin-top: auto; margin-bottom: 0;"
                    class="d-flex align-center px-4 pr-0"
               >
                 <v-spacer/>
@@ -1170,7 +1173,7 @@ export default {
     async saveCurrent () {
       this.showMultipleEditDialog = false
       const name = (await Swal.fire({
-        title: '请为保存的筛选输入一个名字',
+        title: this.$i18n.t('BatchSaveFilter'),
         input: 'text',
       })).value
       this.showMultipleEditDialog = true

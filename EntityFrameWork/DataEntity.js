@@ -124,6 +124,7 @@ export function ModelFactory (entity, config) {
         } catch (e) {
           console.log('IKDataTable Error')
           console.log(e)
+          list = []
         }
         const cache = {}
         for (let i of list.filter((i) => !i.__parsed)) {

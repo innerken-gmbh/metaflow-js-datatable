@@ -6,124 +6,268 @@
         <span class="text-h2 font-weight-bold">{{ entityName || model.name() }}</span>
       </div>
     </div>
-    <div class="d-flex filterBar align-center mb-6">
-      <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
-      <v-btn
-          color="primary"
-          v-if="useDefaultAction && useAddAction"
-          class="mr-0"
-          elevation="0"
-          @click="addItem"
+    <template v-if="$vuetify.breakpoint.mdAndUp">
+      <div
+          class="d-flex filterBar align-center mb-6"
       >
-        <div
-            class="d-flex align-baseline"
+        <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
+        <v-btn
+            color="primary"
+            v-if="useDefaultAction && useAddAction"
+            class="mr-0"
+            elevation="0"
+            @click="addItem"
         >
-          <v-icon left>
-            mdi-plus-circle-outline
-          </v-icon>
-          <span
-              class="text-truncate"
-              style="max-width: 170px;"
+          <div
+              class="d-flex align-baseline"
           >
-            {{ entityName }}
-          </span>
-        </div>
-      </v-btn>
-      <slot
-          :items="items"
-          :selectItems="selectedItems"
-          :tableItems="tableItem"
-          :dateTime="dates"
-          name="footer"
-      />
-
-      <v-spacer/>
-
-      <div class="d-flex ma-0 mr-2  align-center">
-        <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1">
-          <v-text-field
-              class="white"
-              v-model="search"
-              prepend-inner-icon="mdi-magnify"
-              outlined
-              dense
-              hide-details
-              clearable
-              :label="$t('search')"
-              single-line
-          />
-        </div>
-        <v-dialog v-model="showFilter" max-width="300px">
-          <template #activator="{on}">
-            <v-btn v-if="mergableFields.length>0"
-                   v-on="on" outlined
-                   icon
-                   style="background: white"
+            <v-icon left>
+              mdi-plus-circle-outline
+            </v-icon>
+            <div
+                :class="!$vuetify.breakpoint.lgAndUp ? 'text-truncate' : ''"
+                :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 100px;' : ''"
             >
-              <v-icon>mdi-filter-outline</v-icon>
-            </v-btn>
-          </template>
-          <v-card class="pa-4">
-            <template>
-              <template v-for="(field) in mergableFields">
-                <div :key="field.value" style="height: 100%" class="mr-2">
-                  <form-field
-                      :hide-select="true"
-                      :field="field"
-                      :edited-item="filterItem"
-                  />
-                </div>
-              </template>
-            </template>
-            <v-btn elevation="0" @click="showFilter=false" block color="primary">{{ $t('Determine') }}</v-btn>
-          </v-card>
-        </v-dialog>
-        <v-btn v-if="editableFields.length>0&&useDefaultAction"
-               @click="startMassEdit" class="ml-2" style="background: white"
-               outlined
-        >
-          <v-icon left>mdi-format-list-checks</v-icon>
-          {{ $t('Batch') }}
+              {{ entityName }}
+            </div>
+          </div>
         </v-btn>
-      </div>
+        <slot
+            :items="items"
+            :selectItems="selectedItems"
+            :tableItems="tableItem"
+            :dateTime="dates"
+            name="footer"
+        />
 
-      <slot
-          :items="items"
-          :selectItems="selectedItems"
-          :tableItems="tableItem"
-          :dateTime="dates"
-          name="right"
-      />
+        <v-spacer/>
 
-      <template v-if="useDateFilter">
-        <div style="max-width: 300px; height: 54px;"
-             class="d-flex align-center"
-        >
-          <v-btn @click="datePickerMenu=true"
-                 style="background: white"
-                 elevation="0"
+        <div class="d-flex ma-0 ml-2 align-center">
+          <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1">
+            <v-text-field
+                class="white"
+                v-model="search"
+                prepend-inner-icon="mdi-magnify"
+                outlined
+                dense
+                hide-details
+                clearable
+                :label="$t('search')"
+                single-line
+                style="min-width: 150px"
+            />
+          </div>
+          <v-dialog v-model="showFilter" max-width="300px">
+            <template #activator="{on}">
+              <v-btn v-if="mergableFields.length>0"
+                     v-on="on" outlined
+                     icon
+                     style="background: white"
+              >
+                <v-icon>mdi-filter-outline</v-icon>
+              </v-btn>
+            </template>
+            <v-card class="pa-4">
+              <template>
+                <template v-for="(field) in mergableFields">
+                  <div :key="field.value" style="height: 100%" class="mr-2">
+                    <form-field
+                        :hide-select="true"
+                        :field="field"
+                        :edited-item="filterItem"
+                    />
+                  </div>
+                </template>
+              </template>
+              <v-btn elevation="0" @click="showFilter=false" block color="primary">{{ $t('Determine') }}</v-btn>
+            </v-card>
+          </v-dialog>
+          <v-btn v-if="editableFields.length>0&&useDefaultAction"
+                 @click="startMassEdit" class="ml-2" style="background: white; position: relative"
                  outlined
           >
-            <v-icon left>mdi-calendar</v-icon>
-            {{ getNiceLabel(dates) }}
+            <v-icon style="position: relative" left>mdi-format-list-checks</v-icon>
+            <div
+                :class="!$vuetify.breakpoint.lgAndUp ? 'text-truncate' : ''"
+                :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 100px;' : ''"
+                class="text-truncate" style="position: relative">
+              {{ $t('Batch') }}
+            </div>
           </v-btn>
         </div>
-      </template>
 
-    </div>
-    <div class="mb-2 mt-n4" v-if="filterDisplayChips.length>0">
-      <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)"
-              label close
-              @click:close="$delete(filterItem,item.key)"
-              class="mr-2"
-              v-for="item in filterDisplayChips"
-      >
+        <slot
+            :items="items"
+            :selectItems="selectedItems"
+            :tableItems="tableItem"
+            :dateTime="dates"
+            name="right"
+        />
+
+        <template v-if="useDateFilter">
+          <div style="max-width: 300px; height: 54px;"
+               class="d-flex align-center"
+          >
+            <v-btn @click="datePickerMenu=true"
+                   style="background: white"
+                   elevation="0"
+                   outlined
+            >
+              <v-icon left>mdi-calendar</v-icon>
+              {{ getNiceLabel(dates) }}
+            </v-btn>
+          </div>
+        </template>
+
+      </div>
+      <div class="mb-2 mt-n4" v-if="filterDisplayChips.length>0">
+        <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)"
+                label close
+                @click:close="$delete(filterItem,item.key)"
+                class="mr-2"
+                v-for="item in filterDisplayChips"
+        >
             <span class="mr-2">
                 {{ item.name }}
             </span>
-        {{ $t(item.value) }}
-      </v-chip>
-    </div>
+          {{ $t(item.value) }}
+        </v-chip>
+      </div>
+    </template>
+    <template v-else>
+      <v-bottom-navigation
+          fixed
+          hide-on-scroll
+          horizontal
+          dark
+          scroll-target
+          scroll-threshold="10"
+          class="bottomNavigationReset align-center"
+      >
+        <div class="d-flex filterBar flex-wrap align-center">
+          <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
+          <v-btn
+              color="primary"
+              v-if="useDefaultAction && useAddAction"
+              class="mr-0"
+              elevation="0"
+              @click="addItem"
+          >
+            <div
+                class="d-flex align-baseline"
+            >
+              <v-icon left>
+                mdi-plus-circle-outline
+              </v-icon>
+            </div>
+          </v-btn>
+          <slot
+              :items="items"
+              :selectItems="selectedItems"
+              :tableItems="tableItem"
+              :dateTime="dates"
+              name="footer"
+          />
+
+          <div class="d-flex flex-wrap ma-0 ml-2 align-center">
+            <div
+                style="height: 100%;"
+                class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1"
+                @click="activeSearch = true"
+            >
+              <v-text-field
+                  v-model="search"
+                  :class="activeSearch?'collapsedSearch':'collapseSearch'"
+                  prepend-inner-icon="mdi-magnify"
+                  outlined
+                  background-color="transparent"
+                  dense
+                  rounded
+                  hide-details
+                  clearable
+                  :label="$t('search')"
+                  single-line
+                  :clear-icon="activeSearch?'mdi-close' : ''"
+                  :append-icon="activeSearch?'mdi-close-circle' : ''"
+                  @click:append="() => (activeSearch = !activeSearch)"
+              >
+              </v-text-field>
+            </div>
+            <v-dialog v-model="showFilter" max-width="300px">
+              <template #activator="{on}">
+                <v-btn v-if="mergableFields.length>0"
+                       v-on="on" outlined
+                       icon
+                       style="background: transparent; border-color: #666"
+                >
+                  <v-icon color="white">mdi-filter-outline</v-icon>
+                </v-btn>
+              </template>
+              <v-card class="pa-4">
+                <template>
+                  <template v-for="(field) in mergableFields">
+                    <div :key="field.value" style="height: 100%" class="mr-2">
+                      <form-field
+                          :hide-select="true"
+                          :field="field"
+                          :edited-item="filterItem"
+                      />
+                    </div>
+                  </template>
+                </template>
+                <v-btn elevation="0" @click="showFilter=false" block color="primary">{{ $t('Determine') }}</v-btn>
+              </v-card>
+            </v-dialog>
+            <v-btn v-if="editableFields.length>0&&useDefaultAction"
+                   @click="startMassEdit"
+                   class="ml-2"
+                   style="background: transparent; border-color: #666"
+                   outlined
+                   icon
+            >
+              <v-icon center color="white">mdi-format-list-checks</v-icon>
+            </v-btn>
+          </div>
+
+          <slot
+              :items="items"
+              :selectItems="selectedItems"
+              :tableItems="tableItem"
+              :dateTime="dates"
+              name="right"
+          />
+
+          <template v-if="useDateFilter">
+            <div style="max-width: 300px; height: 54px;"
+                 class="d-flex align-center"
+            >
+              <v-btn @click="datePickerMenu=true"
+                     style="background: white"
+                     elevation="0"
+                     outlined
+              >
+                <v-icon left>mdi-calendar</v-icon>
+                {{ getNiceLabel(dates) }}
+              </v-btn>
+            </div>
+          </template>
+
+        </div>
+        <div class="mb-2 mt-n4" v-if="filterDisplayChips.length>0">
+          <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)"
+                  label close
+                  @click:close="$delete(filterItem,item.key)"
+                  class="mr-2"
+                  v-for="item in filterDisplayChips"
+          >
+            <span class="mr-2">
+                {{ item.name }}
+            </span>
+            {{ $t(item.value) }}
+          </v-chip>
+        </div>
+      </v-bottom-navigation>
+    </template>
 
     <div class="d-flex filterBar align-center mb-6">
       <slot

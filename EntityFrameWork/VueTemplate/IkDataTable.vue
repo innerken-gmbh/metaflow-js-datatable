@@ -1,9 +1,17 @@
 <template>
   <v-container :class="showTitle?'px-6':''" style="position: relative">
     <div class="d-flex" v-if="showTitle">
-      <div class="d-flex align-center py-4 pb-6">
+      <div
+          class="d-flex align-center"
+          :class="$vuetify.breakpoint.lgAndUp ? 'py-4 pb-6' : ''"
+      >
         <slot name="navigation"></slot>
-        <span class="text-h2 font-weight-bold">{{ entityName || model.name() }}</span>
+        <span
+            class="font-weight-bold"
+            :class="$vuetify.breakpoint.lgAndUp? 'text-h2 ' : 'text-h3'"
+        >
+          {{ entityName || model.name() }}
+        </span>
       </div>
     </div>
     <template v-if="$vuetify.breakpoint.mdAndUp">
@@ -138,13 +146,11 @@
       <v-bottom-navigation
           fixed
           hide-on-scroll
-          horizontal
           dark
-          scroll-target
-          scroll-threshold="10"
           class="bottomNavigationReset align-center"
+          background-color="transparent"
       >
-        <div class="d-flex filterBar flex-wrap align-center">
+        <div class="d-flex filterBar flex-wrap align-center" style="width: 90%; margin: auto; background-color: #3e3e3e; height: 100%; border-radius: 15px; border-bottom-left-radius: 10px !important; border-bottom-right-radius: 10px !important;">
           <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
           <v-btn
               color="primary"
@@ -154,22 +160,30 @@
               @click="addItem"
           >
             <div
-                class="d-flex align-baseline"
+                class="d-flex align-center"
             >
               <v-icon left>
                 mdi-plus-circle-outline
               </v-icon>
+              <div
+                  :class="!$vuetify.breakpoint.lgAndUp ? 'text-truncate' : ''"
+                  :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 100px;' : ''"
+              >
+                {{ entityName }}
+              </div>
             </div>
           </v-btn>
-          <slot
-              :items="items"
-              :selectItems="selectedItems"
-              :tableItems="tableItem"
-              :dateTime="dates"
-              name="footer"
-          />
+          <div class="d-flex flex-wrap ma-auto ml-6 align-center">
+            <slot
+                :items="items"
+                :selectItems="selectedItems"
+                :tableItems="tableItem"
+                :dateTime="dates"
+                name="footer"
+            />
+          </div>
 
-          <div class="d-flex flex-wrap ma-0 ml-2 align-center">
+          <div class="d-flex flex-wrap ma-auto mr-6 align-center">
             <div
                 style="height: 100%;"
                 class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1"
@@ -269,7 +283,10 @@
       </v-bottom-navigation>
     </template>
 
-    <div class="d-flex filterBar align-center mb-6">
+    <div
+        class="d-flex filterBar align-center"
+        :class="selectedItems.length > 0 ? 'mb-6' : 'mb-3' "
+    >
       <slot
           :items="items"
           :selectItems="selectedItems"
@@ -919,6 +936,13 @@ export default {
         this.reload()
       },
     },
+    activeSearch: {
+      handler (val) {
+        this.activeSearch = val
+        this.activeSearchBtn = val
+        console.log(val, 'THIS IS THE HANDLER FOR activeSearch')
+      },
+    },
     requiredDateValue: {
       immediate: true,
       handler: function (val) {
@@ -936,6 +960,8 @@ export default {
       page: 1,
       fab: null,
       pageCount: 0,
+      activeSearch: false,
+      activeSearchBtn: false,
       itemsPerPage: 15,
       filterItem: {},
 
@@ -1336,6 +1362,56 @@ export default {
 
 th {
   font-size: 16px !important;
+}
+.collapseSearch .v-input__control{
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 100%;
+}
+
+.bottomNavigationReset{
+  box-shadow: unset !important;
+}
+
+.bottomNavigationReset .v-btn {
+  border-radius: 50% !important;
+  min-width: unset !important;
+  max-width: unset !important;
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.bottomNavigationReset .v-icon {
+  margin-right: 0 !important;
+}
+
+.collapseSearch{
+  position: relative;
+}
+
+.collapseSearch .v-input__slot {
+  padding: 0 9px !important;
+}
+
+.collapsedSearch{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background: transparent;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  border-radius: 0;
+  align-items: center;
+  background: #111;
+}
+
+.collapsedSearch .v-input__control{
+  width: 100% !important;
+  padding: 0 25px;
+  border-radius: 25px;
 }
 
 </style>

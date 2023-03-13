@@ -516,279 +516,356 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="showMultipleEditDialog" max-width="800px">
+      <v-stepper :alt-labels="false" v-model="stepperIndex">
+        <v-stepper-header>
+          <v-stepper-step
+              :complete="stepperIndex > 1"
+              step="1"
+          >
+            {{ $t('Batch') }}
+          </v-stepper-step>
+          <v-stepper-step
+              :complete="stepperIndex > 2"
+              step="2"
+          >
+            {{ $t('Batch') }}
+          </v-stepper-step>
 
-      <v-card tile v-if="massEditStep===0" color="#f6f6f6">
-        <div style="display: grid;grid-template-columns: 300px 1fr">
-          <v-card class="pa-4" style="position: relative">
-            <div class="text-h3 mb-4">
-              {{ $t('Batch') }}
-            </div>
-            <div class="text-body-2 mb-4">
-              <div class="font-weight-bold">{{ $t('Filter') }}</div>
-              <div class="text-caption ">
-                {{ $t('BatchFilterHint') }}
-              </div>
-            </div>
-            <div style="height: 350px;overflow-y: scroll">
-              <v-text-field
-                  class="mr-2"
-                  clearable
-                  outlined
-                  :placeholder="$t('BatchNameSearch')"
-                  v-model="massEditSearch"
-                  append-icon="mdi-magnify"
-              />
+          <v-stepper-step
+              :complete="stepperIndex > 3"
+              step="3"
+          >
+            {{ $t('Batch') }}
+          </v-stepper-step>
 
-              <template v-for="(field) in mergableFields">
-                <div :key="field.value" class="mr-2">
-                  <form-field
-                      :hide-select="true"
-                      :field="field"
-                      :edited-item="searchItem"
-                  />
-                </div>
-              </template>
-            </div>
-            <v-card color="#f6f6f6" tile elevation="1"
-                    style="position: absolute;bottom: 0;left: 0;right: 0"
-                    class="pa-2"
+          <v-stepper-step
+              :complete="stepperIndex > 4"
+              step="4"
+          >
+            {{ $t('Batch') }}
+          </v-stepper-step>
+
+          <v-stepper-step
+              :complete="stepperIndex > 5"
+              step="5"
+          >
+            {{ $t('Batch') }}
+          </v-stepper-step>
+        </v-stepper-header>
+
+        <v-stepper-items>
+          <v-stepper-content step="1">
+            <v-card
+                elevation="0"
             >
-              <div class="text-body-2 pl-2">
-                {{ $t('AccordingCriteria') }} : {{ filteredEditItem.length }}
+              <div class="d-flex flex-wrap justify-center">
+                <v-card-title>{{ $t('TableOfontents') }}</v-card-title>
+                <v-card-subtitle class="text-caption font-weight-bold pa-2">{{ $t('Batch') }}</v-card-subtitle>
               </div>
-              <horizontal-list v-if="selectedItems.length>0||storageSet.length>0" class="pa-2">
-                <v-card
-                    elevation="0"
-                    :disabled="selectedItems.length===0" @click="saveCurrent"
-                    width="72"
-                    class="pa-2 d-flex flex-column align-center justify-center"
+              <v-card-actions class="d-flex flex-wrap">
+                <v-card @click="changeOperationMode(0); stepperIndex=2;" elevation="0"
+                        tile
+                        class="px-4 py-4 grey lighten-4 text-body-1"
                 >
-                  <div class="text-body-2">{{ $t('SaveFilter') }}</div>
+                  <div :class="operationMode===0?'font-weight-bold':''">
+                    {{ $t('BatchOverwrite') }}
+                  </div>
+                  <div class="text-caption">
+                    {{ $t('BatchApplySetAttributesToElements') }}
+                  </div>
                 </v-card>
-                <v-card
-                    @click="useSet(item.idSet)"
-                    v-for="item in storageSet"
-                    elevation="0" width="72"
-                    class="pa-2 d-flex flex-column"
+                <v-card v-if="addableFields.length>0"
+                        @click="changeOperationMode(1); stepperIndex=2;"
+                        elevation="0"
+                        tile
+                        width="100%"
+                        class="px-4 py-4 grey lighten-4 text-body-1"
                 >
-                  <div class="text-truncate">{{ item.name }}</div>
-                  <v-spacer></v-spacer>
-                  <div class="text-caption">{{ item.idSet.length }}</div>
+                  <div :class="operationMode===1?'font-weight-bold':''">
+                    {{ $t('BatchInclude') }}
+                  </div>
+                  <div class="text-caption">
+                    {{ $t('BatchAddAttributeHint') }}
+                  </div>
                 </v-card>
-              </horizontal-list>
+
+                <v-card width="100%" @click="changeOperationMode(2); stepperIndex=2;" elevation="0"
+                        tile
+                        class="px-4 py-4 grey lighten-4 text-body-1"
+                >
+                  <div :class="operationMode===2?'font-weight-bold':''">
+                    {{ $t('BatchDelete') }}
+                  </div>
+                  <div class="text-caption">
+                    {{ $t('PermanentlyDeleteSelectedItems') }}
+                  </div>
+                </v-card>
+                <div class="px-4 mt-4">{{ $t('CurrentSelected') }}：{{ selectedItems.length }}</div>
+              </v-card-actions>
             </v-card>
-
-
-          </v-card>
-          <div>
-            <v-card dark tile
-                    color="primary"
-                    class="pa-4"
-                    elevation="0"
+          </v-stepper-content>
+          <v-stepper-content
+              :complete="stepperIndex > 2"
+              step="2"
+          >
+            <div
+                style="height: 600px;position: relative;background: #f9f9f9;display: inherit;"
             >
-              <div class="text-h4">
-                {{ $t('FilterResults') }}
-              </div>
-              <div class="text-body-2">
-                {{ $t('FilterResultsHint') }}
-              </div>
-            </v-card>
-            <div style="height: 500px;overflow-y: scroll;overscroll-behavior: contain">
               <div
-                  v-for="item in filteredEditItem"
-              >
-                <v-card elevation="0" color="transparent" class="pa-2 px-4 d-flex align-center"
-                        @click="toggleItem(item)"
+                  @click="massEditStep=0, stepperIndex=1" class="text-h4 mb-4 px-4 d-flex align-center">
+                <v-icon left>mdi-arrow-left</v-icon>
+              </div>
+
+              <v-card class="pa-4" style="position: relative">
+                <div class="text-h3 mb-4">
+                  {{ $t('Batch') }}
+                </div>
+                <div class="text-body-2 mb-4">
+                  <div class="font-weight-bold">{{ $t('Filter') }}</div>
+                  <div class="text-caption ">
+                    {{ $t('BatchFilterHint') }}
+                  </div>
+                </div>
+                <div style="height: 350px;overflow-y: scroll">
+                  <v-text-field
+                      class="mr-2"
+                      clearable
+                      outlined
+                      :placeholder="$t('BatchNameSearch')"
+                      v-model="massEditSearch"
+                      append-icon="mdi-magnify"
+                  />
+
+                  <template v-for="(field) in mergableFields">
+                    <div :key="field.value" class="mr-2">
+                      <form-field
+                          :hide-select="true"
+                          :field="field"
+                          :edited-item="searchItem"
+                      />
+                    </div>
+                  </template>
+                </div>
+                <v-card color="#f6f6f6" tile elevation="1"
+                        style="position: absolute;bottom: 0;left: 0;right: 0"
+                        class="pa-2"
                 >
-                  {{ model.nameBuilder(item) }}
-                  <v-spacer></v-spacer>
-                  <v-btn icon>
-                    <v-icon color="primary" v-if="selectedItems.includes(item.id)">mdi-checkbox-marked</v-icon>
-                    <v-icon v-else>mdi-checkbox-blank-outline</v-icon>
+                  <div class="text-body-2 pl-2">
+                    {{ $t('AccordingCriteria') }} : {{ filteredEditItem.length }}
+                  </div>
+                  <horizontal-list v-if="selectedItems.length>0||storageSet.length>0" class="pa-2">
+                    <v-card
+                        elevation="0"
+                        :disabled="selectedItems.length===0" @click="saveCurrent"
+                        width="72"
+                        class="pa-2 d-flex flex-column align-center justify-center"
+                    >
+                      <div class="text-body-2">{{ $t('SaveFilter') }}</div>
+                    </v-card>
+                    <v-card
+                        @click="useSet(item.idSet)"
+                        v-for="item in storageSet"
+                        elevation="0" width="72"
+                        class="pa-2 d-flex flex-column"
+                    >
+                      <div class="text-truncate">{{ item.name }}</div>
+                      <v-spacer></v-spacer>
+                      <div class="text-caption">{{ item.idSet.length }}</div>
+
+                    </v-card>
+                  </horizontal-list>
+                  <div>
+                    <v-btn @click="stepperIndex=3">Weiter</v-btn>
+                  </div>
+                </v-card>
+              </v-card>
+            </div>
+          </v-stepper-content>
+          <v-stepper-content
+              :complete="stepperIndex > 3"
+              step="3"
+          >
+            <div
+                style="height: 600px;position: relative;background: #f9f9f9;display: inherit;"
+            >
+              <div
+                  @click="stepperIndex=2" class="text-h4 mb-4 px-4 d-flex align-center">
+                <v-icon left>mdi-arrow-left</v-icon>
+              </div>
+
+              <div>
+                <v-card dark tile
+                        color="primary"
+                        class="pa-4"
+                        elevation="0"
+                >
+                  <div class="text-h4">
+                    {{ $t('FilterResults') }}
+                  </div>
+                  <div class="text-body-2">
+                    {{ $t('FilterResultsHint') }}
+                  </div>
+                </v-card>
+                <div style="height: 500px;overflow-y: scroll;overscroll-behavior: contain">
+                  <div
+                      v-for="item in filteredEditItem"
+                  >
+                    <v-card elevation="0" color="transparent" class="pa-2 px-4 d-flex align-center"
+                            @click="toggleItem(item)"
+                    >
+                      {{ model.nameBuilder(item) }}
+                      <v-spacer></v-spacer>
+                      <v-btn icon>
+                        <v-icon color="primary" v-if="selectedItems.includes(item.id)">mdi-checkbox-marked</v-icon>
+                        <v-icon v-else>mdi-checkbox-blank-outline</v-icon>
+                      </v-btn>
+                    </v-card>
+                  </div>
+                </div>
+
+                <v-card elevation="0" tile dark
+                        style="position: sticky;bottom: 0;height: 64px"
+                        class="d-flex align-center px-4 pr-0 primary"
+                >
+                  <div text @click="toggleAll">
+                    <v-icon v-if="selectedState==0" left>mdi-checkbox-blank-outline</v-icon>
+                    <v-icon v-else-if=" selectedState==1" left>mdi-minus-box</v-icon>
+                    <v-icon left v-else>
+                      mdi-checkbox-marked
+                    </v-icon>
+                    {{ $t('SelectAll') }}
+                  </div>
+                  <v-spacer/>
+                  <v-btn :disabled="selectedItems.length===0"
+                         elevation="0"
+                         @click="massEditStep=1; stepperIndex=4;"
+                         color="primary" class="mr-2"
+                  >
+                    {{ $t('SelectedItems') }} : {{ selectedItems.length }}
                   </v-btn>
                 </v-card>
               </div>
             </div>
-
-            <v-card elevation="0" tile dark
-                    style="position: sticky;bottom: 0;height: 64px"
-                    class="d-flex align-center px-4 pr-0 primary"
-            >
-              <div text @click="toggleAll">
-                <v-icon v-if="selectedState==0" left>mdi-checkbox-blank-outline</v-icon>
-                <v-icon v-else-if=" selectedState==1" left>mdi-minus-box</v-icon>
-                <v-icon left v-else>
-                  mdi-checkbox-marked
-                </v-icon>
-                {{ $t('SelectAll') }}
-              </div>
-              <v-spacer/>
-              <v-btn :disabled="selectedItems.length===0"
-                     elevation="0"
-                     @click="massEditStep=1;changeOperationMode(0);"
-                     color="primary" class="mr-2"
-              >
-                {{ $t('SelectedItems') }} : {{ selectedItems.length }}
-              </v-btn>
-            </v-card>
-          </div>
-        </div>
-      </v-card>
-      <v-card v-else-if="massEditStep===1">
-        <div style="display: grid;grid-template-columns: 300px 1fr">
-          <v-card class="py-4" style="overflow-y: scroll;overscroll-behavior: contain">
-            <div @click="massEditStep=0" class="text-h4 mb-4 px-4 d-flex align-center">
-              <v-icon left>mdi-arrow-left</v-icon>
-            </div>
-            <div class="text-h4 mb-4 px-4">
-              {{ $t('BatchEditTitle') }}
-            </div>
-            <v-divider/>
-            <v-card @click="changeOperationMode(0)" elevation="0"
-                    tile
-                    class="px-4 py-4 grey lighten-4 text-body-1"
-            >
-              <div :class="operationMode===0?'font-weight-bold':''">
-                {{ $t('BatchOverwrite') }}
-              </div>
-              <div class="text-caption">
-                {{ $t('BatchApplySetAttributesToElements') }}
-              </div>
-            </v-card>
-            <v-card v-if="addableFields.length>0"
-                    @click="changeOperationMode(1)"
-                    elevation="0"
-                    tile
-                    class="px-4 py-4 grey lighten-4 text-body-1"
-            >
-              <div :class="operationMode===1?'font-weight-bold':''">
-                {{ $t('BatchInclude') }}
-              </div>
-              <div class="text-caption">
-                {{ $t('BatchAddAttributeHint') }}
-              </div>
-            </v-card>
-
-            <v-divider/>
-            <v-card @click="changeOperationMode(2)" elevation="0"
-                    tile
-                    class="px-4 py-4 grey lighten-4 text-body-1"
-            >
-              <div :class="operationMode===2?'font-weight-bold':''">
-                {{ $t('BatchDelete') }}
-              </div>
-              <div class="text-caption">
-                {{ $t('PermanentlyDeleteSelectedItems') }}
-              </div>
-            </v-card>
-            <div class="px-4 mt-4">{{ $t('CurrentSelected') }}：{{ selectedItems.length }}</div>
-          </v-card>
-          <div
-              style="height: 600px;position: relative;background: #f9f9f9;display: inherit;"
+          </v-stepper-content>
+          <v-stepper-content
+              :complete="stepperIndex > 4"
+              step="4"
           >
-            <template v-if="operationMode===1">
-              <div class="pa-4 mb-4 d-flex align-center"
-                   style="position: sticky;top: 0;z-index: 1"
-              >
-                {{ $t('ChooseAttributes') }}
-              </div>
+            <div
+                style="height: 600px;position: relative;background: #f9f9f9;display: inherit;"
+            >
               <div
-                  style="height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
-              >
-                <template v-for="(field) in addableFields">
-                  <div :key="field.value" class="px-4">
-                    <form-field
-                        :hide-select="true"
-                        :field="field"
-                        :edited-item="targetItem"
-                    />
+                  @click="massEditStep=0, stepperIndex=1" class="text-h4 mb-4 px-4 d-flex align-center">
+                <v-icon left>mdi-arrow-left</v-icon>
+              </div>
+              <template v-if="operationMode===0">
+                <div class="pa-4 mb-4 d-flex align-center"
+                     style="position: sticky;top: 0;z-index: 1"
+                >
+                  {{ $t('ChooseProperties') }}
+                </div>
+                <div
+                    style="height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
+                >
+                  <template v-for="(field) in editableFields">
+                    <div :key="field.value" class="px-4">
+                      <form-field
+                          :hide-select="true"
+                          :field="field"
+                          :edited-item="targetItem"
+                      />
+                    </div>
+                  </template>
+                </div>
+                <div style="background: #f0f0f0;height: 64px;"
+                     class="d-flex align-center px-4 pr-0 mt-auto mb-0"
+                >
+                  <v-spacer/>
+                  <v-btn @click="massiveEdit(1); stepperIndex=5;" color="primary" text class="mr-2">
+                    {{ $t('BatchOverwrite') }}
+                  </v-btn>
+                </div>
+              </template>
+              <template v-if="operationMode===1">
+                <div class="pa-4 mb-4 d-flex align-center"
+                     style="position: sticky;top: 0;z-index: 1"
+                >
+                  {{ $t('ChooseAttributes') }}
+                </div>
+                <div
+                    style="height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
+                >
+                  <template v-for="(field) in addableFields">
+                    <div :key="field.value" class="px-4">
+                      <form-field
+                          :hide-select="true"
+                          :field="field"
+                          :edited-item="targetItem"
+                      />
+                    </div>
+                  </template>
+                </div>
+                <div style="background: #f0f0f0;height: 64px;"
+                     class="d-flex align-center px-4 pr-0 mt-auto mb-0"
+                >
+                  <v-spacer/>
+                  <v-btn @click="massiveEdit(0); stepperIndex=5;" color="primary" text class="mr-2">
+                    {{ $t('BatchInclude') }}
+                  </v-btn>
+                </div>
+              </template>
+              <template v-if="operationMode===2">
+                <div class="px-4 py-12">
+                  <div class="text-h3">
+                    {{ $t('OnceDeletedCannotRecovered') }}
                   </div>
-                </template>
-              </div>
-              <div style="background: #f0f0f0;height: 64px;"
-                   class="d-flex align-center px-4 pr-0 mt-auto mb-0"
-              >
-                <v-spacer/>
-                <v-btn @click="massiveEdit(0)" color="primary" text class="mr-2">
-                  {{ $t('BatchInclude') }}
-                </v-btn>
-              </div>
-            </template>
-            <template v-if="operationMode===0">
-              <div class="pa-4 mb-4 d-flex align-center"
-                   style="position: sticky;top: 0;z-index: 1"
-              >
-                {{ $t('ChooseProperties') }}
-              </div>
-              <div
-                  style="height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
-              >
-                <template v-for="(field) in editableFields">
-                  <div :key="field.value" class="px-4">
-                    <form-field
-                        :hide-select="true"
-                        :field="field"
-                        :edited-item="targetItem"
-                    />
+                  <div class="mt-4">
+                    {{ $t('PleaseConfirmSelectedItemsDeleted') }}
                   </div>
-                </template>
-              </div>
-              <div style="background: #f0f0f0;height: 64px;"
-                   class="d-flex align-center px-4 pr-0 mt-auto mb-0"
+                </div>
+                <div style="background: #f0f0f0;height: 64px;"
+                     class="d-flex align-center px-4 pr-0 mt-auto mb-0"
+                >
+                  <v-spacer/>
+                  <v-btn @click="massiveEdit(2); stepperIndex=5;" text color="error" class="mr-2">
+                    {{ $t('IrrevocablyDelete') }}
+                  </v-btn>
+                </div>
+              </template>
+            </div>
+          </v-stepper-content>
+          <v-stepper-content
+              :complete="stepperIndex > 5"
+              step="5"
+          >
+            <v-card height="600">
+              <div v-if="massLoading" style="height: 600px"
+                   class="d-flex justify-center align-center"
               >
-                <v-spacer/>
-                <v-btn @click="massiveEdit(1)" color="primary" text class="mr-2">
-                  {{ $t('BatchOverwrite') }}
-                </v-btn>
+                <v-progress-circular></v-progress-circular>
               </div>
-            </template>
-            <template v-if="operationMode===2">
-              <div class="px-4 py-12">
+              <div style="height: 600px"
+                   class="d-flex flex-column justify-center align-center"
+                   v-else
+              >
                 <div class="text-h3">
-                  {{ $t('OnceDeletedCannotRecovered') }}
+                  {{ $t('BatchComplete') }}
                 </div>
                 <div class="mt-4">
-                  {{ $t('PleaseConfirmSelectedItemsDeleted') }}
+                  {{
+                    $t('Finish') + ' ' + progress + ' ' + $t('from') + '  ' + maxProgress + ', ' + $t('Failed') + ' ' + (maxProgress - progress)
+                  }}
                 </div>
-              </div>
-              <div style="background: #f0f0f0;height: 64px;"
-                   class="d-flex align-center px-4 pr-0 mt-auto mb-0"
-              >
-                <v-spacer/>
-                <v-btn @click="massiveEdit(2)" text color="error" class="mr-2">
-                  {{ $t('IrrevocablyDelete') }}
-                </v-btn>
-              </div>
-            </template>
+                <div class="d-flex mt-4">
+                  <v-btn outlined @click="massEditStep=1; stepperIndex=1;" class="mr-2">{{ $t('ContinueBatchProcessing') }}</v-btn>
+                  <v-btn outlined @click="showMultipleEditDialog=false; stepperIndex=1">{{ $t('Finish') }}</v-btn>
+                </div>
 
-          </div>
-        </div>
-      </v-card>
-      <v-card v-else height="600">
-        <div v-if="massLoading" style="height: 600px"
-             class="d-flex justify-center align-center"
-        >
-          <v-progress-circular></v-progress-circular>
-        </div>
-        <div style="height: 600px"
-             class="d-flex flex-column justify-center align-center"
-             v-else
-        >
-          <div class="text-h3">
-            {{ $t('BatchComplete') }}
-          </div>
-          <div class="mt-4">
-            {{
-              $t('Finish') + ' ' + progress + ' ' + $t('from') + '  ' + maxProgress + ', ' + $t('Failed') + ' ' + (maxProgress - progress)
-            }}
-          </div>
-          <div class="d-flex mt-4">
-            <v-btn outlined @click="massEditStep=1" class="mr-2">{{ $t('ContinueBatchProcessing') }}</v-btn>
-            <v-btn outlined @click="showMultipleEditDialog=false">{{ $t('Finish') }}</v-btn>
-          </div>
-
-        </div>
-      </v-card>
+              </div>
+            </v-card>
+          </v-stepper-content>
+        </v-stepper-items>
+      </v-stepper>
     </v-dialog>
   </v-container>
 </template>
@@ -931,6 +1008,11 @@ export default {
 
   },
   watch: {
+    operationMode: {
+      handler (val) {
+        console.log(val, 'THIS IS OPERATION MODE')
+      }
+    },
     realFilter: {
       handler () {
         this.reload()
@@ -964,6 +1046,7 @@ export default {
       activeSearchBtn: false,
       itemsPerPage: 15,
       filterItem: {},
+      stepperIndex: 1,
 
       Types: IKDataEntity.Types,
       search: '',
@@ -1399,13 +1482,14 @@ th {
   right: 0;
   bottom: 0;
   top: 0;
-  background: transparent;
-  width: 100%;
+  background: #3e3e3e;
+  width: 90%;
+  margin-left: 5% !important;
   height: 100%;
+  border-radius: 20px !important;
   z-index: 1;
   border-radius: 0;
   align-items: center;
-  background: #111;
 }
 
 .collapsedSearch .v-input__control{

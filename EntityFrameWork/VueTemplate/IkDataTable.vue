@@ -515,9 +515,34 @@
         </div>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="showMultipleEditDialog" max-width="800px">
-      <v-stepper :alt-labels="false" v-model="stepperIndex">
-        <v-stepper-header>
+    <v-dialog fullscreen v-model="showMultipleEditDialog">
+      <v-stepper height="100%" rounded="0" elevation="0" :alt-labels="false" v-model="stepperIndex">
+        <div
+            style="width: 100%;"
+            class="d-flex align-center"
+        >
+          <div
+              class="text-caption ml-2"
+              style="color: #3e3e3e"
+          >
+            {{ $t('BatchMenuTitle') }}
+          </div>
+          <v-btn
+              class="ml-auto mr-0"
+              color="white"
+              height="30px"
+              elevation="0"
+              min-width="auto"
+              style="padding: 4px !important;"
+              tile
+              width="30px"
+              @click="showMultipleEditDialog = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </div>
+        <v-stepper-header style="box-shadow: 0 7px 7px -7px rgb(0 0 0 / 20%) !important;">
+
           <v-stepper-step
               :complete="stepperIndex > 1"
               step="1"
@@ -553,16 +578,16 @@
           </v-stepper-step>
         </v-stepper-header>
 
-        <v-stepper-items>
+        <v-stepper-items class="d-flex align-center">
           <v-stepper-content step="1">
             <v-card
                 elevation="0"
             >
-              <div class="d-flex flex-wrap justify-center">
-                <v-card-title>{{ $t('TableOfontents') }}</v-card-title>
+              <div class="d-flex flex-wrap justify-center align-center">
+                <v-card-title class="pt-0 text-h3 font-weight-thin">{{ $t('TableOfontents') }}</v-card-title>
                 <v-card-subtitle class="text-caption font-weight-bold pa-2">{{ $t('Batch') }}</v-card-subtitle>
               </div>
-              <v-card-actions class="d-flex flex-wrap">
+              <v-card-actions class="mt-2 d-flex flex-wrap">
                 <v-card @click="changeOperationMode(0); stepperIndex=2;" elevation="0"
                         tile
                         class="px-4 py-4 grey lighten-4 text-body-1"
@@ -570,8 +595,13 @@
                   <div :class="operationMode===0?'font-weight-bold':''">
                     {{ $t('BatchOverwrite') }}
                   </div>
-                  <div class="text-caption">
-                    {{ $t('BatchApplySetAttributesToElements') }}
+                  <div class="d-flex align-center">
+                    <div class="text-caption">
+                      {{ $t('BatchApplySetAttributesToElements') }}
+                    </div>
+                    <v-btn icon color="transparent" :elevation="false">
+                      <v-icon color="#ddd" size="30px">mdi-arrow-right</v-icon>
+                    </v-btn>
                   </div>
                 </v-card>
                 <v-card v-if="addableFields.length>0"
@@ -579,28 +609,38 @@
                         elevation="0"
                         tile
                         width="100%"
-                        class="px-4 py-4 grey lighten-4 text-body-1"
+                        class="mt-4 px-4 py-4 grey lighten-4 text-body-1"
                 >
                   <div :class="operationMode===1?'font-weight-bold':''">
                     {{ $t('BatchInclude') }}
                   </div>
-                  <div class="text-caption">
-                    {{ $t('BatchAddAttributeHint') }}
+                  <div class="d-flex align-center">
+                    <div class="text-caption">
+                      {{ $t('BatchAddAttributeHint') }}
+                    </div>
+                    <v-btn icon color="transparent" :elevation="false">
+                      <v-icon color="#ddd" size="30px">mdi-arrow-right</v-icon>
+                    </v-btn>
                   </div>
                 </v-card>
 
                 <v-card width="100%" @click="changeOperationMode(2); stepperIndex=2;" elevation="0"
                         tile
-                        class="px-4 py-4 grey lighten-4 text-body-1"
+                        class="mt-4 px-4 py-4 grey lighten-4 text-body-1"
                 >
                   <div :class="operationMode===2?'font-weight-bold':''">
                     {{ $t('BatchDelete') }}
                   </div>
-                  <div class="text-caption">
-                    {{ $t('PermanentlyDeleteSelectedItems') }}
+                  <div class="d-flex align-center">
+                    <div class="text-caption">
+                      {{ $t('PermanentlyDeleteSelectedItems') }}
+                    </div>
+                    <v-btn icon color="transparent" :elevation="false">
+                      <v-icon color="#ddd" size="30px">mdi-arrow-right</v-icon>
+                    </v-btn>
                   </div>
                 </v-card>
-                <div class="px-4 mt-4">{{ $t('CurrentSelected') }}：{{ selectedItems.length }}</div>
+                <div class="ma-auto mr-0 mt-6">{{ $t('CurrentSelected') }}：{{ selectedItems.length }}</div>
               </v-card-actions>
             </v-card>
           </v-stepper-content>
@@ -609,16 +649,26 @@
               step="2"
           >
             <div
-                style="height: 600px;position: relative;background: #f9f9f9;display: inherit;"
+                style="position: relative;background: #f9f9f9;display: inherit;"
             >
-              <div
-                  @click="massEditStep=0, stepperIndex=1" class="text-h4 mb-4 px-4 d-flex align-center">
-                <v-icon left>mdi-arrow-left</v-icon>
-              </div>
 
-              <v-card class="pa-4" style="position: relative">
-                <div class="text-h3 mb-4">
-                  {{ $t('Batch') }}
+              <v-card elevation="0" color="white" :rounded="false" :outlined="false" style="position: relative; height: 100%;">
+                <div
+                    style="width: 100%;"
+                    @click="massEditStep=0, stepperIndex=1"
+                    class="text-h4 pa-2 d-flex align-center"
+                >
+                  <v-icon left>mdi-arrow-left</v-icon>
+                  <div class="text-caption">{{ $t('Zurück') }}</div>
+                </div>
+                <div v-if="operationMode===0" class="text-h3 mb-4">
+                  {{ $t('BatchOverwrite') }}
+                </div>
+                <div v-if="operationMode===1" class="text-h3 mb-4">
+                  {{ $t('BatchInclude') }}
+                </div>
+                <div v-if="operationMode===2" class="text-h3 mb-4">
+                  {{ $t('BatchDelete') }}
                 </div>
                 <div class="text-body-2 mb-4">
                   <div class="font-weight-bold">{{ $t('Filter') }}</div>
@@ -626,18 +676,16 @@
                     {{ $t('BatchFilterHint') }}
                   </div>
                 </div>
-                <div style="height: 350px;overflow-y: scroll">
+                <div style="position: relative; height: calc(100vh - 450px); overflow-y: scroll">
                   <v-text-field
-                      class="mr-2"
                       clearable
                       outlined
                       :placeholder="$t('BatchNameSearch')"
                       v-model="massEditSearch"
                       append-icon="mdi-magnify"
                   />
-
                   <template v-for="(field) in mergableFields">
-                    <div :key="field.value" class="mr-2">
+                    <div :key="field.value">
                       <form-field
                           :hide-select="true"
                           :field="field"
@@ -646,15 +694,12 @@
                     </div>
                   </template>
                 </div>
-                <v-card color="#f6f6f6" tile elevation="1"
-                        style="position: absolute;bottom: 0;left: 0;right: 0"
+                <v-card tile elevation="0"
                         class="pa-2"
                 >
-                  <div class="text-body-2 pl-2">
-                    {{ $t('AccordingCriteria') }} : {{ filteredEditItem.length }}
-                  </div>
                   <horizontal-list v-if="selectedItems.length>0||storageSet.length>0" class="pa-2">
                     <v-card
+                        color="#f6f6f6"
                         elevation="0"
                         :disabled="selectedItems.length===0" @click="saveCurrent"
                         width="72"
@@ -665,7 +710,9 @@
                     <v-card
                         @click="useSet(item.idSet)"
                         v-for="item in storageSet"
-                        elevation="0" width="72"
+                        elevation="0"
+                        width="72"
+                        color="#f6f6f6"
                         class="pa-2 d-flex flex-column"
                     >
                       <div class="text-truncate">{{ item.name }}</div>
@@ -674,8 +721,13 @@
 
                     </v-card>
                   </horizontal-list>
-                  <div>
-                    <v-btn @click="stepperIndex=3">Weiter</v-btn>
+                  <div class="text-body-2 pl-2 d-flex align-center">
+                    <div style="max-width: 150px;">
+                      {{ $t('AccordingCriteria') }} : {{ filteredEditItem.length }}
+                    </div>
+                    <div class="ma-auto mr-0">
+                      <v-btn class="primary" @click="stepperIndex=3">Weiter</v-btn>
+                    </div>
                   </div>
                 </v-card>
               </v-card>
@@ -686,18 +738,21 @@
               step="3"
           >
             <div
-                style="height: 600px;position: relative;background: #f9f9f9;display: inherit;"
+                style="width: 100%;"
+                @click="massEditStep=0, stepperIndex=1"
+                class="text-h4 pa-2 d-flex align-center"
             >
-              <div
-                  @click="stepperIndex=2" class="text-h4 mb-4 px-4 d-flex align-center">
-                <v-icon left>mdi-arrow-left</v-icon>
-              </div>
-
+              <v-icon left>mdi-arrow-left</v-icon>
+              <div class="text-caption">{{ $t('Zurück') }}</div>
+            </div>
+            <div
+                style="position: relative;background: #f9f9f9;"
+            >
               <div>
                 <v-card dark tile
                         color="primary"
-                        class="pa-4"
                         elevation="0"
+                        class="pa-2 pt-0"
                 >
                   <div class="text-h4">
                     {{ $t('FilterResults') }}
@@ -706,7 +761,7 @@
                     {{ $t('FilterResultsHint') }}
                   </div>
                 </v-card>
-                <div style="height: 500px;overflow-y: scroll;overscroll-behavior: contain">
+                <div style="height: calc(100vh - 310px); overflow-y: scroll;overscroll-behavior: contain">
                   <div
                       v-for="item in filteredEditItem"
                   >
@@ -752,12 +807,16 @@
               step="4"
           >
             <div
-                style="height: 600px;position: relative;background: #f9f9f9;display: inherit;"
+                style="width: 100%;"
+                @click="massEditStep=0, stepperIndex=1"
+                class="text-h4 pa-2 d-flex align-center"
             >
-              <div
-                  @click="massEditStep=0, stepperIndex=1" class="text-h4 mb-4 px-4 d-flex align-center">
-                <v-icon left>mdi-arrow-left</v-icon>
-              </div>
+              <v-icon left>mdi-arrow-left</v-icon>
+              <div class="text-caption">{{ $t('Zurück') }}</div>
+            </div>
+            <div
+                style="position: relative;background: #f9f9f9;display: inherit;"
+            >
               <template v-if="operationMode===0">
                 <div class="pa-4 mb-4 d-flex align-center"
                      style="position: sticky;top: 0;z-index: 1"
@@ -765,7 +824,7 @@
                   {{ $t('ChooseProperties') }}
                 </div>
                 <div
-                    style="height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
+                    style="height: calc(100vh - 350px); overflow-y: scroll;overscroll-behavior: contain;"
                 >
                   <template v-for="(field) in editableFields">
                     <div :key="field.value" class="px-4">
@@ -793,7 +852,7 @@
                   {{ $t('ChooseAttributes') }}
                 </div>
                 <div
-                    style="height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
+                    style="height: calc(100vh - 400px); overflow-y: scroll;overscroll-behavior: contain;"
                 >
                   <template v-for="(field) in addableFields">
                     <div :key="field.value" class="px-4">
@@ -838,29 +897,28 @@
               :complete="stepperIndex > 5"
               step="5"
           >
-            <v-card height="600">
-              <div v-if="massLoading" style="height: 600px"
-                   class="d-flex justify-center align-center"
+            <v-card elevation="0">
+              <div v-if="massLoading"
+                   class="d-flex flex-wrap justify-center align-center"
               >
                 <v-progress-circular></v-progress-circular>
               </div>
-              <div style="height: 600px"
-                   class="d-flex flex-column justify-center align-center"
-                   v-else
+              <div
+                  class="d-flex flex-wrap justify-center align-center text-center"
+                  v-else
               >
                 <div class="text-h3">
                   {{ $t('BatchComplete') }}
                 </div>
-                <div class="mt-4">
+                <div class="mt-4 text-wrap">
                   {{
                     $t('Finish') + ' ' + progress + ' ' + $t('from') + '  ' + maxProgress + ', ' + $t('Failed') + ' ' + (maxProgress - progress)
                   }}
                 </div>
-                <div class="d-flex mt-4">
-                  <v-btn outlined @click="massEditStep=1; stepperIndex=1;" class="mr-2">{{ $t('ContinueBatchProcessing') }}</v-btn>
+                <div class="d-flex flex-wrap justify-center mt-4">
+                  <v-btn outlined @click="massEditStep=1; stepperIndex=1;" class="mb-2"><div class="text-truncate" style="max-width: 200px;">{{ $t('ContinueBatchProcessing') }}</div></v-btn>
                   <v-btn outlined @click="showMultipleEditDialog=false; stepperIndex=1">{{ $t('Finish') }}</v-btn>
                 </div>
-
               </div>
             </v-card>
           </v-stepper-content>

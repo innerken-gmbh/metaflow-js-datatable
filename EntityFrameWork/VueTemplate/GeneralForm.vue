@@ -6,168 +6,189 @@
         <v-btn @click="close()" class="mr-5 rounded" height="36px" width="36px" tile icon>
           <v-icon size="24">mdi-arrow-left</v-icon>
         </v-btn>
-        <div class="text-h3 font-weight-bold">
+        <div :class="$vuetify.breakpoint.smAndDown ? 'text-h4' : 'text-h3'" class="font-weight-bold">
           {{ editedIndex === -1 ? $t('new') : $t('edit')+ ' ' + '/' }} {{ name }}
         </div>
         <v-spacer></v-spacer>
 
 
       </div>
-      <v-form ref="form" v-model="valid" lazy-validation>
-        <div
-        >
-          <div v-if="imageField.length>0">
-            <form-field
-                :field="imageField[0]"
-                :current-state="editedIndex"
-                :edited-item="editedItem"
-                no-details
-            />
-          </div>
-          <div v-if="groupedFields.length+requiredFields.length+notRequiredFields.length>0" class="flex-grow-1">
-            <v-card outlined height="fit-content" class="pa-4 px-6 my-4">
-              <template v-for="(field,index) in groupedFields">
-                <div outlined :key="field.value+index+'group'">
-                  <div class="d-flex align-center">
-                    <div class="text-h4 font-weight-medium">
-                      {{ $t('' + field.groupName) }}
-                    </div>
-                    <v-spacer/>
-                    <div class="d-flex">
-                      <div>
-                        <v-tabs color="#232123" height="36px" v-model="tab">
-                          <v-tab v-for="(child,i) in field.children"
-                                 :key="field.value+'c'+editedItem[field.value][i][field.childLabelKey]+'tab'"
-                          >
-                            {{ $t(editedItem[field.value][i][field.childLabelKey].toLowerCase()) }}
-                            <span class="red--text" v-if="i===0"
-                            > * </span>
-                          </v-tab>
-                        </v-tabs>
+      <div class="d-flex align-center justify-center">
+        <v-form style="max-width: 100%;" ref="form" v-model="valid" lazy-validation>
+          <div
+          >
+            <div v-if="imageField.length>0">
+              <form-field
+                  :field="imageField[0]"
+                  :current-state="editedIndex"
+                  :edited-item="editedItem"
+                  no-details
+              />
+            </div>
+            <div v-if="groupedFields.length+requiredFields.length+notRequiredFields.length>0" class="flex-grow-1">
+              <v-card outlined height="fit-content" class="pa-4 px-6 my-4">
+                <template v-for="(field,index) in groupedFields">
+                  <div outlined :key="field.value+index+'group'">
+                    <div class="d-flex flex-wrap align-center">
+                      <div class="text-h4 font-weight-medium">
+                        {{ $t('' + field.groupName) }}
+                      </div>
+                      <v-spacer/>
+                      <div class="d-flex">
+                        <div>
+                          <v-tabs :show-arrows="!$vuetify.breakpoint.lgAndUp ? true : false" color="#232123" height="36px" v-model="tab">
+                            <v-tab v-for="(child,i) in field.children"
+                                   :key="field.value+'c'+editedItem[field.value][i][field.childLabelKey]+'tab'"
+                            >
+                              {{ $t(editedItem[field.value][i][field.childLabelKey].toLowerCase()) }}
+                              <span class="red--text" v-if="i===0"
+                              > * </span>
+                            </v-tab>
+                          </v-tabs>
+                        </div>
                       </div>
                     </div>
+
+
+                    <v-tabs-items v-model="tab" class="mt-8">
+                      <v-tab-item v-for="(child,i) in field.children">
+                        <template v-for="(c,t) in child">
+                          <div :key="field.id+'t'+t+'c'+i">
+                            <form-field
+                                v-if="editedItem[field.value]"
+                                :field="c"
+                                :current-state="editedIndex"
+                                :edited-item="editedItem[field.value][i]"
+                                :outside-disabled="outsideSettedField.includes(field.value)"
+                                no-details
+                            />
+                          </div>
+                        </template>
+                      </v-tab-item>
+                    </v-tabs-items>
+
+
                   </div>
 
+                </template>
+                <div v-if="notRequiredFields.length>0">
 
-                  <v-tabs-items v-model="tab" class="mt-8">
-                    <v-tab-item v-for="(child,i) in field.children">
-                      <template v-for="(c,t) in child">
-                        <div :key="field.id+'t'+t+'c'+i">
-                          <form-field
-                              v-if="editedItem[field.value]"
-                              :field="c"
-                              :current-state="editedIndex"
-                              :edited-item="editedItem[field.value][i]"
-                              :outside-disabled="outsideSettedField.includes(field.value)"
-                              no-details
-                          />
-                        </div>
-                      </template>
-                    </v-tab-item>
-                  </v-tabs-items>
-
+                  <template v-for="(field,index) in requiredFields">
+                    <div :key="'f1'+index+field.text"
+                    >
+                      <form-field
+                          :field="field"
+                          :current-state="editedIndex"
+                          :edited-item="editedItem"
+                          :outside-disabled="outsideSettedField.includes(field.value)"
+                          no-details
+                      />
+                    </div>
+                  </template>
 
                 </div>
-
-              </template>
-              <div v-if="notRequiredFields.length>0">
-
-                <template v-for="(field,index) in requiredFields">
-                  <div :key="'f1'+index+field.text"
-                  >
+                <div v-else>
+                  <template v-for="(field,index) in requiredFields">
+                    <div :key="'f1'+index+field.text"
+                    >
+                      <form-field
+                          :field="field"
+                          :current-state="editedIndex"
+                          :edited-item="editedItem"
+                          :outside-disabled="outsideSettedField.includes(field.value)"
+                          no-details
+                      />
+                    </div>
+                  </template>
+                </div>
+              </v-card>
+            </div>
+            <v-card v-if="notRequiredFields.length>0" outlined height="fit-content" class="pa-4 px-6 mt-8">
+              <div class="d-flex  mt-2 ">
+                <div class="text-h4 font-weight-medium">{{ $t('option_info') }}</div>
+                <v-spacer></v-spacer>
+                <v-btn outlined style="border-radius: 8px" icon @click="showOptionalField=!showOptionalField">
+                  <v-icon v-if="!showOptionalField">mdi-chevron-down</v-icon>
+                  <v-icon v-else>mdi-chevron-up</v-icon>
+                </v-btn>
+              </div>
+              <div class="mt-6" v-if="showOptionalField">
+                <template v-for="(field,index) in notRequiredFields">
+                  <div :key="'f2'+index" class="my-4">
                     <form-field
                         :field="field"
                         :current-state="editedIndex"
                         :edited-item="editedItem"
-                        :outside-disabled="outsideSettedField.includes(field.value)"
                         no-details
                     />
                   </div>
                 </template>
-
               </div>
-              <div v-else>
-                <template v-for="(field,index) in requiredFields">
-                  <div :key="'f1'+index+field.text"
+              <div class="mt-6 text-body-2" v-else>
+                {{ $t('AutoContentNotMandatory') }}<br><br>
+                <template v-for="(field,index) in notRequiredFields">
+                  <v-chip outlined
+                          @click="showOptionalField=true"
+                          label
+                          :key="'f2'+index"
+                          class="text-body-1 font-weight-bold mb-1 mr-1"
                   >
-                    <form-field
-                        :field="field"
-                        :current-state="editedIndex"
-                        :edited-item="editedItem"
-                        :outside-disabled="outsideSettedField.includes(field.value)"
-                        no-details
-                    />
-                  </div>
+                    {{ $t(field.text) }}
+                    <template v-if="editedItem[field.value]&&field.dataType!==IKDataEntity.Types.Color"> :
+                      {{
+                        Array.isArray(editedItem[field.value]) ? editedItem[field.value].length + $t('individually') : editedItem[field.value]
+                      }}
+                    </template>
+                  </v-chip>
                 </template>
               </div>
             </v-card>
-          </div>
-          <v-card v-if="notRequiredFields.length>0" outlined height="fit-content" class="pa-4 px-6 mt-8">
-            <div class="d-flex  mt-2 ">
-              <div class="text-h4 font-weight-medium">{{ $t('option_info') }}</div>
-              <v-spacer></v-spacer>
-              <v-btn outlined style="border-radius: 8px" icon @click="showOptionalField=!showOptionalField">
-                <v-icon v-if="!showOptionalField">mdi-chevron-down</v-icon>
-                <v-icon v-else>mdi-chevron-up</v-icon>
-              </v-btn>
-            </div>
-            <div class="mt-6" v-if="showOptionalField">
-              <template v-for="(field,index) in notRequiredFields">
-                <div :key="'f2'+index" class="my-4">
-                  <form-field
-                      :field="field"
-                      :current-state="editedIndex"
-                      :edited-item="editedItem"
-                      no-details
-                  />
-                </div>
-              </template>
-            </div>
-            <div class="mt-6 text-body-2" v-else>
-              {{ $t('AutoContentNotMandatory') }}<br><br>
-              <template v-for="(field,index) in notRequiredFields">
-                <v-chip outlined
-                        @click="showOptionalField=true"
-                        label
-                        :key="'f2'+index"
-                        class="text-body-1 font-weight-bold mb-1 mr-1"
+            <template v-if="$vuetify.breakpoint.smAndDown">
+              <v-btn
+                  :disabled="!valid"
+                  :loading="loading"
+                  color="green"
+                  elevation="10"
+                  fixed
+                  bottom
+                  right
+                  fab
+                  style="background-color: #4caf50;"
+                  @click="save"
+              >
+                <v-icon
+                    color="white"
                 >
-                  {{ $t(field.text) }}
-                  <template v-if="editedItem[field.value]&&field.dataType!==IKDataEntity.Types.Color"> :
-                    {{
-                      Array.isArray(editedItem[field.value]) ? editedItem[field.value].length + $t('individually') : editedItem[field.value]
-                    }}
-                  </template>
-                </v-chip>
-              </template>
-            </div>
-          </v-card>
-          <div class="mt-8 pl-1">
-            <v-btn
-                :loading="loading"
-                color="primary"
-                elevation="0"
-                class="mr-4"
-                :disabled="!valid"
-                @click="save"
-            >
-              {{ $t('save_change') }}
-            </v-btn>
-            <v-btn
-                :loading="loading"
-                outlined
-                v-if="editedIndex===-1&&showAddMoreButton"
-                elevation="0"
-                class="mr-0"
-                :disabled="!valid"
-                @click="save(false)"
-            >
-              {{ $t('saveAndAdd') }}
-            </v-btn>
+                  mdi-content-save
+                </v-icon>
+              </v-btn>
+            </template>
+            <template v-else>
+              <v-btn
+                  :loading="loading"
+                  color="primary"
+                  elevation="0"
+                  :class="$vuetify.breakpoint.smAndDown ? '' : 'mr-4'"
+                  :disabled="!valid"
+                  @click="save"
+              >
+                {{ $t('save_change') }}
+              </v-btn>
+              <v-btn
+                  :loading="loading"
+                  outlined
+                  v-if="editedIndex===-1&&showAddMoreButton"
+                  elevation="0"
+                  class="mt-2"
+                  :disabled="!valid"
+                  @click="save(false)"
+              >
+                {{ $t('saveAndAdd') }}
+              </v-btn>
+            </template>
           </div>
-
-        </div>
-      </v-form>
+        </v-form>
+      </div>
     </v-container>
   </nice-dialog>
 </template>

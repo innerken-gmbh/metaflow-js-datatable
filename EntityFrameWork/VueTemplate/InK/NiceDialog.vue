@@ -4,13 +4,15 @@
 
 <template>
   <v-navigation-drawer
-    v-model="realValue"
-    :width="width"
-    color="#fafbfc"
-    fixed
-    right
-    temporary
-    touchless
+      v-model="realValue"
+      :width="$vuetify.breakpoint.smAndDown ? '100%' : width"
+      style="z-index: 10 !important;"
+      :style="$vuetify.breakpoint.smAndDown ? 'left: 0;' : ''"
+      color="#fafbfc"
+      fixed
+      right
+      temporary
+      touchless
   >
     <no-chain-scroll-container>
       <slot/>
@@ -19,40 +21,40 @@
 </template>
 
 <script>
-  import NoChainScrollContainer from '@/composable/NoChainScrollContainer'
+import NoChainScrollContainer from '@/composable/NoChainScrollContainer'
 
-  export default {
-    name: 'NiceDialog',
-    components: { NoChainScrollContainer },
-    props: {
-      value: {
-        default: null,
-        type: Boolean,
-      },
-      width: {
-        default: 'min(700px,calc(100vw - 300px))',
-        type: String,
+export default {
+  name: 'NiceDialog',
+  components: { NoChainScrollContainer },
+  props: {
+    value: {
+      default: null,
+      type: Boolean,
+    },
+    width: {
+      default: 'min(700px,calc(100vw - 300px))',
+      type: String,
+    },
+  },
+  data: function () {
+    return {
+      realValue: null,
+    }
+  },
+  watch: {
+    value: {
+      immediate: true,
+      handler (val) {
+        this.realValue = val
       },
     },
-    data: function () {
-      return {
-        realValue: null,
+    realValue (val, old) {
+      if (val !== old) {
+        this.$emit('input', val)
       }
     },
-    watch: {
-      value: {
-        immediate: true,
-        handler (val) {
-          this.realValue = val
-        },
-      },
-      realValue (val, old) {
-        if (val !== old) {
-          this.$emit('input', val)
-        }
-      },
-    },
-  }
+  },
+}
 </script>
 
 <style scoped>

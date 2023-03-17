@@ -29,15 +29,19 @@
           <div
               class="d-flex align-baseline"
           >
-            <v-icon left>
-              mdi-plus-circle-outline
-            </v-icon>
-            <div
-                :class="!$vuetify.breakpoint.lgAndUp ? 'text-truncate' : ''"
-                :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 100px;' : ''"
-            >
-              {{ entityName }}
-            </div>
+            <template v-if="!$vuetify.breakpoint.lgAndUp">
+              <v-icon left>
+                mdi-plus-circle-outline
+              </v-icon>
+            </template>
+            <template v-if="$vuetify.breakpoint.lgAndUp">
+              <div
+                  :class="!$vuetify.breakpoint.lgAndUp ? 'text-truncate' : ''"
+                  :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 100px;' : ''"
+              >
+                {{ entityName }}
+              </div>
+            </template>
           </div>
         </v-btn>
         <slot
@@ -152,28 +156,36 @@
       >
         <div class="d-flex filterBar flex-wrap align-center" style="width: 90%; margin: auto; background-color: #3e3e3e; height: 100%; border-radius: 15px; border-bottom-left-radius: 10px !important; border-bottom-right-radius: 10px !important;">
           <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
-          <v-btn
-              color="primary"
-              v-if="useDefaultAction && useAddAction"
-              class="mr-0"
-              elevation="0"
-              @click="addItem"
-          >
-            <div
-                class="d-flex align-center"
-            >
-              <v-icon left>
-                mdi-plus-circle-outline
-              </v-icon>
-              <div
-                  :class="!$vuetify.breakpoint.lgAndUp ? 'text-truncate' : ''"
-                  :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 100px;' : ''"
-              >
-                {{ entityName }}
-              </div>
-            </div>
-          </v-btn>
           <div class="d-flex flex-wrap ma-auto ml-6 align-center">
+            <v-btn
+                color="primary"
+                v-if="useDefaultAction && useAddAction"
+                :icon="!$vuetify.breakpoint.lgAndUp"
+                elevation="0"
+                outlined
+                style="background-color: #f57c00;border-color: #666;"
+                @click="addItem"
+            >
+              <div
+                  class="d-flex align-center"
+              >
+                <v-icon
+                    color="white"
+                    :left="$vuetify.breakpoint.mdAndUp"
+                    :center="!$vuetify.breakpoint.mdAndUp"
+                >
+                  mdi-plus-circle-outline
+                </v-icon>
+                <template v-if="$vuetify.breakpoint.mdAndUp">
+                  <div
+                      :class="!$vuetify.breakpoint.lgAndUp ? 'text-truncate' : ''"
+                      :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 100px;' : ''"
+                  >
+                    {{ entityName }}
+                  </div>
+                </template>
+              </div>
+            </v-btn>
             <slot
                 :items="items"
                 :selectItems="selectedItems"
@@ -183,7 +195,7 @@
             />
           </div>
 
-          <div class="d-flex flex-wrap ma-auto mr-6 align-center">
+          <div class="d-flex flex-wrap justify-center ma-auto mr-6 align-center">
             <div
                 style="height: 100%;"
                 class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1"
@@ -297,8 +309,13 @@
     </div>
 
     <template v-if="realCategoryList.length>0">
-      <v-tabs style="background: transparent" v-model="activeCategoryFilterIndex">
-        <v-tab v-for="c in realCategoryList" :key="c.id">{{ c.name }}</v-tab>
+      <v-tabs
+          v-model="activeCategoryFilterIndex"
+          :show-arrows="!$vuetify.breakpoint.lgAndUp ? true : false"
+          style="background: transparent"
+      >
+        <v-tab v-for="c in realCategoryList" :key="c.id">{{ c.name }}
+        </v-tab>
       </v-tabs>
       <v-divider></v-divider>
     </template>

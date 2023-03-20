@@ -1,7 +1,8 @@
 <template>
-  <v-container :class="showTitle?'px-6':''" style="position: relative">
+  <v-container :class="showTitle && $vuetify.breakpoint.lgAndUp ? 'px-6' : 'px-4'" style="position: relative">
     <div class="d-flex" v-if="showTitle">
       <div
+
           class="d-flex align-center"
           :class="$vuetify.breakpoint.lgAndUp ? 'py-4 pb-6' : ''"
       >
@@ -323,6 +324,7 @@
     <v-card>
       <v-data-table
           :headers="realHeaders"
+          :class="$vuetify.breakpoint.mdAndDown ? 'tableContainerReset' : ''"
           :items="tableItem"
           :loading="loading"
           :search.sync="search"
@@ -335,8 +337,8 @@
         <template #item.action="{item}">
           <v-menu close-on-content-click rounded left offset-y offset-overflow>
             <template #activator="{on,attrs}">
-              <v-btn v-on="on" v-bind="attrs" style="border-radius: 12px"
-                     large icon
+              <v-btn v-on="on" v-bind="attrs" :outlined="$vuetify.breakpoint.mdAndDown" style="border-radius: 12px"
+                     large icon width="40px" height="40px" class="ma-auto mr-0 pa-0"
               >
                 <v-icon>mdi-dots-vertical</v-icon>
               </v-btn>
@@ -351,7 +353,6 @@
                 </v-list-item>
                 <slot name="item.action" :item="item"></slot>
               </v-list-item-group>
-
             </v-list>
           </v-menu>
 
@@ -424,7 +425,6 @@
             adItem.dataType===Types.Option"
           >
             <div class="d-flex">
-
               <template v-for="(value,i) in [item[adItem.value]].flat().splice(0,2)">
                 <div :key="value+'.'+i">
                   <template v-if="adItem.type.color">
@@ -1865,4 +1865,8 @@ th {
   border-radius: 25px;
 }
 
+.tableContainerReset .v-data-table__mobile-row .v-data-table__mobile-row__cell{
+  max-width: 100px;
+  overflow: hidden;
+}
 </style>

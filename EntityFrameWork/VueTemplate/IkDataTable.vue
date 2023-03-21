@@ -30,8 +30,11 @@
           <div
               class="d-flex align-baseline"
           >
-            <template v-if="!$vuetify.breakpoint.lgAndUp">
-              <v-icon left>
+            <template v-if="$vuetify.breakpoint.lgAndUp">
+              <v-icon
+                  :center="!$vuetify.breakpoint.lgAndUp"
+                  :left="$vuetify.breakpoint.lgAndUp"
+              >
                 mdi-plus-circle-outline
               </v-icon>
             </template>
@@ -312,8 +315,8 @@
     <template v-if="realCategoryList.length>0">
       <v-tabs
           v-model="activeCategoryFilterIndex"
-          :show-arrows="!$vuetify.breakpoint.lgAndUp ? true : false"
-          style="background: transparent"
+          :show-arrows="!$vuetify.breakpoint.lgAndUp"
+          style="background: transparent;"
       >
         <v-tab v-for="c in realCategoryList" :key="c.id">{{ c.name }}
         </v-tab>

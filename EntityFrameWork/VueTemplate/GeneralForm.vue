@@ -10,8 +10,6 @@
           {{ editedIndex === -1 ? $t('new') : $t('edit')+ ' ' + '/' }} {{ name }}
         </div>
         <v-spacer></v-spacer>
-
-
       </div>
       <div class="d-flex align-center justify-center">
         <v-form style="max-width: 100%;" ref="form" v-model="valid" lazy-validation>
@@ -36,7 +34,12 @@
                       <v-spacer/>
                       <div class="d-flex">
                         <div>
-                          <v-tabs :show-arrows="!$vuetify.breakpoint.lgAndUp ? true : false" color="#232123" height="36px" v-model="tab">
+                          <v-tabs
+                              show-arrows
+                              color="#232123"
+                              height="36px"
+                              v-model="tab"
+                          >
                             <v-tab v-for="(child,i) in field.children"
                                    :key="field.value+'c'+editedItem[field.value][i][field.childLabelKey]+'tab'"
                             >
@@ -48,6 +51,8 @@
                         </div>
                       </div>
                     </div>
+
+                    <template v-if="!$vuetify.breakpoint.lgAndDown"></template>
 
 
                     <v-tabs-items v-model="tab" class="mt-8">

@@ -315,7 +315,7 @@
     <template v-if="realCategoryList.length>0">
       <v-tabs
           v-model="activeCategoryFilterIndex"
-          :show-arrows="!$vuetify.breakpoint.lgAndUp"
+          show-arrows
           style="background: transparent;"
       >
         <v-tab v-for="c in realCategoryList" :key="c.id">{{ c.name }}

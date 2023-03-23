@@ -152,6 +152,7 @@
     </template>
     <template v-else>
       <v-bottom-navigation
+          id="iKbottomNav"
           fixed
           hide-on-scroll
           dark

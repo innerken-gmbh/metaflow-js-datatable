@@ -3,7 +3,7 @@
     <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
     <v-container class="pa-6" v-if="editedItem">
       <div class="d-flex align-center mb-8">
-        <v-btn @click="close()" class="mr-5 rounded" height="36px" width="36px" tile icon>
+        <v-btn outlined @click="close()" class="mr-5 rounded" height="36px" width="36px" tile icon>
           <v-icon size="24">mdi-arrow-left</v-icon>
         </v-btn>
         <div :class="$vuetify.breakpoint.smAndDown ? 'text-h4' : 'text-h3'" class="font-weight-bold">
@@ -32,24 +32,21 @@
                         {{ $t('' + field.groupName) }}
                       </div>
                       <v-spacer/>
-                      <div class="d-flex">
-                        <div>
-                          <v-tabs
-                              show-arrows
-                              color="#232123"
-                              height="36px"
-                              v-model="tab"
-                          >
-                            <v-tab v-for="(child,i) in field.children"
-                                   :key="field.value+'c'+editedItem[field.value][i][field.childLabelKey]+'tab'"
-                            >
-                              {{ $t(editedItem[field.value][i][field.childLabelKey].toLowerCase()) }}
-                              <span class="red--text" v-if="i===0"
-                              > * </span>
-                            </v-tab>
-                          </v-tabs>
-                        </div>
-                      </div>
+                      <v-tabs
+                          class="mt-2"
+                          show-arrows
+                          color="#232123"
+                          height="36px"
+                          v-model="tab"
+                      >
+                        <v-tab v-for="(child,i) in field.children"
+                               :key="field.value+'c'+editedItem[field.value][i][field.childLabelKey]+'tab'"
+                        >
+                          {{ $t(editedItem[field.value][i][field.childLabelKey].toLowerCase()) }}
+                          <span class="red--text" v-if="i===0"
+                          > * </span>
+                        </v-tab>
+                      </v-tabs>
                     </div>
 
                     <template v-if="!$vuetify.breakpoint.lgAndDown"></template>

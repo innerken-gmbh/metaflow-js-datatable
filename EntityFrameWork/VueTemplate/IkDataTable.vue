@@ -17,7 +17,7 @@
     </div>
     <template v-if="$vuetify.breakpoint.mdAndUp">
       <div
-          class="d-flex filterBar align-center mb-6"
+          class="d-flex flex-wrap filterBar align-center mb-6"
       >
         <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
         <v-btn
@@ -152,7 +152,8 @@
     </template>
     <template v-else>
       <v-bottom-navigation
-          id="iKbottomNav"
+          id="ikBottomNav"
+          active-class
           fixed
           hide-on-scroll
           dark

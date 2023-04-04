@@ -1,10 +1,10 @@
 <template>
-  <v-container :class="showTitle && $vuetify.breakpoint.lgAndUp ? 'px-6' : 'px-4'" style="position: relative">
+  <div style="position: relative">
     <div class="d-flex" v-if="showTitle">
       <div
 
           class="d-flex align-center"
-          :class="$vuetify.breakpoint.lgAndUp ? 'py-4 pb-6' : ''"
+          :class="!$vuetify.breakpoint.lgAndUp ? 'pb-4' : 'py-4 pb-6'"
       >
         <slot name="navigation"></slot>
         <span
@@ -17,7 +17,8 @@
     </div>
     <template v-if="$vuetify.breakpoint.mdAndUp">
       <div
-          class="d-flex flex-wrap filterBar align-center mb-6"
+          :class="!$vuetify.breakpoint.lgAndUp ? 'flex-wrap' : ''"
+          class="d-flex filterBar align-center mb-6"
       >
         <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
         <v-btn
@@ -30,18 +31,16 @@
           <div
               class="d-flex align-baseline"
           >
-            <template v-if="$vuetify.breakpoint.lgAndUp">
-              <v-icon
-                  :center="!$vuetify.breakpoint.lgAndUp"
-                  :left="$vuetify.breakpoint.lgAndUp"
-              >
-                mdi-plus-circle-outline
-              </v-icon>
-            </template>
-            <template v-if="$vuetify.breakpoint.lgAndUp">
+            <v-icon
+                :center="!$vuetify.breakpoint.mdAndUp"
+                :left="$vuetify.breakpoint.mdAndUp"
+            >
+              mdi-plus-circle-outline
+            </v-icon>
+            <template v-if="$vuetify.breakpoint.mdAndUp">
               <div
-                  :class="!$vuetify.breakpoint.lgAndUp ? 'text-truncate' : ''"
-                  :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 100px;' : ''"
+                  class="text-truncate"
+                  :style="$vuetify.breakpoint.mdAndDown ? 'max-width: 80px !important;' : '' && !$vuetify.breakpoint.lgAndUp ? 'max-width: 90px;' : ''"
               >
                 {{ entityName }}
               </div>
@@ -71,6 +70,7 @@
                 :label="$t('search')"
                 single-line
                 style="min-width: 150px"
+                :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 165px;' : ''"
             />
           </div>
           <v-dialog v-model="showFilter" max-width="300px">
@@ -103,12 +103,13 @@
                  outlined
           >
             <v-icon style="position: relative" left>mdi-format-list-checks</v-icon>
-            <div
-                :class="!$vuetify.breakpoint.lgAndUp ? 'text-truncate' : ''"
-                :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 100px;' : ''"
-                class="text-truncate" style="position: relative">
-              {{ $t('Batch') }}
-            </div>
+            <template v-if="$vuetify.breakpoint.mdAndUp">
+              <div
+                  :style="$vuetify.breakpoint.mdAndDown ? 'max-width: 80px !important;' : '' && !$vuetify.breakpoint.lgAndUp ? 'max-width: 90px;' : ''"
+                  class="text-truncate" style="position: relative">
+                {{ $t('Batch') }}
+              </div>
+            </template>
           </v-btn>
         </div>
 
@@ -125,12 +126,15 @@
                class="d-flex align-center"
           >
             <v-btn @click="datePickerMenu=true"
-                   style="background: white"
+                   :style="$vuetify.breakpoint.mdAndUp ? 'background: white' : 'background: transparent'"
                    elevation="0"
+                   :icon="!$vuetify.breakpoint.mdAndUp"
                    outlined
             >
               <v-icon left>mdi-calendar</v-icon>
-              {{ getNiceLabel(dates) }}
+              <template v-if="$vuetify.breakpoint.mdAndUp">
+                {{ getNiceLabel(dates) }}
+              </template>
             </v-btn>
           </div>
         </template>
@@ -161,7 +165,13 @@
           background-color="transparent"
       >
         <div class="d-flex filterBar flex-wrap align-center" style="width: 90%; margin: auto; background-color: #3e3e3e; height: 100%; border-radius: 15px; border-bottom-left-radius: 10px !important; border-bottom-right-radius: 10px !important;">
-          <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
+          <span
+              v-if="!showTitle"
+              class="font-weight-bold"
+              :class="!$vuetify.breakpoint.lgAndUp ? 'text-h3 pb-4' : 'text-h2'"
+          >
+            {{ entityName || model.name() }}
+          </span>
           <div class="d-flex flex-wrap ma-auto ml-6 align-center">
             <v-btn
                 color="primary"
@@ -184,8 +194,8 @@
                 </v-icon>
                 <template v-if="$vuetify.breakpoint.mdAndUp">
                   <div
-                      :class="!$vuetify.breakpoint.lgAndUp ? 'text-truncate' : ''"
-                      :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 100px;' : ''"
+                      class="text-truncate"
+                      :style="$vuetify.breakpoint.mdAndDown ? 'max-width: 80px !important;' : '' && !$vuetify.breakpoint.lgAndUp ? 'max-width: 90px;' : ''"
                   >
                     {{ entityName }}
                   </div>
@@ -259,31 +269,35 @@
             >
               <v-icon center color="white">mdi-format-list-checks</v-icon>
             </v-btn>
-          </div>
 
-          <slot
-              :items="items"
-              :selectItems="selectedItems"
-              :tableItems="tableItem"
-              :dateTime="dates"
-              name="right"
-          />
+            <slot
+                :items="items"
+                :selectItems="selectedItems"
+                :tableItems="tableItem"
+                :dateTime="dates"
+                name="right"
+            />
 
-          <template v-if="useDateFilter">
-            <div style="max-width: 300px; height: 54px;"
-                 class="d-flex align-center"
-            >
-              <v-btn @click="datePickerMenu=true"
-                     style="background: white"
-                     elevation="0"
-                     outlined
+            <template v-if="useDateFilter">
+              <div style="max-width: 300px; height: 54px;"
+                   class="d-flex align-center"
               >
-                <v-icon left>mdi-calendar</v-icon>
-                {{ getNiceLabel(dates) }}
-              </v-btn>
-            </div>
-          </template>
+                <v-btn @click="datePickerMenu=true"
+                       :style="$vuetify.breakpoint.lgAndUp ? 'background: white' : 'background: transparent'"
+                       elevation="0"
+                       :icon="!$vuetify.breakpoint.lgAndUp"
+                       outlined
+                       style="background-color: #f57c00;border-color: #666;"
+                >
+                  <v-icon :color="!$vuetify.breakpoint.lgAndUp ? 'white' : 'black'" :center="!$vuetify.breakpoint.lgAndUp" :left="$vuetify.breakpoint.lgAndUp">mdi-calendar</v-icon>
+                  <template v-if="$vuetify.breakpoint.lgAndUp">
+                    {{ getNiceLabel(dates) }}
+                  </template>
+                </v-btn>
+              </div>
+            </template>
 
+          </div>
         </div>
         <div class="mb-2 mt-n4" v-if="filterDisplayChips.length>0">
           <v-chip :key="item.key" @click="()=>$delete(filterItem,item.key)"
@@ -303,7 +317,7 @@
 
     <div
         class="d-flex filterBar align-center"
-        :class="selectedItems.length > 0 ? 'mb-6' : 'mb-3' "
+        :class="{'flex-wrap' : !$vuetify.breakpoint.lgAndUp, 'mb-6' : selectedItems.length > 0}"
     >
       <slot
           :items="items"
@@ -472,12 +486,14 @@
         </template>
         <template v-slot:no-data>
           <slot name="no-data">
-            <v-btn
-                color="primary"
-                @click="reload"
-            >
-              {{ $t('reload') }}
-            </v-btn>
+            <div style="width: 100%;" class="text-center">
+              <v-btn
+                  color="primary"
+                  @click="reload"
+              >
+                {{ $t('reload') }}
+              </v-btn>
+            </div>
           </slot>
         </template>
 
@@ -1239,7 +1255,7 @@
         </v-card>
       </v-dialog>
     </template>
-  </v-container>
+  </div>
 </template>
 
 <script>

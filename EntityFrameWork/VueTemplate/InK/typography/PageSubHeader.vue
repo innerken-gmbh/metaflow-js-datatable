@@ -4,16 +4,16 @@
 
 <template>
   <div class="d-flex">
-    <div class="d-flex align-center py-4 pb-6">
+    <div class="d-flex align-center">
       <span class="text-h3 font-weight-bold"><slot/></span>
     </div>
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'PageSubHeader',
-  }
+export default {
+  name: 'PageSubHeader',
+}
 </script>
 
 <style scoped>

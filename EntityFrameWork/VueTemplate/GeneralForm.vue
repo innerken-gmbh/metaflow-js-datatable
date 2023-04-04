@@ -296,6 +296,7 @@ export default {
       if (!val) {
         this.editedItem = false
         this.$emit('input', false)
+        this.close(true)
       } else {
         this.wait(this.editedIndexUpdated)
       }

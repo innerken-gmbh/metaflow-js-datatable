@@ -40,7 +40,7 @@
             <template v-if="$vuetify.breakpoint.mdAndUp">
               <div
                   class="text-truncate"
-                  :style="$vuetify.breakpoint.mdAndDown ? 'max-width: 80px !important;' : '' && !$vuetify.breakpoint.lgAndUp ? 'max-width: 90px;' : ''"
+                  :style="$vuetify.breakpoint.mdAndDown ? 'max-width: 80px !important;' : '' && !$vuetify.breakpoint.lgAndUp ? 'max-width: 90px;' : 'max-width: 250px;'"
               >
                 {{ entityName }}
               </div>
@@ -1398,7 +1398,7 @@ export default {
   watch: {
     operationMode: {
       handler (val) {
-        console.log(val, 'THIS IS OPERATION MODE')
+        console.log(val)
       }
     },
     realFilter: {
@@ -1410,7 +1410,6 @@ export default {
       handler (val) {
         this.activeSearch = val
         this.activeSearchBtn = val
-        console.log(val, 'THIS IS THE HANDLER FOR activeSearch')
       },
     },
     requiredDateValue: {

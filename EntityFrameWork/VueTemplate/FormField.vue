@@ -277,7 +277,7 @@ export const colorList = ['#FFCDD2', '#F8BBD0', '#E1BEE7',
 import ImgWithLoading from './Base/ImgWithLoading'
 import Utils from 'innerken-js-utils'
 
-const noSpecialCharRule=v=>!/[',"]/g.test(v)||'不能使用单引号或双引号'
+const noSpecialCharRule = v => !v || !/[',"]/g.test(v) || '不能使用单引号或双引号'
 
 export function getColorLightness (c) {
     if (c?.startsWith('#')) {
@@ -370,7 +370,7 @@ export default {
             return this.currentState === -1
         },
         shouldDisable: function () {
-            return this.outsideDisabled||
+            return this.outsideDisabled ||
                 (this.disableNew && this.isNew) ||
                 (this.disableEdit && !this.isNew)
         },
@@ -380,13 +380,12 @@ export default {
                 if (!this.overwriteRule) {
                     if (this.isNew && this.requiredNew) {
                         rules = rules.concat(Utils.ValidateRules.NotEmpty)
-                        rules.push(noSpecialCharRule)
                     } else if (!this.isNew && this.requiredEdit) {
                         rules = rules.concat(Utils.ValidateRules.NotEmpty)
-                        rules.push(noSpecialCharRule)
                     }
                 }
             }
+            rules.push(noSpecialCharRule)
             return this.hideSelect ? [] : rules
         },
         locale: function () {

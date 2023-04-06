@@ -2,37 +2,37 @@
     <div style="position: relative">
         <div class="d-flex " v-if="showTitle">
             <div
-                style="width:100%"
-                class="d-flex align-center"
-                :class="!$vuetify.breakpoint.lgAndUp? 'pb-4' : 'py-4 pb-6'"
+                    style="width:100%"
+                    class="d-flex align-center"
+                    :class="!$vuetify.breakpoint.lgAndUp? 'pb-4' : 'py-4 pb-6'"
             >
                 <slot name="navigation"></slot>
                 <span
-                    class="font-weight-bold"
-                    :class="$vuetify.breakpoint.lgAndUp? 'text-h2 ' : 'text-h3'"
+                        class="font-weight-bold"
+                        :class="$vuetify.breakpoint.lgAndUp? 'text-h2 ' : 'text-h3'"
                 >
           {{ entityName || model.name() }}
         </span>
                 <v-spacer></v-spacer>
                 <slot v-if="mobileView" name="primaryButton">
                     <v-btn
-                        color="primary lighten-4 black--text"
-                        v-if="useDefaultAction && useAddAction"
-                        elevation="0"
-                        @click="addItem"
+                            color="primary lighten-4 black--text"
+                            v-if="useDefaultAction && useAddAction"
+                            elevation="0"
+                            @click="addItem"
                     >
                         <div
-                            class="d-flex align-center"
+                                class="d-flex align-center"
                         >
                             <v-icon
-                                left
+                                    left
                             >
                                 mdi-plus-circle-outline
                             </v-icon>
                             <template>
                                 <div
-                                    class="text-truncate"
-                                    style="max-width: 80px !important;"
+                                        class="text-truncate"
+                                        style="max-width: 80px !important;"
                                 >
                                     {{ entityName }}
                                 </div>
@@ -44,30 +44,30 @@
         </div>
         <template v-if="!mobileView">
             <div
-                :class="!$vuetify.breakpoint.lgAndUp ? 'flex-wrap' : ''"
-                class="d-flex filterBar align-center mb-6"
+                    :class="!$vuetify.breakpoint.lgAndUp ? 'flex-wrap' : ''"
+                    class="d-flex filterBar align-center mb-6"
             >
                 <div style="display: grid;grid-auto-flow: column;grid-gap: 8px">
                     <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
                     <slot name="primaryButton">
                         <v-btn
-                            color="primary lighten-4 black--text"
-                            v-if="useDefaultAction && useAddAction"
-                            elevation="0"
-                            @click="addItem"
+                                color="primary lighten-4 black--text"
+                                v-if="useDefaultAction && useAddAction"
+                                elevation="0"
+                                @click="addItem"
                         >
                             <div
-                                class="d-flex align-center"
+                                    class="d-flex align-center"
                             >
                                 <v-icon
-                                    left
+                                        left
                                 >
                                     mdi-plus-circle-outline
                                 </v-icon>
                                 <template>
                                     <div
-                                        class="text-truncate"
-                                        style="max-width: 80px !important;"
+                                            class="text-truncate"
+                                            style="max-width: 80px !important;"
                                     >
                                         {{ entityName }}
                                     </div>
@@ -77,11 +77,11 @@
                     </slot>
 
                     <slot
-                        :items="items"
-                        :selectItems="selectedItems"
-                        :tableItems="tableItem"
-                        :dateTime="dates"
-                        name="footer"
+                            :items="items"
+                            :selectItems="selectedItems"
+                            :tableItems="tableItem"
+                            :dateTime="dates"
+                            name="footer"
                     />
                 </div>
 
@@ -91,17 +91,17 @@
                 <div class="d-flex ma-0 ml-2 align-center">
                     <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1">
                         <v-text-field
-                            class="white"
-                            v-model="search"
-                            prepend-inner-icon="mdi-magnify"
-                            outlined
-                            dense
-                            hide-details
-                            clearable
-                            :label="$t('search')"
-                            single-line
-                            style="min-width: 150px"
-                            :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 165px;' : ''"
+                                class="white"
+                                v-model="search"
+                                prepend-inner-icon="mdi-magnify"
+                                outlined
+                                dense
+                                hide-details
+                                clearable
+                                :label="$t('search')"
+                                single-line
+                                style="min-width: 150px"
+                                :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 165px;' : ''"
                         />
                     </div>
                     <v-btn v-if="mergableFields.length>0"
@@ -114,15 +114,15 @@
                     </v-btn>
 
                     <v-btn
-                        v-if="canMassEdit&&selectedItems.length>0"
-                        @click="startMassEdit" class="ml-2" style="background: white; position: relative"
-                        outlined
+                            v-if="canMassEdit&&selectedItems.length>0"
+                            @click="startMassEdit" class="ml-2" style="background: white; position: relative"
+                            outlined
                     >
                         <v-icon style="position: relative" left>mdi-format-list-checks</v-icon>
                         <template v-if="$vuetify.breakpoint.mdAndUp">
                             <div
-                                :style="$vuetify.breakpoint.mdAndDown ? 'max-width: 80px !important;' : '' && !$vuetify.breakpoint.lgAndUp ? 'max-width: 90px;' : ''"
-                                class="text-truncate" style="position: relative"
+                                    :style="$vuetify.breakpoint.mdAndDown ? 'max-width: 80px !important;' : '' && !$vuetify.breakpoint.lgAndUp ? 'max-width: 90px;' : ''"
+                                    class="text-truncate" style="position: relative"
                             >
                                 {{ $t('Batch') }}
                             </div>
@@ -131,11 +131,11 @@
                 </div>
 
                 <slot
-                    :items="items"
-                    :selectItems="selectedItems"
-                    :tableItems="tableItem"
-                    :dateTime="dates"
-                    name="right"
+                        :items="items"
+                        :selectItems="selectedItems"
+                        :tableItems="tableItem"
+                        :dateTime="dates"
+                        name="right"
                 />
 
                 <template v-if="useDateFilter">
@@ -173,46 +173,47 @@
         </template>
         <template v-else>
             <v-app-bar
-                dense
-                bottom
-                app
+                    dense
+                    bottom
+                    app
             >
-                <div style="display: grid;grid-auto-flow: column;grid-gap: 8px;overflow-x: scroll">
+                <div style="display: grid;grid-auto-flow: column;grid-gap: 8px;grid-auto-columns: max-content;
+                overflow-x: scroll">
                     <slot
-                        :items="items"
-                        :selectItems="selectedItems"
-                        :tableItems="tableItem"
-                        :dateTime="dates"
-                        name="footer"
+                            :items="items"
+                            :selectItems="selectedItems"
+                            :tableItems="tableItem"
+                            :dateTime="dates"
+                            name="footer"
                     />
                     <v-btn
-                        small
-                        :color="filterDisplayChips.length>0?'primary lighten-4 black--text':''"
-                        @click="showFilter=true"
-                        v-if="mergableFields.length>0"
-                        :outlined="filterDisplayChips.length===0"
+                            small
+                            :color="filterDisplayChips.length>0?'primary lighten-4 black--text':''"
+                            @click="showFilter=true"
+                            v-if="mergableFields.length>0"
+                            :outlined="filterDisplayChips.length===0"
                     >
                         <v-icon
-                            :color="filterDisplayChips.length>0?'black':''"
-                            left
+                                :color="filterDisplayChips.length>0?'black':''"
+                                left
                         >mdi-filter-outline
                         </v-icon>
                         <div class="text-caption">
                             筛选
                         </div>
                         <v-icon
-                            :color="filterDisplayChips.length>0?'black':''"
-                            v-if="filterDisplayChips.length>0"
-                            right
-                            @click.stop="filterItem={}"
+                                :color="filterDisplayChips.length>0?'black':''"
+                                v-if="filterDisplayChips.length>0"
+                                right
+                                @click.stop="filterItem={}"
                         >mdi-close-circle
                         </v-icon>
                     </v-btn>
                     <v-btn
-                        small
-                        outlined
-                        v-if="canMassEdit&&selectedItems.length>0"
-                        @click="startMassEdit"
+                            small
+                            outlined
+                            v-if="canMassEdit&&selectedItems.length>0"
+                            @click="startMassEdit"
 
                     >
                         <v-icon>mdi-format-list-checks</v-icon>
@@ -221,11 +222,11 @@
                         </div>
                     </v-btn>
                     <slot
-                        :items="items"
-                        :selectItems="selectedItems"
-                        :tableItems="tableItem"
-                        :dateTime="dates"
-                        name="right"
+                            :items="items"
+                            :selectItems="selectedItems"
+                            :tableItems="tableItem"
+                            :dateTime="dates"
+                            name="right"
                     />
                     <template v-if="useDateFilter">
 
@@ -248,23 +249,23 @@
         </template>
 
         <div
-            class="d-flex filterBar align-center"
-            :class="{'flex-wrap' : !$vuetify.breakpoint.lgAndUp}"
+                class="d-flex filterBar align-center"
+                :class="{'flex-wrap' : !$vuetify.breakpoint.lgAndUp}"
         >
             <slot
-                :items="items"
-                :selectItems="selectedItems"
-                :tableItems="tableItem"
-                :dateTime="dates"
-                name="topOnTable"
+                    :items="items"
+                    :selectItems="selectedItems"
+                    :tableItems="tableItem"
+                    :dateTime="dates"
+                    name="topOnTable"
             />
         </div>
 
         <template v-if="realCategoryList.length>0">
             <v-tabs
-                v-model="activeCategoryFilterIndex"
-                show-arrows
-                style="background: transparent;"
+                    v-model="activeCategoryFilterIndex"
+                    show-arrows
+                    style="background: transparent;"
             >
                 <v-tab v-for="c in realCategoryList" :key="c.id">{{ c.name }}
                 </v-tab>
@@ -274,41 +275,43 @@
 
         <v-card>
             <div
-                v-if="mobileView"
-                class="pa-2"
+                    v-if="mobileView"
+                    class="pa-2"
             >
                 <v-text-field
-                    v-model="search"
-                    prepend-inner-icon="mdi-magnify"
-                    outlined
-                    background-color="transparent"
-                    dense
-                    rounded
-                    hide-details
-                    clearable
-                    :label="$t('search')"
-                    single-line
+                        v-model="search"
+                        prepend-inner-icon="mdi-magnify"
+                        outlined
+                        background-color="transparent"
+                        dense
+                        rounded
+                        hide-details
+                        clearable
+                        :label="$t('search')"
+                        single-line
                 />
                 <v-divider class="my-2"></v-divider>
             </div>
             <v-data-table
-                :headers="realHeaders"
-                :class="$vuetify.breakpoint.mdAndDown ? 'tableContainerReset' : ''"
-                :items="tableItem"
-                :loading="loading"
-                v-model="selectedItems"
-                :show-select="canMassEdit"
-                :search.sync="search"
-                @update:page="pageUpdate"
-                :items-per-page="30"
-                :footer-props="{itemsPerPageOptions:[30,50,-1]}"
-                :disable-sort="mobileView"
-                @click:row.self="editItem"
+                    :mobile-breakpoint="20"
+                    :headers="realHeaders"
+                    :class="$vuetify.breakpoint.mdAndDown ? 'tableContainerReset' : ''"
+                    :items="tableItem"
+                    :loading="loading"
+                    v-model="selectedItems"
+                    :show-select="canMassEdit"
+                    :search.sync="search"
+                    @update:page="pageUpdate"
+                    :items-per-page="30"
+                    :footer-props="{itemsPerPageOptions:[30,50,-1]}"
+                    :disable-sort="mobileView"
+                    @click:row.self="editItem"
             >
                 <template #item.action="{item}">
                     <v-menu close-on-content-click rounded left offset-y offset-overflow>
                         <template #activator="{on,attrs}">
-                            <v-btn v-on="on" v-bind="attrs" :outlined="$vuetify.breakpoint.mdAndDown" style="border-radius: 12px"
+                            <v-btn v-on="on" v-bind="attrs" :outlined="$vuetify.breakpoint.mdAndDown"
+                                   style="border-radius: 12px"
                                    large icon width="40px" height="40px" class="ma-auto mr-0 pa-0"
                             >
                                 <v-icon>mdi-dots-vertical</v-icon>
@@ -329,70 +332,70 @@
 
                 </template>
                 <template
-                    v-for="slottedItem in slottedItems"
-                    v-slot:[slottedItem.name]="{ item }"
+                        v-for="slottedItem in slottedItems"
+                        v-slot:[slottedItem.name]="{ item }"
                 >
                     <slot
-                        :name="slottedItem.name"
-                        :item="item"
+                            :name="slottedItem.name"
+                            :item="item"
                     />
                 </template>
                 <template
-                    v-for="adItem in advancedItems"
-                    v-slot:[adItem.name]="{ item }"
+                        v-for="adItem in advancedItems"
+                        v-slot:[adItem.name]="{ item }"
                 >
                     <template
-                        v-if="
+                            v-if="
             adItem.dataType===Types.Image"
                     >
                         <img-template
-                            :key="adItem.name"
-                            :model="adItem.value"
-                            :item="item"
-                            :root="adItem.type.root()"
+                                :key="adItem.name"
+                                :model="adItem.value"
+                                :item="item"
+                                :root="adItem.type.root()"
                         />
                     </template>
                     <template
-                        v-else-if="adItem.dataType===Types.Group"
+                            v-else-if="adItem.dataType===Types.Group"
                     >
                         <div
-                            v-bind:key="'_'+adItem.value+c"
-                            v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
+                                v-bind:key="'_'+adItem.value+c"
+                                v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
                         >
                             {{ item['_' + adItem.value + c] }}
                         </div>
                     </template>
 
                     <template
-                        v-else-if="
+                            v-else-if="
               adItem.dataType===Types.Boolean"
                     >
                         <div>
                             <v-simple-checkbox
-                                :value="!!item[adItem.value]"
-                                dense
-                                class="ma-0"
-                                color="primary"
-                                @click="toggleProperty(item,adItem.value)"
-                                :key="adItem.name"
+                                    :value="!!item[adItem.value]"
+                                    dense
+                                    class="ma-0"
+                                    color="primary"
+                                    @click="toggleProperty(item,adItem.value)"
+                                    :key="adItem.name"
                             />
                         </div>
 
                     </template>
 
                     <template
-                        v-else-if="
+                            v-else-if="
             adItem.dataType===Types.Color"
                     >
                         <v-chip
-                            :key="adItem.name"
-                            :color="item[adItem.value]"
-                            label
-                            :style="swatchStyle"
+                                :key="adItem.name"
+                                :color="item[adItem.value]"
+                                label
+                                :style="swatchStyle"
                         />
                     </template>
                     <template
-                        v-else-if="
+                            v-else-if="
             adItem.dataType===Types.Option"
                     >
                         <div class="d-flex">
@@ -400,8 +403,8 @@
                                 <div :key="value+'.'+i">
                                     <template v-if="adItem.type.color">
                  <span
-                     class="pa-1 px-3 mr-1 white--text rounded-pill text-no-wrap"
-                     :class="
+                         class="pa-1 px-3 mr-1 white--text rounded-pill text-no-wrap"
+                         :class="
                        adItem.type.color
                      .find(c=>{return parseInt(value)===c.id}).color"
                  >
@@ -423,14 +426,14 @@
 
                     </template>
                     <template
-                        v-else-if="
+                            v-else-if="
             adItem.dataType===Types.Date"
                     >
                         <div>{{ item[adItem.value] | beautifulTime }}</div>
 
                     </template>
                     <template
-                        v-else-if="
+                            v-else-if="
             adItem.dataType===Types.Float"
                     >
                         <price-table-display :price="item[adItem.value]"/>
@@ -440,8 +443,8 @@
                     <slot name="no-data">
                         <div style="width: 100%;" class="text-center">
                             <v-btn
-                                color="primary"
-                                @click="reload"
+                                    color="primary"
+                                    @click="reload"
                             >
                                 {{ $t('reload') }}
                             </v-btn>
@@ -452,23 +455,23 @@
                 <template v-slot:expanded-item="{ item }">
                     <td :colspan="headers.length">
                         <slot
-                            name="expanded-item"
-                            :item="item"
+                                name="expanded-item"
+                                :item="item"
                         />
                     </td>
                 </template>
             </v-data-table>
         </v-card>
         <general-form
-            ref="gf"
-            :title="entityName"
-            v-model="dialog"
-            :edited-index="editedIndex"
-            :model="model"
-            :use-delete-action="useDefaultAction&&useDeleteAction"
-            @need-refresh="reload"
-            :out-side-list="tableItem"
-            :out-side-property="fixedFilter"
+                ref="gf"
+                :title="entityName"
+                v-model="dialog"
+                :edited-index="editedIndex"
+                :model="model"
+                :use-delete-action="useDefaultAction&&useDeleteAction"
+                @need-refresh="reload"
+                :out-side-list="tableItem"
+                :out-side-property="fixedFilter"
         />
         <v-dialog max-width="400px" v-model="datePickerMenu">
             <v-card @click="datePickerMenu=false" color="#efefef" class="pa-2">
@@ -478,9 +481,9 @@
 
 
         <v-dialog
-            :fullscreen="$vuetify.breakpoint.mobile"
-            v-model="showMultipleEditDialog"
-            max-width="600px"
+                :fullscreen="$vuetify.breakpoint.mobile"
+                v-model="showMultipleEditDialog"
+                max-width="600px"
         >
             <v-card tile>
 
@@ -529,14 +532,14 @@
                                             {{ $t('ChooseAttributes') }}
                                         </div>
                                         <div
-                                            style="max-height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
+                                                style="max-height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
                                         >
                                             <template v-for="(field) in addableFields">
                                                 <div :key="field.value">
                                                     <form-field
-                                                        :hide-select="true"
-                                                        :field="field"
-                                                        :edited-item="targetItem"
+                                                            :hide-select="true"
+                                                            :field="field"
+                                                            :edited-item="targetItem"
                                                     />
                                                 </div>
                                             </template>
@@ -550,14 +553,14 @@
                                             {{ $t('ChooseProperties') }}
                                         </div>
                                         <div
-                                            style="max-height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
+                                                style="max-height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
                                         >
                                             <template v-for="(field) in editableFields">
                                                 <div :key="field.value">
                                                     <form-field
-                                                        :hide-select="true"
-                                                        :field="field"
-                                                        :edited-item="targetItem"
+                                                            :hide-select="true"
+                                                            :field="field"
+                                                            :edited-item="targetItem"
                                                     />
                                                 </div>
                                             </template>
@@ -575,13 +578,16 @@
                                     </template>
 
                                 </div>
-                                <div class="mt-4 text-body-2 mb-4">{{ $t('CurrentSelected') }}：{{ selectedItems.length }}</div>
+                                <div class="mt-4 text-body-2 mb-4">{{ $t('CurrentSelected') }}：{{
+                                    selectedItems.length
+                                    }}
+                                </div>
                                 <v-card
-                                    elevation="0"
-                                    style="border-radius: 12px"
-                                    @click="massiveEdit(operationMode)"
-                                    color="primary lighten-4 black--text"
-                                    class="d-flex align-center justify-center pa-4 pr-0 mt-auto mb-0"
+                                        elevation="0"
+                                        style="border-radius: 12px"
+                                        @click="massiveEdit(operationMode)"
+                                        color="primary lighten-4 black--text"
+                                        class="d-flex align-center justify-center pa-4 pr-0 mt-auto mb-0"
                                 >
                                     <div>
                                         <template v-if="operationMode===1">
@@ -616,11 +622,14 @@
                             </div>
                             <div class="mt-4">
                                 {{
-                                    $t('操作结果：') + '' + progress + '个成功。 共操作了' + maxProgress + ', 其中失败了' + (maxProgress - progress) + '个'
+                                $t('操作结果：') + '' + progress + '个成功。 共操作了' + maxProgress + ', 其中失败了' + (maxProgress - progress) + '个'
                                 }}
                             </div>
                             <div class="d-flex mt-4">
-                                <v-btn outlined @click="massEditStep=0" class="mr-2">{{ $t('ContinueBatchProcessing') }}</v-btn>
+                                <v-btn outlined @click="massEditStep=0" class="mr-2">{{
+                                    $t('ContinueBatchProcessing')
+                                    }}
+                                </v-btn>
                                 <v-btn outlined @click="showMultipleEditDialog=false">{{ $t('Finish') }}</v-btn>
                             </div>
 
@@ -639,9 +648,9 @@
                     <template v-for="(field) in mergableFields">
                         <div :key="field.value" style="height: 100%" class="mr-2">
                             <form-field
-                                :hide-select="true"
-                                :field="field"
-                                :edited-item="filterItem"
+                                    :hide-select="true"
+                                    :field="field"
+                                    :edited-item="filterItem"
                             />
                         </div>
                     </template>
@@ -657,23 +666,23 @@ import Swal from 'sweetalert2'
 import GeneralForm from './GeneralForm'
 import ImgTemplate from './Base/ImgTemplate'
 import FormField from './FormField'
-import { IKDataEntity } from '../../index'
+import {IKDataEntity} from '../../index'
 import IKUtils from 'innerken-js-utils'
-import { groupBy } from 'lodash'
+import {groupBy} from 'lodash'
 import DateRangePicker from './Base/DateRangePicker'
 import PriceTableDisplay from './Base/PriceTableDisplay'
-import { getNiceLabel } from '../DateRepository'
+import {getNiceLabel} from '../DateRepository'
 import NoChainScrollContainer from './Base/NoChainScrollContainer.vue'
-import { Ripple } from 'vuetify/lib/directives'
+import {Ripple} from 'vuetify/lib/directives'
 import HorizontalList from './InK/HorizontalList.vue'
 
-import { uniqBy } from 'lodash-es'
+import {uniqBy} from 'lodash-es'
 
-function key (model) {
+function key(model) {
     return Object.keys(model).join('/')
 }
 
-function getStorageMassEdit (model) {
+function getStorageMassEdit(model) {
     try {
         return JSON.parse(localStorage.getItem(key(model))) ?? []
     } catch (e) {
@@ -681,7 +690,7 @@ function getStorageMassEdit (model) {
     }
 }
 
-function setMassEditSet (model, idSet, name) {
+function setMassEditSet(model, idSet, name) {
     const current = getStorageMassEdit(model)
     current.unshift({
         idSet,
@@ -791,12 +800,12 @@ export default {
     },
     watch: {
         operationMode: {
-            handler (val) {
+            handler(val) {
                 console.log(val)
             },
         },
         realFilter: {
-            handler () {
+            handler() {
                 this.reload()
             },
         },
@@ -808,7 +817,7 @@ export default {
                 }
             },
         },
-        activeCategoryFilterIndex (val) {
+        activeCategoryFilterIndex(val) {
             this.$emit('index-update', val, this.realCategoryList)
         },
     },
@@ -849,17 +858,17 @@ export default {
         }
     },
     computed: {
-        okDates () {
+        okDates() {
             return this.dates
         },
-        realFilter () {
+        realFilter() {
             const res = this.filter ?? {}
             if (this.okDates) {
                 res.dateFilter = this.okDates
             }
             return res
         },
-        swatchStyle () {
+        swatchStyle() {
             return {
                 cursor: 'pointer',
                 height: '30px',
@@ -947,7 +956,7 @@ export default {
             }
             return target
         },
-        realCategoryList () {
+        realCategoryList() {
             return this.categoryList ? [{
                 id: -1,
                 name: this.$t('all'),
@@ -989,17 +998,17 @@ export default {
                     }
                 })
         },
-        realHeaders () {
+        realHeaders() {
             return this.headers.filter(it => !it.onlyAction).map(item => {
                 item.text = this.$i18n.t(item.text)
                 return item
             })
         },
-        mobileView () {
+        mobileView() {
             return this.$vuetify.breakpoint.mobile
         },
     },
-    mounted () {
+    mounted() {
         [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
         this.formDisc = _.keyBy([this.formField, this.headers].flat(), 'value')
 
@@ -1054,7 +1063,7 @@ export default {
                 })
         },
 
-        async toggleProperty (item, key) {
+        async toggleProperty(item, key) {
             const _item = IKUtils.deepCopy(item)
             _item[key] = !_item[key]
             await this.updateItem(_item)
@@ -1062,11 +1071,11 @@ export default {
             await this.reload()
         },
 
-        async updateItem (item) {
+        async updateItem(item) {
             return await IKUtils.safeCallFunction(this.model, this.model.edit, item)
         },
 
-        async deleteItem (item, promt = true) {
+        async deleteItem(item, promt = true) {
             if (promt) {
                 const res = await IKUtils.showConfirmAsyn(
                     this.$t('are_you_sure'),
@@ -1087,11 +1096,11 @@ export default {
                     })
             }
         },
-        addItem () {
+        addItem() {
             this.editedIndex = -1
             this.dialog = true
         },
-        editItem (item) {
+        editItem(item) {
             if (this.useDefaultAction && this.useEditAction) {
                 this.editedIndex = this.tableItem.indexOf(item)
                 this.dialog = true
@@ -1100,7 +1109,7 @@ export default {
             }
         },
 
-        async reload () {
+        async reload() {
             const model = this.model
             this.loading = true
 
@@ -1111,11 +1120,11 @@ export default {
                 this.$emit('reloaded', this.items)
             })
         },
-        changeOperationMode (newMode) {
+        changeOperationMode(newMode) {
             this.operationMode = newMode
             this.targetItem = {}
         },
-        startMassEdit () {
+        startMassEdit() {
             this.targetItem = {}
             this.searchItem = {}
             this.massEditSearch = ''
@@ -1126,7 +1135,7 @@ export default {
             this.showMultipleEditDialog = true
 
         },
-        async massiveEdit (operationMode) {
+        async massiveEdit(operationMode) {
             this.massEditStep = 1
             this.massLoading = true
             const selectedItems = this.selectedItems
@@ -1164,7 +1173,7 @@ export default {
             this.massLoading = false
 
         },
-        pageUpdate () {
+        pageUpdate() {
             this.$vuetify.goTo(0, {
                 appOffset: true,
             })

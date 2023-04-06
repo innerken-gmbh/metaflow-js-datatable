@@ -328,7 +328,7 @@ export default {
     },
     data: function () {
         return {
-            fileStore:null,
+            fileStore: null,
             colorList,
             timePickerShow: false,
             datePickerShow: false,
@@ -408,10 +408,10 @@ export default {
         async fileStore (val) {
             const options = {
                 maxSizeMB: 1,
-                useWebWorker: true
+                useWebWorker: true,
             }
-            this.editedItem[this.type.fileStorage] = await imageCompression(val, options)
-        }
+            this.$set(this.editedItem, this.type.fileStorage, await imageCompression(val, options))
+        },
     },
     methods: {
         showText (item) {
@@ -419,7 +419,6 @@ export default {
             return Array.isArray(value) ? '+' + value.length : item[this.type.itemText]
         },
         startUpload () {
-            console.log(this.$refs.file.$refs.input)
             this.$refs.file.$refs.input.click()
         },
         colorIsDark (color) {

@@ -137,7 +137,7 @@
                     prepend-inner-icon="mdi-file"
                     :hide-details="noDetails"
                     :placeholder="$t(text)"
-                    v-model="editedItem[type.fileStorage]"
+                    v-model="fileStore"
                     :disabled="shouldDisable"
                     :label="$t(text)"
                     :rules="rules"
@@ -275,6 +275,7 @@ export const colorList = ['#FFCDD2', '#F8BBD0', '#E1BEE7',
     '#FFF9C4', '#FFECB3', '#FFE0B2',
     '#FFCCBC', '#D7CCC8', '#CFD8DC', '#FFFFFF']
 import ImgWithLoading from './Base/ImgWithLoading'
+import imageCompression from 'browser-image-compression'
 import Utils from 'innerken-js-utils'
 
 const noSpecialCharRule = v => typeof v !== 'string' || (!v || !/[',"]/g.test(v) || '不能使用单引号或双引号')
@@ -327,6 +328,7 @@ export default {
     },
     data: function () {
         return {
+            fileStore:null,
             colorList,
             timePickerShow: false,
             datePickerShow: false,
@@ -336,7 +338,6 @@ export default {
         }
     },
     computed: {
-
         selectItemsIsDynamic: function () {
             return typeof this?.type?.selectItems === 'function'
         },
@@ -404,6 +405,13 @@ export default {
                 this.preProcessOptions()
             },
         },
+        async fileStore (val) {
+            const options = {
+                maxSizeMB: 1,
+                useWebWorker: true
+            }
+            this.editedItem[this.type.fileStorage] = await imageCompression(val, options)
+        }
     },
     methods: {
         showText (item) {

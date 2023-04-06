@@ -1,6 +1,6 @@
 <template>
     <div
-            v-if="(currentState===-1&&inNew)||(currentState>-1&&inEdit)"
+        v-if="(currentState===-1&&inNew)||(currentState>-1&&inEdit)"
     >
         <div v-if="type.name!=='image'&&text&&!hideSelect" class="pb-1">
             <div class="text-caption">
@@ -14,62 +14,62 @@
         <template v-if="type.name==='text'">
 
             <v-text-field
-                    v-if="!textArea"
-                    outlined
-                    v-model="editedItem[value]"
-                    :disabled="shouldDisable"
-                    :rules="rules"
+                v-if="!textArea"
+                outlined
+                v-model="editedItem[value]"
+                :disabled="shouldDisable"
+                :rules="rules"
             />
             <v-textarea
-                    v-else
-                    auto-grow
-                    outlined
-                    counter
-                    rows="1"
-                    v-model="editedItem[value]"
-                    :disabled="shouldDisable"
-                    :rules="rules"
-                    :counter="maxLength||''"
+                v-else
+                auto-grow
+                outlined
+                counter
+                rows="1"
+                v-model="editedItem[value]"
+                :disabled="shouldDisable"
+                :rules="rules"
+                :counter="maxLength||''"
             />
         </template>
         <template v-if="type.name==='float'">
             <v-text-field
-                    outlined
-                    v-model="editedItem[value]"
-                    :disabled="shouldDisable"
-                    :rules="rules"
-                    type="number"
-                    step="0.01"
+                outlined
+                v-model="editedItem[value]"
+                :disabled="shouldDisable"
+                :rules="rules"
+                type="number"
+                step="0.01"
             >
                 <template #append>€</template>
             </v-text-field>
         </template>
         <template v-if="type.name==='integer'">
             <v-text-field
-                    outlined
-                    v-model="editedItem[value]"
-                    :disabled="shouldDisable"
-                    :rules="rules"
-                    type="number"
-                    step="1"
+                outlined
+                v-model="editedItem[value]"
+                :disabled="shouldDisable"
+                :rules="rules"
+                type="number"
+                step="1"
             >
             </v-text-field>
         </template>
         <template v-else-if="type.name==='select'">
             <v-select
-                    outlined
-                    :placeholder="$t(text)"
-                    :menu-props="{offsetY:true, outlined:true, contentClass:'elevation-2 ikRounded',
+                outlined
+                :placeholder="$t(text)"
+                :menu-props="{offsetY:true, outlined:true, contentClass:'elevation-2 ikRounded',
           nudgeBottom:'16px',closeOnContentClick: !type.multiple,}"
-                    @click:clear="$emit('clear')"
-                    v-model="editedItem[value]"
-                    :disabled="shouldDisable"
-                    :items="selectItemList"
-                    :item-text="type.itemText"
-                    :item-value="type.itemValue"
-                    :multiple="type.multiple"
-                    :rules="rules"
-                    :clearable="hideSelect"
+                @click:clear="$emit('clear')"
+                v-model="editedItem[value]"
+                :disabled="shouldDisable"
+                :items="selectItemList"
+                :item-text="type.itemText"
+                :item-value="type.itemValue"
+                :multiple="type.multiple"
+                :rules="rules"
+                :clearable="hideSelect"
             >
                 <template v-if="type.showButton&&!hideSelect" v-slot:prepend-item>
                     <v-list-item @click="$emit('click')">
@@ -81,8 +81,8 @@
                 </template>
                 <template v-if="hideSelect" v-slot:selection="{ item, index }">
           <span
-                  v-if="index==0"
-                  class="grey--text text-caption"
+              v-if="index==0"
+              class="grey--text text-caption"
           >
           {{ $t(text) }}({{ showText(item) }})
         </span>
@@ -91,17 +91,17 @@
         </template>
         <template v-else-if="type.name==='switch'">
             <v-select
-                    outlined
+                outlined
 
-                    :placeholder="$t(text)"
-                    :menu-props="{offsetY:true, outlined:true, contentClass:'elevation-2 ikRounded',
+                :placeholder="$t(text)"
+                :menu-props="{offsetY:true, outlined:true, contentClass:'elevation-2 ikRounded',
           nudgeBottom:'16px',closeOnContentClick: !type.multiple,}"
-                    @click:clear="$emit('clear')"
-                    v-model="editedItem[value]"
-                    :disabled="shouldDisable"
-                    :items="[{text:$t('yes'),value:true},{text:$t('no'),value:false}]"
-                    :rules="rules"
-                    :clearable="hideSelect"
+                @click:clear="$emit('clear')"
+                v-model="editedItem[value]"
+                :disabled="shouldDisable"
+                :items="[{text:$t('yes'),value:true},{text:$t('no'),value:false}]"
+                :rules="rules"
+                :clearable="hideSelect"
             />
 
         </template>
@@ -111,16 +111,16 @@
                         class="d-flex justify-center align-center"
                 >
                     <img-with-loading
-                            v-if="editedItem[type.fileStorage]"
-                            :height="'160px'"
-                            :img-src="uploadUrl"
+                        v-if="editedItem[type.fileStorage]"
+                        :height="'160px'"
+                        :img-src="uploadUrl"
                     />
                     <template
-                            v-else-if="currentState>-1"
+                        v-else-if="currentState>-1"
                     >
                         <img-with-loading
-                                :height="'160px'"
-                                :img-src="root + editedItem[value]"
+                            :height="'160px'"
+                            :img-src="root + editedItem[value]"
                         />
                     </template>
                     <v-btn absolute style="right: -12px" bottom fab x-small color="primary">
@@ -128,21 +128,21 @@
                     </v-btn>
                 </v-card>
                 <v-file-input
-                        outlined
-                        dense
-                        ref="file"
-                        style="height: 0px;opacity: 0"
-                        class="mt-2"
-                        prepend-icon=""
-                        prepend-inner-icon="mdi-file"
-                        :hide-details="noDetails"
-                        :placeholder="$t(text)"
-                        v-model="editedItem[type.fileStorage]"
-                        :disabled="shouldDisable"
-                        :label="$t(text)"
-                        :rules="rules"
-                        show-size
-                        counter
+                    outlined
+                    dense
+                    ref="file"
+                    style="height: 0px;opacity: 0"
+                    class="mt-2"
+                    prepend-icon=""
+                    prepend-inner-icon="mdi-file"
+                    :hide-details="noDetails"
+                    :placeholder="$t(text)"
+                    v-model="editedItem[type.fileStorage]"
+                    :disabled="shouldDisable"
+                    :label="$t(text)"
+                    :rules="rules"
+                    show-size
+                    counter
                 />
                 <div class="text-caption text--secondary">{{ $t(hint) }}</div>
 
@@ -151,41 +151,41 @@
         </template>
         <template v-else-if="type.name==='time'">
             <v-dialog
-                    ref="dialog"
-                    v-model="timePickerShow"
-                    :return-value.sync="editedItem[value]"
-                    persistent
-                    width="290px"
+                ref="dialog"
+                v-model="timePickerShow"
+                :return-value.sync="editedItem[value]"
+                persistent
+                width="290px"
             >
                 <template v-slot:activator="{ on }">
                     <div>
                         <v-text-field
-                                outlined
-                                v-model="editedItem[value]"
-                                prepend-inner-icon="mdi-clock-outline"
-                                readonly
-                                v-on="on"
+                            outlined
+                            v-model="editedItem[value]"
+                            prepend-inner-icon="mdi-clock-outline"
+                            readonly
+                            v-on="on"
                         />
                     </div>
 
                 </template>
                 <v-time-picker
-                        v-if="timePickerShow"
-                        v-model="editedItem[value]"
-                        full-width
+                    v-if="timePickerShow"
+                    v-model="editedItem[value]"
+                    full-width
                 >
                     <v-spacer/>
                     <v-btn
-                            text
-                            color="primary"
-                            @click="timePickerShow = false"
+                        text
+                        color="primary"
+                        @click="timePickerShow = false"
                     >
                         {{ $t('Cancel') }}
                     </v-btn>
                     <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.dialog.save(editedItem[value])"
+                        text
+                        color="primary"
+                        @click="$refs.dialog.save(editedItem[value])"
                     >
                         {{ $t('OK') }}
                     </v-btn>
@@ -194,41 +194,41 @@
         </template>
         <template v-else-if="type.name==='date'">
             <v-dialog
-                    ref="dialog"
-                    v-model="datePickerShow"
-                    :return-value.sync="editedItem[value]"
-                    persistent
-                    width="290px"
+                ref="dialog"
+                v-model="datePickerShow"
+                :return-value.sync="editedItem[value]"
+                persistent
+                width="290px"
             >
                 <template v-slot:activator="{ on }">
                     <v-text-field
-                            :placeholder="$t(text)"
-                            :dense="!fullHeight"
-                            v-model="editedItem[value]"
-                            :label="$t(text)"
-                            prepend-icon="mdi-clock-outline"
-                            readonly
-                            v-on="on"
+                        :placeholder="$t(text)"
+                        :dense="!fullHeight"
+                        v-model="editedItem[value]"
+                        :label="$t(text)"
+                        prepend-icon="mdi-clock-outline"
+                        readonly
+                        v-on="on"
                     />
                 </template>
                 <v-date-picker
-                        v-if="datePickerShow"
-                        v-model="editedItem[value]"
-                        full-width
-                        :locale="locale"
+                    v-if="datePickerShow"
+                    v-model="editedItem[value]"
+                    full-width
+                    :locale="locale"
                 >
                     <v-spacer/>
                     <v-btn
-                            text
-                            color="primary"
-                            @click="datePickerShow = false"
+                        text
+                        color="primary"
+                        @click="datePickerShow = false"
                     >
                         {{ $t('Cancel') }}
                     </v-btn>
                     <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.dialog.save(editedItem[value])"
+                        text
+                        color="primary"
+                        @click="$refs.dialog.save(editedItem[value])"
                     >
                         {{ $t('OK') }}
                     </v-btn>
@@ -242,15 +242,15 @@
         grid-gap: 4px;"
                 >
                     <v-item
-                            :key="color"
-                            v-for="color in colorList"
-                            :value="color"
-                            v-slot="{active,toggle}"
+                        :key="color"
+                        v-for="color in colorList"
+                        :value="color"
+                        v-slot="{active,toggle}"
                     >
                         <v-card
-                                @click="toggle" :color="color"
-                                width="48px" height="48px"
-                                class="d-flex align-center justify-center"
+                            @click="toggle" :color="color"
+                            width="48px" height="48px"
+                            class="d-flex align-center justify-center"
                         >
                             <v-icon v-if="active">mdi-check</v-icon>
                         </v-card>
@@ -277,7 +277,7 @@ export const colorList = ['#FFCDD2', '#F8BBD0', '#E1BEE7',
 import ImgWithLoading from './Base/ImgWithLoading'
 import Utils from 'innerken-js-utils'
 
-const noSpecialCharRule = v => !v || !/[',"]/g.test(v) || '不能使用单引号或双引号'
+const noSpecialCharRule = v => typeof v !== 'string' || (!v || !/[',"]/g.test(v) || '不能使用单引号或双引号')
 
 export function getColorLightness (c) {
     if (c?.startsWith('#')) {
@@ -375,7 +375,7 @@ export default {
                 (this.disableEdit && !this.isNew)
         },
         rules: function () {
-            let rules = this.rule
+            let rules = [...this.rule]
             if (this.required && this.type.name !== 'switch') {
                 if (!this.overwriteRule) {
                     if (this.isNew && this.requiredNew) {

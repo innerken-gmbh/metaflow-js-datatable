@@ -1,12 +1,12 @@
 <template>
   <v-btn
-    class="mr-4 rounded"
-    height="36px"
-    width="36px"
-    outlined
-    tile
-    icon
-    @click="$emit('close')"
+      class="mr-4 rounded"
+      height="36px"
+      width="36px"
+      outlined
+      tile
+      icon
+      @click="$emit('close')"
   >
     <v-icon size="24">
       mdi-arrow-left
@@ -15,9 +15,9 @@
 </template>
 
 <script>
-  export default {
-    name: 'BackButton',
-  }
+export default {
+  name: 'BackButton',
+}
 </script>
 
 <style scoped>

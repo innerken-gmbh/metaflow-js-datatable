@@ -4,7 +4,7 @@
             <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
             <div style="width: 100%" class="pa-6" v-if="editedItem">
                 <div class="d-flex align-center mb-8">
-                    <v-btn outlined @click="close()" class="mr-5 rounded" height="36px" width="36px" tile icon>
+                    <v-btn outlined @click="close(false)" class="mr-5 rounded" height="36px" width="36px" tile icon>
                         <v-icon size="24">mdi-arrow-left</v-icon>
                     </v-btn>
                     <div :class="$vuetify.breakpoint.smAndDown ? 'text-h4' : 'text-h3'" class="font-weight-bold">
@@ -17,10 +17,10 @@
                         <div>
                             <div v-if="imageField.length>0">
                                 <form-field
-                                        :field="imageField[0]"
-                                        :current-state="editedIndex"
-                                        :edited-item="editedItem"
-                                        no-details
+                                    :field="imageField[0]"
+                                    :current-state="editedIndex"
+                                    :edited-item="editedItem"
+                                    no-details
                                 />
                             </div>
                             <div v-if="groupedFields.length+requiredFields.length+notRequiredFields.length>0" class="flex-grow-1">
@@ -33,11 +33,11 @@
                                                 </div>
                                                 <v-spacer/>
                                                 <v-tabs
-                                                        class="mt-2"
-                                                        show-arrows
-                                                        color="#232123"
-                                                        height="36px"
-                                                        v-model="tab"
+                                                    class="mt-2"
+                                                    show-arrows
+                                                    color="#232123"
+                                                    height="36px"
+                                                    v-model="tab"
                                                 >
                                                     <v-tab v-for="(child,i) in field.children"
                                                            :key="field.value+'c'+editedItem[field.value][i][field.childLabelKey]+'tab'"
@@ -57,12 +57,12 @@
                                                     <template v-for="(c,t) in child">
                                                         <div :key="field.id+'t'+t+'c'+i">
                                                             <form-field
-                                                                    v-if="editedItem[field.value]"
-                                                                    :field="c"
-                                                                    :current-state="editedIndex"
-                                                                    :edited-item="editedItem[field.value][i]"
-                                                                    :outside-disabled="outsideSettedField.includes(field.value)"
-                                                                    no-details
+                                                                v-if="editedItem[field.value]"
+                                                                :field="c"
+                                                                :current-state="editedIndex"
+                                                                :edited-item="editedItem[field.value][i]"
+                                                                :outside-disabled="outsideSettedField.includes(field.value)"
+                                                                no-details
                                                             />
                                                         </div>
                                                     </template>
@@ -79,11 +79,11 @@
                                             <div :key="'f1'+index+field.text"
                                             >
                                                 <form-field
-                                                        :field="field"
-                                                        :current-state="editedIndex"
-                                                        :edited-item="editedItem"
-                                                        :outside-disabled="outsideSettedField.includes(field.value)"
-                                                        no-details
+                                                    :field="field"
+                                                    :current-state="editedIndex"
+                                                    :edited-item="editedItem"
+                                                    :outside-disabled="outsideSettedField.includes(field.value)"
+                                                    no-details
                                                 />
                                             </div>
                                         </template>
@@ -94,11 +94,11 @@
                                             <div :key="'f1'+index+field.text"
                                             >
                                                 <form-field
-                                                        :field="field"
-                                                        :current-state="editedIndex"
-                                                        :edited-item="editedItem"
-                                                        :outside-disabled="outsideSettedField.includes(field.value)"
-                                                        no-details
+                                                    :field="field"
+                                                    :current-state="editedIndex"
+                                                    :edited-item="editedItem"
+                                                    :outside-disabled="outsideSettedField.includes(field.value)"
+                                                    no-details
                                                 />
                                             </div>
                                         </template>
@@ -118,10 +118,10 @@
                                     <template v-for="(field,index) in notRequiredFields">
                                         <div :key="'f2'+index" class="my-4">
                                             <form-field
-                                                    :field="field"
-                                                    :current-state="editedIndex"
-                                                    :edited-item="editedItem"
-                                                    no-details
+                                                :field="field"
+                                                :current-state="editedIndex"
+                                                :edited-item="editedItem"
+                                                no-details
                                             />
                                         </div>
                                     </template>
@@ -138,7 +138,7 @@
                                             {{ $t(field.text) }}
                                             <template v-if="editedItem[field.value]&&field.dataType!==IKDataEntity.Types.Color"> :
                                                 {{
-                                                Array.isArray(editedItem[field.value]) ? editedItem[field.value].length + $t('individually') : editedItem[field.value]
+                                                    Array.isArray(editedItem[field.value]) ? editedItem[field.value].length + $t('individually') : editedItem[field.value]
                                                 }}
                                             </template>
                                         </v-chip>
@@ -147,19 +147,19 @@
                             </v-card>
                             <template v-if="$vuetify.breakpoint.smAndDown">
                                 <v-btn
-                                        :disabled="!valid"
-                                        :loading="loading"
-                                        color="green"
-                                        elevation="10"
-                                        fixed
-                                        bottom
-                                        right
-                                        fab
-                                        style="background-color: #4caf50;"
-                                        @click="save"
+                                    :disabled="!valid"
+                                    :loading="loading"
+                                    color="green"
+                                    elevation="10"
+                                    fixed
+                                    bottom
+                                    right
+                                    fab
+                                    style="background-color: #4caf50;"
+                                    @click="save"
                                 >
                                     <v-icon
-                                            color="white"
+                                        color="white"
                                     >
                                         mdi-content-save
                                     </v-icon>
@@ -167,23 +167,23 @@
                             </template>
                             <template v-else>
                                 <v-btn
-                                        :loading="loading"
-                                        color="primary"
-                                        elevation="0"
-                                        :class="$vuetify.breakpoint.smAndDown ? '' : 'mr-4'"
-                                        :disabled="!valid"
-                                        @click="save"
+                                    :loading="loading"
+                                    color="primary"
+                                    elevation="0"
+                                    :class="$vuetify.breakpoint.smAndDown ? '' : 'mr-4'"
+                                    :disabled="!valid"
+                                    @click="save"
                                 >
                                     {{ $t('save_change') }}
                                 </v-btn>
                                 <v-btn
-                                        :loading="loading"
-                                        outlined
-                                        v-if="editedIndex===-1&&showAddMoreButton"
-                                        elevation="0"
-                                        class="mt-2"
-                                        :disabled="!valid"
-                                        @click="save(false)"
+                                    :loading="loading"
+                                    outlined
+                                    v-if="editedIndex===-1&&showAddMoreButton"
+                                    elevation="0"
+                                    class="mt-2"
+                                    :disabled="!valid"
+                                    @click="save(false)"
                                 >
                                     {{ $t('saveAndAdd') }}
                                 </v-btn>
@@ -298,7 +298,6 @@ export default {
             if (!val) {
                 this.editedItem = false
                 this.$emit('input', false)
-                this.close(true)
             } else {
                 this.wait(this.editedIndexUpdated)
             }

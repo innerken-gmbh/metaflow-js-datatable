@@ -290,6 +290,7 @@
                 :footer-props="{itemsPerPageOptions:[30,50,-1]}"
                 :disable-sort="mobileView"
                 @click:row.self="editItem"
+                :item-class="getItemClass"
             >
                 <template #item.action="{item}">
                     <v-menu close-on-content-click rounded left offset-y offset-overflow>
@@ -830,6 +831,7 @@ export default {
             activeCategoryFilterIndex: '',
 
             showMultipleEditDialog: false,
+            lastClickItemId: null,
             selectedItems: [],
             targetItem: {},
             searchItem: {},
@@ -1020,6 +1022,10 @@ export default {
         })
     },
     methods: {
+        getItemClass (item) {
+            console.log(item)
+            return item?.id === this.lastClickItemId ? 'grey lighten-4' : ''
+        },
         getNiceLabel,
 
         getAdvancedItems: function () {
@@ -1085,6 +1091,7 @@ export default {
             this.dialog = true
         },
         editItem (item) {
+            this.lastClickItemId=item?.id
             if (this.useDefaultAction && this.useEditAction) {
                 this.editedIndex = this.tableItem.indexOf(item)
                 this.dialog = true

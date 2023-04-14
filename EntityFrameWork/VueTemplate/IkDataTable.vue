@@ -431,8 +431,6 @@
                 {{ $t('CurrentlyNoData') }}
               </div>
               <v-btn
-                  elevation="0"
-                  class="mt-4"
                   color="primary"
                   @click="reload"
               >
@@ -797,11 +795,6 @@ export default {
 
   },
   watch: {
-    operationMode: {
-      handler (val) {
-        console.log(val)
-      },
-    },
     realFilter: {
       handler () {
         this.reload()
@@ -1156,7 +1149,6 @@ export default {
           actions.push(this.updateItem(item))
         })
       } else if (operationMode === 0) {
-        console.log(this.targetItem)
         selectedItems.forEach(item => {
           actions.push(this.updateItem(IKUtils.extend(item, this.targetItem)))
         })
@@ -1172,7 +1164,6 @@ export default {
       this.massLoading = true
       const actions = this.actionsFactory(operationMode)
       const result = await Promise.allSettled(actions)
-      console.log(result, 'result')
       IKUtils.toast(this.$t('edit_success'))
       this.maxProgress = result.length
       this.progress = result.filter(it => it.status === 'fulfilled').length

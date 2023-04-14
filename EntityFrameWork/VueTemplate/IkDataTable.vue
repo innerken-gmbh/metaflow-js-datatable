@@ -431,7 +431,9 @@
                                 {{ $t('CurrentlyNoData') }}
                             </div>
                             <v-btn
-                                    color="primary"
+                                    elevation="0"
+                                    class="mt-4"
+                                    color="primary lighten-4 black--text"
                                     @click="reload"
                             >
                                 {{ $t('reload') }}

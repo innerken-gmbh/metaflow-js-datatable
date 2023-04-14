@@ -425,15 +425,9 @@
                 </template>
                 <template v-slot:no-data>
                     <slot name="no-data">
-                        <div style="width: 100%;height: 400px" class="d-flex flex-column justify-center align-center">
-                            <v-icon x-large>mdi-emoticon-dead</v-icon>
-                            <div class="mt-4 text-body-1">
-                                目前没有数据
-                            </div>
+                        <div style="width: 100%;" class="text-center">
                             <v-btn
-                                elevation="0"
-                                class="mt-4"
-                                color="primary lighten-4 black--text"
+                                color="primary"
                                 @click="reload"
                             >
                                 {{ $t('reload') }}
@@ -790,11 +784,6 @@ export default {
 
     },
     watch: {
-        operationMode: {
-            handler (val) {
-                console.log(val)
-            },
-        },
         realFilter: {
             handler () {
                 this.reload()
@@ -1029,8 +1018,9 @@ export default {
     },
     methods: {
         getItemClass (item) {
-            console.log(item)
-            return item?.id === this.lastClickItemId ? 'grey lighten-4' : ''
+            const disabled = this.model.rowDisableFunction ? this.model.rowDisableFunction(item) : false
+            let classString = item?.id === this.lastClickItemId ? 'grey lighten-4' : ''
+            return classString + (disabled ? ' disabled' : '')
         },
         getNiceLabel,
 
@@ -1148,7 +1138,6 @@ export default {
                     actions.push(this.updateItem(item))
                 })
             } else if (operationMode === 0) {
-                console.log(this.targetItem)
                 selectedItems.forEach(item => {
                     actions.push(this.updateItem(IKUtils.extend(item, this.targetItem)))
                 })
@@ -1164,7 +1153,6 @@ export default {
             this.massLoading = true
             const actions = this.actionsFactory(operationMode)
             const result = await Promise.allSettled(actions)
-            console.log(result, 'result')
             IKUtils.toast('OK')
             this.maxProgress = result.length
             this.progress = result.filter(it => it.status === 'fulfilled').length
@@ -1198,6 +1186,15 @@ export default {
 
 ::-webkit-scrollbar {
     display: none;
+}
+
+.disabled {
+    pointer-events: none;
+    background: #f9f9f9;
+    color: grey;
+}
+.v-simple-checkbox:not(.v-data-table__checkbox){
+    pointer-events: auto !important;
 }
 
 </style>

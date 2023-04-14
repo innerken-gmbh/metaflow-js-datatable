@@ -425,9 +425,15 @@
                 </template>
                 <template v-slot:no-data>
                     <slot name="no-data">
-                        <div style="width: 100%;" class="text-center">
+                        <div style="width: 100%;height: 400px" class="d-flex flex-column justify-center align-center">
+                            <v-icon x-large>mdi-emoticon-dead</v-icon>
+                            <div class="mt-4 text-body-1">
+                                目前没有数据
+                            </div>
                             <v-btn
-                                color="primary"
+                                elevation="0"
+                                class="mt-4"
+                                color="primary lighten-4 black--text"
                                 @click="reload"
                             >
                                 {{ $t('reload') }}
@@ -1091,7 +1097,7 @@ export default {
             this.dialog = true
         },
         editItem (item) {
-            this.lastClickItemId=item?.id
+            this.lastClickItemId = item?.id
             if (this.useDefaultAction && this.useEditAction) {
                 this.editedIndex = this.tableItem.indexOf(item)
                 this.dialog = true

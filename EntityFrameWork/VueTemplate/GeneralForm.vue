@@ -138,7 +138,8 @@
                                             {{ $t(field.text) }}
                                             <template v-if="editedItem[field.value]&&field.dataType!==IKDataEntity.Types.Color"> :
                                                 {{
-                                                    Array.isArray(editedItem[field.value]) ? editedItem[field.value].length + $t('individually') : editedItem[field.value]
+                                                    Array.isArray(editedItem[field.value]) ? editedItem[field.value].length + $t(
+                                                        'individually') : editedItem[field.value]
                                                 }}
                                             </template>
                                         </v-chip>
@@ -323,9 +324,11 @@ export default {
         },
 
         copyToAll (field, arr) {
-            const [de, zh, en] = [this.findLangEntityInLangArr('DE', arr),
+            const [de, zh, en] = [
+                this.findLangEntityInLangArr('DE', arr),
                 this.findLangEntityInLangArr('ZH', arr),
-                this.findLangEntityInLangArr('EN', arr)]
+                this.findLangEntityInLangArr('EN', arr),
+            ]
 
             for (const fieldKey of field.childKey) {
                 const [deContent, zhContent, enContent] = [de, zh, en].map(it => it[fieldKey])
@@ -345,7 +348,8 @@ export default {
         },
 
         async refreshList () {
-            this.currentList = this.outSideList ?? await IKUtils.safeCallFunction(this.model, this.model.getList, true, this.outSideProperty)
+            this.currentList = this.outSideList ?? await IKUtils.safeCallFunction(this.model, this.model.getList, true,
+                this.outSideProperty)
         },
 
         async editedIndexUpdated () {
@@ -364,8 +368,14 @@ export default {
                     return obj
                 }, {})
                 this.uniqueField.forEach(it => {
+                    if (it.extraUniqueCheckFunc) {
+                        it.rule.push(
+                            val => this.keyStore[it.value] && it.extraUniqueCheckFunc(val, this.keyStore[it.value])
+                                || this.$t(it.text) + this.$t('duplicated'))
+                    }
                     if (this.keyStore[it.value]) {
-                        const uniqueCheck = val => this.keyStore[it.value] && !this.keyStore[it.value].includes(val) || this.$t(it.text) + this.$t('duplicated')
+                        const uniqueCheck = val => this.keyStore[it.value] && !this.keyStore[it.value].includes(val) || this.$t(
+                            it.text) + this.$t('duplicated')
                         it.rule.push(uniqueCheck)
                     }
 

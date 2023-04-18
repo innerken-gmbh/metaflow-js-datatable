@@ -1,6 +1,13 @@
 import hillo from 'hillo'
 import IKUtils from 'innerken-js-utils'
+import { sortBy } from 'lodash-es'
 
+const LanguageRank = {
+  'DE': 1,
+  'ZH': 2,
+  'EN': 3,
+  'OT': 5,
+}
 export const Types = {
   Integer: Symbol('Type:Integer'),
   Float: Symbol('Type:Float'),
@@ -72,7 +79,10 @@ export const Types = {
       return parseInt(value)
     }
     if (type === Types.Group) {
-      return value
+      return sortBy(value, (obj) => {
+        const lang = LanguageRank[obj.lang] ? obj.lang : 'OT'
+        return LanguageRank[lang]
+      })
     }
     return value
   },

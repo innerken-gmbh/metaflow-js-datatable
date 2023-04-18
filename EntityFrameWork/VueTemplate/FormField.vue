@@ -74,7 +74,7 @@
                 <template v-if="type.showButton&&!hideSelect" v-slot:prepend-item>
                     <v-list-item @click="$emit('click')">
                         <v-list-item-content>
-                            <v-list-item-title class="primary--text">{{ $t('NewOthers') }}{{ text }}</v-list-item-title>
+                            <v-list-item-title class="primary--text">{{ $t('NewOthers') }} {{ text }}</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                     <v-divider></v-divider>

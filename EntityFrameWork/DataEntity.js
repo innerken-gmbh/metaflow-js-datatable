@@ -407,7 +407,7 @@ export function getFieldFromModel (model) {
  */
 
 function getActualOptionValue (value, dict, resultKey) {
-  return [value].flat().map(k => dict[k][resultKey])
+  return [value].flat().map(k => (dict && dict[k] && dict[k][resultKey]) || null)
 }
 
 async function prepareOptionCache (option) {
@@ -415,6 +415,7 @@ async function prepareOptionCache (option) {
   const searchKey = option.type.itemValue
   const resultKey = option.type.itemText
   const listFunction = option.type.selectItems
+
   const dict = keyBy(
       (typeof listFunction === 'function' ? await IKUtils.safeCallFunction(this, listFunction) : listFunction),
       searchKey)

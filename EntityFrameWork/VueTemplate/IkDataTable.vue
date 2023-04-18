@@ -2,30 +2,30 @@
     <div style="position: relative">
         <div class="d-flex " v-if="showTitle">
             <div
-                    style="width:100%"
-                    class="d-flex align-center"
-                    :class="!$vuetify.breakpoint.lgAndUp? 'pb-4' : 'py-4 pb-6'"
+                style="width:100%"
+                class="d-flex align-center"
+                :class="!$vuetify.breakpoint.lgAndUp? 'pb-4' : 'py-4 pb-6'"
             >
                 <slot name="navigation"></slot>
                 <span
-                        class="font-weight-bold text-truncate"
-                        :class="$vuetify.breakpoint.lgAndUp? 'text-h2 ' : 'text-h3'"
+                    class="font-weight-bold text-truncate"
+                    :class="$vuetify.breakpoint.lgAndUp? 'text-h2 ' : 'text-h3'"
                 >
           {{ entityName || model.name() }}
         </span>
                 <v-spacer></v-spacer>
                 <slot v-if="mobileView" name="primaryButton">
                     <v-btn
-                            color="primary lighten-4 black--text"
-                            v-if="useDefaultAction && useAddAction"
-                            elevation="0"
-                            @click="addItem"
+                        color="primary lighten-4 black--text"
+                        v-if="useDefaultAction && useAddAction"
+                        elevation="0"
+                        @click="addItem"
                     >
                         <div
-                                class="d-flex align-center"
+                            class="d-flex align-center"
                         >
                             <v-icon
-                                    left
+                                left
                             >
                                 mdi-plus-circle-outline
                             </v-icon>
@@ -37,23 +37,23 @@
         </div>
         <template v-if="!mobileView">
             <div
-                    :class="!$vuetify.breakpoint.lgAndUp ? 'flex-wrap' : ''"
-                    class="d-flex filterBar align-center mb-6"
+                :class="!$vuetify.breakpoint.lgAndUp ? 'flex-wrap' : ''"
+                class="d-flex filterBar align-center mb-6"
             >
                 <div style="display: grid;grid-auto-flow: column;grid-gap: 8px">
                     <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
                     <slot name="primaryButton">
                         <v-btn
-                                color="primary lighten-4 black--text"
-                                v-if="useDefaultAction && useAddAction"
-                                elevation="0"
-                                @click="addItem"
+                            color="primary lighten-4 black--text"
+                            v-if="useDefaultAction && useAddAction"
+                            elevation="0"
+                            @click="addItem"
                         >
                             <div
-                                    class="d-flex align-center"
+                                class="d-flex align-center"
                             >
                                 <v-icon
-                                        left
+                                    left
                                 >
                                     mdi-plus-circle-outline
                                 </v-icon>
@@ -63,11 +63,11 @@
                     </slot>
 
                     <slot
-                            :items="items"
-                            :selectItems="selectedItems"
-                            :tableItems="tableItem"
-                            :dateTime="dates"
-                            name="footer"
+                        :items="items"
+                        :selectItems="selectedItems"
+                        :tableItems="tableItem"
+                        :dateTime="dates"
+                        name="footer"
                     />
                 </div>
 
@@ -77,17 +77,17 @@
                 <div class="d-flex ma-0 ml-2 align-center">
                     <div style="height: 100%;" class="d-flex align-center mr-2 flex-grow-1 flex-shrink-1">
                         <v-text-field
-                                class="white"
-                                v-model="search"
-                                prepend-inner-icon="mdi-magnify"
-                                outlined
-                                dense
-                                hide-details
-                                clearable
-                                :label="$t('search')"
-                                single-line
-                                style="min-width: 150px"
-                                :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 165px;' : ''"
+                            class="white"
+                            v-model="search"
+                            prepend-inner-icon="mdi-magnify"
+                            outlined
+                            dense
+                            hide-details
+                            clearable
+                            :label="$t('search')"
+                            single-line
+                            style="min-width: 150px"
+                            :style="!$vuetify.breakpoint.lgAndUp ? 'max-width: 165px;' : ''"
                         />
                     </div>
                     <v-btn v-if="mergableFields.length>0"
@@ -100,15 +100,15 @@
                     </v-btn>
 
                     <v-btn
-                            v-if="canMassEdit&&selectedItems.length>0"
-                            @click="startMassEdit" class="ml-2" style="background: white; position: relative"
-                            outlined
+                        v-if="canMassEdit&&selectedItems.length>0"
+                        @click="startMassEdit" class="ml-2" style="background: white; position: relative"
+                        outlined
                     >
                         <v-icon style="position: relative" left>mdi-format-list-checks</v-icon>
                         <template v-if="$vuetify.breakpoint.mdAndUp">
                             <div
-                                    :style="$vuetify.breakpoint.mdAndDown ? 'max-width: 80px !important;' : '' && !$vuetify.breakpoint.lgAndUp ? 'max-width: 90px;' : ''"
-                                    class="text-truncate" style="position: relative"
+                                :style="$vuetify.breakpoint.mdAndDown ? 'max-width: 80px !important;' : '' && !$vuetify.breakpoint.lgAndUp ? 'max-width: 90px;' : ''"
+                                class="text-truncate" style="position: relative"
                             >
                                 {{ $t('Batch') }}
                             </div>
@@ -117,11 +117,11 @@
                 </div>
 
                 <slot
-                        :items="items"
-                        :selectItems="selectedItems"
-                        :tableItems="tableItem"
-                        :dateTime="dates"
-                        name="right"
+                    :items="items"
+                    :selectItems="selectedItems"
+                    :tableItems="tableItem"
+                    :dateTime="dates"
+                    name="right"
                 />
 
                 <template v-if="useDateFilter">
@@ -159,49 +159,49 @@
         </template>
         <template v-else>
             <v-app-bar
-                    dense
-                    bottom
-                    app
-                    class="paReset"
+                dense
+                bottom
+                app
+                class="paReset"
             >
                 <div style="display: grid;grid-auto-flow: column;grid-gap: 8px;grid-auto-columns: max-content;
                 overflow-x: scroll"
                 >
                     <slot
-                            :items="items"
-                            :selectItems="selectedItems"
-                            :tableItems="tableItem"
-                            :dateTime="dates"
-                            name="footer"
+                        :items="items"
+                        :selectItems="selectedItems"
+                        :tableItems="tableItem"
+                        :dateTime="dates"
+                        name="footer"
                     />
                     <v-btn
-                            small
-                            :color="filterDisplayChips.length>0?'primary lighten-4 black--text':''"
-                            @click="showFilter=true"
-                            v-if="mergableFields.length>0"
-                            :outlined="filterDisplayChips.length===0"
+                        small
+                        :color="filterDisplayChips.length>0?'primary lighten-4 black--text':''"
+                        @click="showFilter=true"
+                        v-if="mergableFields.length>0"
+                        :outlined="filterDisplayChips.length===0"
                     >
                         <v-icon
-                                :color="filterDisplayChips.length>0?'black':''"
-                                left
+                            :color="filterDisplayChips.length>0?'black':''"
+                            left
                         >mdi-filter-outline
                         </v-icon>
                         <div class="text-caption">
                             {{ $t('Filter') }}
                         </div>
                         <v-icon
-                                :color="filterDisplayChips.length>0?'black':''"
-                                v-if="filterDisplayChips.length>0"
-                                right
-                                @click.stop="filterItem={}"
+                            :color="filterDisplayChips.length>0?'black':''"
+                            v-if="filterDisplayChips.length>0"
+                            right
+                            @click.stop="filterItem={}"
                         >mdi-close-circle
                         </v-icon>
                     </v-btn>
                     <v-btn
-                            small
-                            outlined
-                            v-if="canMassEdit&&selectedItems.length>0"
-                            @click="startMassEdit"
+                        small
+                        outlined
+                        v-if="canMassEdit&&selectedItems.length>0"
+                        @click="startMassEdit"
 
                     >
                         <v-icon>mdi-format-list-checks</v-icon>
@@ -210,11 +210,11 @@
                         </div>
                     </v-btn>
                     <slot
-                            :items="items"
-                            :selectItems="selectedItems"
-                            :tableItems="tableItem"
-                            :dateTime="dates"
-                            name="right"
+                        :items="items"
+                        :selectItems="selectedItems"
+                        :tableItems="tableItem"
+                        :dateTime="dates"
+                        name="right"
                     />
                     <template v-if="useDateFilter">
 
@@ -233,23 +233,23 @@
         </template>
 
         <div
-                class="d-flex filterBar align-center"
-                :class="{'flex-wrap' : !$vuetify.breakpoint.lgAndUp}"
+            class="d-flex filterBar align-center"
+            :class="{'flex-wrap' : !$vuetify.breakpoint.lgAndUp}"
         >
             <slot
-                    :items="items"
-                    :selectItems="selectedItems"
-                    :tableItems="tableItem"
-                    :dateTime="dates"
-                    name="topOnTable"
+                :items="items"
+                :selectItems="selectedItems"
+                :tableItems="tableItem"
+                :dateTime="dates"
+                name="topOnTable"
             />
         </div>
 
         <template v-if="realCategoryList.length>0">
             <v-tabs
-                    v-model="activeCategoryFilterIndex"
-                    show-arrows
-                    style="background: transparent;"
+                v-model="activeCategoryFilterIndex"
+                show-arrows
+                style="background: transparent;"
             >
                 <v-tab v-for="c in realCategoryList" :key="c.id">{{ c.name }}
                 </v-tab>
@@ -259,38 +259,38 @@
 
         <v-card>
             <div
-                    v-if="mobileView"
-                    class="pa-2"
+                v-if="mobileView"
+                class="pa-2"
             >
                 <v-text-field
-                        v-model="search"
-                        prepend-inner-icon="mdi-magnify"
-                        outlined
-                        background-color="transparent"
-                        dense
-                        rounded
-                        hide-details
-                        clearable
-                        :label="$t('search')"
-                        single-line
+                    v-model="search"
+                    prepend-inner-icon="mdi-magnify"
+                    outlined
+                    background-color="transparent"
+                    dense
+                    rounded
+                    hide-details
+                    clearable
+                    :label="$t('search')"
+                    single-line
                 />
                 <v-divider class="my-2"></v-divider>
             </div>
             <v-data-table
-                    :mobile-breakpoint="20"
-                    :headers="realHeaders"
-                    :class="$vuetify.breakpoint.mdAndDown ? 'tableContainerReset' : ''"
-                    :items="tableItem"
-                    :loading="loading"
-                    v-model="selectedItems"
-                    :show-select="canMassEdit"
-                    :search.sync="search"
-                    @update:page="pageUpdate"
-                    :items-per-page="30"
-                    :footer-props="{itemsPerPageOptions:[30,50,-1]}"
-                    :disable-sort="mobileView"
-                    @click:row.self="editItem"
-                    :item-class="getItemClass"
+                :mobile-breakpoint="20"
+                :headers="realHeaders"
+                :class="$vuetify.breakpoint.mdAndDown ? 'tableContainerReset' : ''"
+                :items="tableItem"
+                :loading="loading"
+                v-model="selectedItems"
+                :show-select="canMassEdit"
+                :search.sync="search"
+                @update:page="pageUpdate"
+                :items-per-page="30"
+                :footer-props="{itemsPerPageOptions:[30,50,-1]}"
+                :disable-sort="mobileView"
+                @click:row.self="editItem"
+                :item-class="getItemClass"
             >
                 <template #item.action="{item}">
                     <v-menu close-on-content-click rounded left offset-y offset-overflow>
@@ -317,69 +317,69 @@
 
                 </template>
                 <template
-                        v-for="slottedItem in slottedItems"
-                        v-slot:[slottedItem.name]="{ item }"
+                    v-for="slottedItem in slottedItems"
+                    v-slot:[slottedItem.name]="{ item }"
                 >
                     <slot
-                            :name="slottedItem.name"
-                            :item="item"
+                        :name="slottedItem.name"
+                        :item="item"
                     />
                 </template>
                 <template
-                        v-for="adItem in advancedItems"
-                        v-slot:[adItem.name]="{ item }"
+                    v-for="adItem in advancedItems"
+                    v-slot:[adItem.name]="{ item }"
                 >
                     <template
-                            v-if="
+                        v-if="
             adItem.dataType===Types.Image"
                     >
                         <img-template
-                                :key="adItem.name"
-                                :model="adItem.value"
-                                :item="item"
-                                :root="adItem.type.root()"
+                            :key="adItem.name"
+                            :model="adItem.value"
+                            :item="item"
+                            :root="adItem.type.root()"
                         />
                     </template>
                     <template
-                            v-else-if="adItem.dataType===Types.Group"
+                        v-else-if="adItem.dataType===Types.Group"
                     >
                         <div
-                                v-bind:key="'_'+adItem.value+c"
-                                v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
+                            v-bind:key="'_'+adItem.value+c"
+                            v-for="(c) in adItem.childKey.filter(adItem.displayChild)"
                         >
                             {{ item['_' + adItem.value + c] }}
                         </div>
                     </template>
 
                     <template
-                            v-else-if="
+                        v-else-if="
               adItem.dataType===Types.Boolean"
                     >
                         <div style="width: min-content">
                             <v-simple-checkbox
-                                    :value="!!item[adItem.value]"
-                                    dense
-                                    color="primary"
-                                    @click="toggleProperty(item,adItem.value)"
-                                    :key="adItem.name"
+                                :value="!!item[adItem.value]"
+                                dense
+                                color="primary"
+                                @click="toggleProperty(item,adItem.value)"
+                                :key="adItem.name"
                             />
                         </div>
 
                     </template>
 
                     <template
-                            v-else-if="
+                        v-else-if="
             adItem.dataType===Types.Color"
                     >
                         <v-chip
-                                :key="adItem.name"
-                                :color="item[adItem.value]"
-                                label
-                                :style="swatchStyle"
+                            :key="adItem.name"
+                            :color="item[adItem.value]"
+                            label
+                            :style="swatchStyle"
                         />
                     </template>
                     <template
-                            v-else-if="
+                        v-else-if="
             adItem.dataType===Types.Option"
                     >
                         <div class="d-flex">
@@ -387,8 +387,8 @@
                                 <div :key="value+'.'+i">
                                     <template v-if="adItem.type.color">
                  <span
-                         class="pa-1 px-3 mr-1 white--text rounded-pill text-no-wrap"
-                         :class="
+                     class="pa-1 px-3 mr-1 white--text rounded-pill text-no-wrap"
+                     :class="
                        adItem.type.color
                      .find(c=>{return parseInt(value)===c.id}).color"
                  >
@@ -410,14 +410,14 @@
 
                     </template>
                     <template
-                            v-else-if="
+                        v-else-if="
             adItem.dataType===Types.Date"
                     >
                         <div>{{ item[adItem.value] | beautifulTime }}</div>
 
                     </template>
                     <template
-                            v-else-if="
+                        v-else-if="
             adItem.dataType===Types.Float"
                     >
                         <price-table-display :price="item[adItem.value]"/>
@@ -431,10 +431,10 @@
                                 {{ $t('CurrentlyNoData') }}
                             </div>
                             <v-btn
-                                    elevation="0"
-                                    class="mt-4"
-                                    color="primary lighten-4 black--text"
-                                    @click="reload"
+                                elevation="0"
+                                class="mt-4"
+                                color="primary lighten-4 black--text"
+                                @click="reload"
                             >
                                 {{ $t('reload') }}
                             </v-btn>
@@ -445,23 +445,23 @@
                 <template v-slot:expanded-item="{ item }">
                     <td :colspan="headers.length">
                         <slot
-                                name="expanded-item"
-                                :item="item"
+                            name="expanded-item"
+                            :item="item"
                         />
                     </td>
                 </template>
             </v-data-table>
         </v-card>
         <general-form
-                ref="gf"
-                :title="entityName"
-                v-model="dialog"
-                :edited-index="editedIndex"
-                :model="model"
-                :use-delete-action="useDefaultAction&&useDeleteAction"
-                @need-refresh="reload"
-                :out-side-list="tableItem"
-                :out-side-property="fixedFilter"
+            ref="gf"
+            :title="entityName"
+            v-model="dialog"
+            :edited-index="editedIndex"
+            :model="model"
+            :use-delete-action="useDefaultAction&&useDeleteAction"
+            @need-refresh="reload"
+            :out-side-list="tableItem"
+            :out-side-property="fixedFilter"
         />
         <v-dialog max-width="400px" v-model="datePickerMenu">
             <v-card @click="datePickerMenu=false" color="#efefef" class="pa-2">
@@ -471,9 +471,9 @@
 
 
         <v-dialog
-                :fullscreen="$vuetify.breakpoint.mobile"
-                v-model="showMultipleEditDialog"
-                max-width="600px"
+            :fullscreen="$vuetify.breakpoint.mobile"
+            v-model="showMultipleEditDialog"
+            max-width="600px"
         >
             <v-card tile>
 
@@ -522,14 +522,14 @@
                                             {{ $t('ChooseAttributes') }}
                                         </div>
                                         <div
-                                                style="max-height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
+                                            style="max-height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
                                         >
                                             <template v-for="(field) in addableFields">
                                                 <div :key="field.value">
                                                     <form-field
-                                                            :hide-select="true"
-                                                            :field="field"
-                                                            :edited-item="targetItem"
+                                                        :hide-select="true"
+                                                        :field="field"
+                                                        :edited-item="targetItem"
                                                     />
                                                 </div>
                                             </template>
@@ -543,14 +543,14 @@
                                             {{ $t('ChooseProperties') }}
                                         </div>
                                         <div
-                                                style="max-height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
+                                            style="max-height: 400px; overflow-y: scroll;overscroll-behavior: contain;"
                                         >
                                             <template v-for="(field) in editableFields">
                                                 <div :key="field.value">
                                                     <form-field
-                                                            :hide-select="true"
-                                                            :field="field"
-                                                            :edited-item="targetItem"
+                                                        :hide-select="true"
+                                                        :field="field"
+                                                        :edited-item="targetItem"
                                                     />
                                                 </div>
                                             </template>
@@ -569,15 +569,15 @@
 
                                 </div>
                                 <div class="mt-4 text-body-2 mb-4">{{ $t('CurrentSelected') }}：{{
-                                    selectedItems.length + ' ' + $t('Pice')
+                                        selectedItems.length + ' ' + $t('Pice')
                                     }}
                                 </div>
                                 <v-card
-                                        elevation="0"
-                                        style="border-radius: 12px"
-                                        @click="massiveEdit(operationMode)"
-                                        color="primary lighten-4 black--text"
-                                        class="d-flex align-center justify-center pa-4 pr-0 mt-auto mb-0"
+                                    elevation="0"
+                                    style="border-radius: 12px"
+                                    @click="massiveEdit(operationMode)"
+                                    color="primary lighten-4 black--text"
+                                    class="d-flex align-center justify-center pa-4 pr-0 mt-auto mb-0"
                                 >
                                     <div>
                                         <template v-if="operationMode===1">
@@ -613,18 +613,20 @@
                             <div class="mt-4">
                                 <template v-if="$i18n.locale === 'zh'">
                                     {{
-                                    '操作结果：' + '' + progress + '个成功。 共操作了' + maxProgress + ', 其中失败了' + (maxProgress - progress) + '个'
+                                        '操作结果：' + '' + progress + '个成功。 共操作了' + maxProgress + ', 其中失败了' + (maxProgress - progress) + '个'
                                     }}
                                 </template>
                                 <template v-else>
                                     {{
-                                    $t('BatchResult') + ': ' + $t('BatchSuccess') + ' ' + progress + ' ' + $t('from') + ' ' + maxProgress + ' ' + $t('Pice') + ', ' + $t('BatchFailed') + ' ' + (maxProgress - progress) + ' ' + $t('Pice')
+                                        $t('BatchResult') + ': ' + $t('BatchSuccess') + ' ' + progress + ' ' + $t(
+                                            'from') + ' ' + maxProgress + ' ' + $t('Pice') + ', ' + $t(
+                                            'BatchFailed') + ' ' + (maxProgress - progress) + ' ' + $t('Pice')
                                     }}
                                 </template>
                             </div>
                             <div class="d-flex mt-4">
                                 <v-btn outlined @click="massEditStep=0" class="mr-2">{{
-                                    $t('ContinueBatchProcessing')
+                                        $t('ContinueBatchProcessing')
                                     }}
                                 </v-btn>
                                 <v-btn outlined @click="showMultipleEditDialog=false">{{ $t('Finish') }}</v-btn>
@@ -645,9 +647,9 @@
                     <template v-for="(field) in mergableFields">
                         <div :key="field.value" style="height: 100%" class="mr-2">
                             <form-field
-                                    :hide-select="true"
-                                    :field="field"
-                                    :edited-item="filterItem"
+                                :hide-select="true"
+                                :field="field"
+                                :edited-item="filterItem"
                             />
                         </div>
                     </template>
@@ -659,28 +661,26 @@
 </template>
 
 <script>
-import Swal from 'sweetalert2'
 import GeneralForm from './GeneralForm'
 import ImgTemplate from './Base/ImgTemplate'
 import FormField from './FormField'
-import {IKDataEntity} from '../../index'
+import { IKDataEntity } from '../../index'
 import IKUtils from 'innerken-js-utils'
-import {groupBy} from 'lodash'
+import { groupBy } from 'lodash'
 import DateRangePicker from './Base/DateRangePicker'
 import PriceTableDisplay from './Base/PriceTableDisplay'
-import {getNiceLabel} from '../DateRepository'
+import { getNiceLabel } from '../DateRepository'
 import NoChainScrollContainer from './Base/NoChainScrollContainer.vue'
-import {Ripple} from 'vuetify/lib/directives'
+import { Ripple } from 'vuetify/lib/directives'
 import HorizontalList from './InK/HorizontalList.vue'
-import promiseRetry from 'promise-retry'
 
-import {uniqBy} from 'lodash-es'
+import { uniqBy } from 'lodash-es'
 
-function key(model) {
+function key (model) {
     return Object.keys(model).join('/')
 }
 
-function getStorageMassEdit(model) {
+function getStorageMassEdit (model) {
     try {
         return JSON.parse(localStorage.getItem(key(model))) ?? []
     } catch (e) {
@@ -688,7 +688,7 @@ function getStorageMassEdit(model) {
     }
 }
 
-function setMassEditSet(model, idSet, name) {
+function setMassEditSet (model, idSet, name) {
     const current = getStorageMassEdit(model)
     current.unshift({
         idSet,
@@ -798,7 +798,7 @@ export default {
     },
     watch: {
         realFilter: {
-            handler() {
+            handler () {
                 this.reload()
             },
         },
@@ -810,7 +810,7 @@ export default {
                 }
             },
         },
-        activeCategoryFilterIndex(val) {
+        activeCategoryFilterIndex (val) {
             this.$emit('index-update', val, this.realCategoryList)
         },
     },
@@ -852,17 +852,17 @@ export default {
         }
     },
     computed: {
-        okDates() {
+        okDates () {
             return this.dates
         },
-        realFilter() {
+        realFilter () {
             const res = this.filter ?? {}
             if (this.okDates) {
                 res.dateFilter = this.okDates
             }
             return res
         },
-        swatchStyle() {
+        swatchStyle () {
             return {
                 cursor: 'pointer',
                 height: '30px',
@@ -924,7 +924,8 @@ export default {
                         t => {
                             const org = i[t]
                             const oth = this.searchItem[t]
-                            return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(ot => org.includes(ot)))))
+                            return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(
+                                ot => org.includes(ot)))))
                         })
                 }).filter(it => {
                     return !this.massEditSearch || Object.values(it).some(that => (that + '').toLowerCase()
@@ -941,20 +942,24 @@ export default {
                         t => {
                             const org = i[t]
                             const oth = this.filterItem[t]
-                            return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(ot => org.includes(ot)))))
+                            return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(
+                                ot => org.includes(ot)))))
                         })
                 })
             }
             if (this.activeCategoryFilterIndex > 0 && this.categoryList && this.categoryFilterFunc) {
-                target = target.filter(it => this.categoryFilterFunc(it, this.realCategoryList[this.activeCategoryFilterIndex]))
+                target = target.filter(
+                    it => this.categoryFilterFunc(it, this.realCategoryList[this.activeCategoryFilterIndex]))
             }
             return target
         },
-        realCategoryList() {
-            return this.categoryList ? [{
-                id: -1,
-                name: this.$t('all'),
-            }, ...this.categoryList] : []
+        realCategoryList () {
+            return this.categoryList ? [
+                {
+                    id: -1,
+                    name: this.$t('all'),
+                }, ...this.categoryList,
+            ] : []
         },
         filterDisplayChips: function () {
             const keys = !this.showFilter ? Object.keys(this.filterItem) : []
@@ -992,17 +997,17 @@ export default {
                     }
                 })
         },
-        realHeaders() {
+        realHeaders () {
             return this.headers.filter(it => !it.onlyAction).map(item => {
                 item.text = this.$i18n.t(item.text)
                 return item
             })
         },
-        mobileView() {
+        mobileView () {
             return this.$vuetify.breakpoint.mobile
         },
     },
-    mounted() {
+    mounted () {
         [this.headers, this.formField, this.defaultItem] = IKDataEntity.parseField(this.model)
         this.formDisc = _.keyBy([this.formField, this.headers].flat(), 'value')
 
@@ -1030,7 +1035,7 @@ export default {
         })
     },
     methods: {
-        getItemClass(item) {
+        getItemClass (item) {
             const disabled = this.model.rowDisableFunction ? this.model.rowDisableFunction(item) : false
             let classString = item?.id === this.lastClickItemId ? 'grey lighten-4' : ''
             return classString + (disabled ? ' disabled' : '')
@@ -1039,7 +1044,8 @@ export default {
 
         getAdvancedItems: function () {
             return this.headers
-                .filter(item => [IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
+                .filter(item => [
+                    IKDataEntity.Types.Image, IKDataEntity.Types.Boolean,
                     IKDataEntity.Types.Date,
                     IKDataEntity.Types.Option, IKDataEntity.Types.Group,
                     IKDataEntity.Types.Color, IKDataEntity.Types.Float,
@@ -1062,7 +1068,7 @@ export default {
                 })
         },
 
-        async toggleProperty(item, key) {
+        async toggleProperty (item, key) {
             const _item = IKUtils.deepCopy(item)
             _item[key] = !_item[key]
             await this.updateItem(_item)
@@ -1070,11 +1076,11 @@ export default {
             await this.reload()
         },
 
-        async updateItem(item) {
+        async updateItem (item) {
             return await IKUtils.safeCallFunction(this.model, this.model.edit, item)
         },
 
-        async deleteItem(item, promt = true) {
+        async deleteItem (item, promt = true) {
             if (promt) {
                 const res = await IKUtils.showConfirmAsyn(
                     this.$t('are_you_sure'),
@@ -1095,11 +1101,11 @@ export default {
                     })
             }
         },
-        addItem() {
+        addItem () {
             this.editedIndex = -1
             this.dialog = true
         },
-        editItem(item) {
+        editItem (item) {
             this.lastClickItemId = item?.id
             if (this.useDefaultAction && this.useEditAction) {
                 this.editedIndex = this.tableItem.indexOf(item)
@@ -1109,7 +1115,7 @@ export default {
             }
         },
 
-        async reload() {
+        async reload () {
             const model = this.model
             this.loading = true
 
@@ -1120,11 +1126,12 @@ export default {
                 this.$emit('reloaded', this.items)
             })
         },
-        changeOperationMode(newMode) {
+        changeOperationMode (newMode) {
             this.operationMode = newMode
             this.targetItem = {}
         },
-        startMassEdit() {
+        startMassEdit () {
+            console.log(this.targetItem)
             this.targetItem = {}
             this.searchItem = {}
             this.massEditSearch = ''
@@ -1135,10 +1142,13 @@ export default {
             this.showMultipleEditDialog = true
 
         },
-        actionsFactory(operationMode, requiredItems = null) {
+        actionsFactory (operationMode, requiredItems = null) {
+            console.log(this.targetItem)
             const selectedItems = requiredItems ?? this.selectedItems
             const actions = []
+
             if (operationMode === 1) {
+                //add
                 Object.keys(this.targetItem).forEach(key => {
                     if (this.targetItem[key]) {
                         selectedItems.forEach(it => {
@@ -1148,27 +1158,40 @@ export default {
                     }
                 })
                 selectedItems.forEach(item => {
-                    actions.push(this.updateItem(item))
+                    actions.push(async () => await this.updateItem(item))
                 })
             } else if (operationMode === 0) {
+                //overwirte
                 selectedItems.forEach(item => {
-                    actions.push(this.updateItem(IKUtils.extend(item, this.targetItem)))
+                    actions.push(async () => await this.updateItem(IKUtils.extend(item, this.targetItem)))
                 })
             } else {
                 selectedItems.forEach(item => {
-                    actions.push(this.deleteItem(item, false))
+                    actions.push(async () => await this.deleteItem(item, false))
                 })
             }
-            return actions.map(a => promiseRetry((retry, number) => a.catch(retry), {maxTimeout: 2000}))
+            return actions
         },
-        async massiveEdit(operationMode) {
+        async massiveEdit (operationMode) {
             this.massEditStep = 1
             this.massLoading = true
             const actions = this.actionsFactory(operationMode)
-            const result = await Promise.allSettled(actions)
+            const result = []
+            for (const action of actions) {
+                try {
+                    await action()
+                    result.push({ ok: true })
+                } catch (e) {
+                    result.push({
+                        ok: false,
+                        message: e.message,
+                    })
+                }
+
+            }
             IKUtils.toast(this.$t('edit_success'))
             this.maxProgress = result.length
-            this.progress = result.filter(it => it.status === 'fulfilled').length
+            this.progress = result.filter(it => it.ok).length
             this.targetItem = {}
             this.reload().catch(() => {
                 this.loading = false
@@ -1178,7 +1201,7 @@ export default {
 
         },
 
-        pageUpdate() {
+        pageUpdate () {
             this.$vuetify.goTo(0, {
                 appOffset: true,
             })

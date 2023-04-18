@@ -1,6 +1,6 @@
 import hillo from 'hillo'
 import IKUtils from 'innerken-js-utils'
-import { sortBy } from 'lodash-es'
+import { keyBy, sortBy } from 'lodash-es'
 
 const LanguageRank = {
   'DE': 1,
@@ -137,14 +137,7 @@ export function ModelFactory (entity, config) {
           list = []
         }
         const cache = {}
-        for (let i of list.filter((i) => !i.__parsed)) {
-          try {
-            i = await parseDataForEntity(i, entity, cache)
-          } catch (e) {
-            console.error(e)
-          }
-        }
-
+        list = await parseListForEntity(list, entity)
         loadingIndicator[myCounter] = false
       } else {
 
@@ -413,51 +406,26 @@ export function getFieldFromModel (model) {
  * @param {{}} cache
  */
 
-async function getActualOptionValue (option, item, cache) {
+function getActualOptionValue (value, dict, resultKey) {
+  return [value].flat().map(k => dict[k][resultKey])
+}
+
+async function prepareOptionCache (option) {
   const key = option.value
   const searchKey = option.type.itemValue
   const resultKey = option.type.itemText
-  const selectedOpts = [item[key]].flat()
   const listFunction = option.type.selectItems
-
-  if (!cache[key]) {
-    cache[key] = {}
-  }
-
-  if (!cache[key].dict) {
-    cache[key].dict =
-        (typeof listFunction === 'function' ? await IKUtils.safeCallFunction(this, listFunction) : listFunction)
-            .reduce((obj, i) => {
-              obj[i[searchKey]] = i
-              return obj
-            }, {})
-  }
-
-  const actualValues = []
-  for (const v of selectedOpts) {
-    if (!cache[key][v]) {
-      cache[key][v] = cache[key].dict[v] // cache[key].list.find(opt => opt[searchKey] == v)
-    }
-    if (cache[key][v] && cache[key][v][resultKey]) {
-      actualValues.push(cache[key][v][resultKey])
-    }
-  }
-  return actualValues
+  const dict = keyBy(
+      (typeof listFunction === 'function' ? await IKUtils.safeCallFunction(this, listFunction) : listFunction),
+      searchKey)
+  return dict
 }
 
-/**
- * @param {*} item
- * @param {{}} entity
- * @param cache
- */
-export async function parseDataForEntity (item, entity, cache = {}) {
+export async function parseListForEntity (list, entity) {
+  const parsedInstruction = []
   for (const key of Object.keys(entity)) {
     const instruction = entity[key]
-    if (item[key] === '' || item[key] === null || item[key] === undefined ||
-        (!item[key] && item[key] !== 0)) {
-      item[key] = Types.getTypeDefault(instruction.type)
-    }
-
+    instruction._field_name = key
     if (instruction.type === Types.Group) {
       if (!instruction.tableConfig) {
         throw new Error(`Parse Failed for group${item}${instruction}`)
@@ -469,29 +437,46 @@ export async function parseDataForEntity (item, entity, cache = {}) {
         throw new Error(`Parse Failed for group${item}${instruction}`)
       }
       instruction.childKey = [instruction.childKey].flat()
-      instruction.childKey.forEach((childKey) => {
-        item[`_${key}${childKey}`] = item[key].find((i) => (instruction.tableConfig.displayCondition(i)))[childKey]
-      })
     }
-    item[key] = Types.parseValue(instruction.type, item[key])
-    if (instruction.formConfig) {
-      if (instruction.formConfig.type) {
-        if (instruction.formConfig.type.multiple) {
-          item[key] = [item[key]].flat()
-        }
-      }
-    }
-
     if (instruction.type === Types.Option) {
       const opt = generateField(instruction, key)
-      item[`opt${key}`] = await getActualOptionValue(opt, item, cache)
+      instruction.optionDict = await prepareOptionCache(opt)
+      instruction.resultKey = opt.type.itemText
     }
-    if (key === 'paymentStr') {
-      console.log(item[`opt${key}`])
-    }
+    parsedInstruction.push(instruction)
   }
-  item.__parsed = true
-  return item
+  const itemTransformFunction = (item) => {
+    for (const ins of parsedInstruction) {
+      const key = ins._field_name
+      if (item[key] === '' || item[key] === null || item[key] === undefined ||
+          (!item[key] && item[key] !== 0)) {
+        item[key] = Types.getTypeDefault(ins.type)
+      }
+      if (ins.type === Types.Group) {
+        ins.childKey.forEach((childKey) => {
+          item[`_${key}${childKey}`]
+              = item[key].find((i) => (ins.tableConfig.displayCondition(i)))[childKey]
+        })
+      }
+      item[key] = Types.parseValue(ins.type, item[key])
+
+      if (ins.type === Types.Option) {
+        if (ins.formConfig) {
+          if (ins.formConfig.type) {
+            if (ins.formConfig.type.multiple) {
+              item[key] = [item[key]].flat()
+            }
+          }
+        }
+        item[`opt${key}`] = getActualOptionValue(item[key], ins.optionDict, ins.resultKey)
+      }
+
+    }
+    item.__parsed = true
+    return item
+  }
+  return list.map(it => itemTransformFunction(it))
+
 }
 
 /**
@@ -526,7 +511,7 @@ export function parseField (model) {
 }
 
 export default {
-  parseDataForEntity,
+  parseListForEntity,
   parseField,
   Types,
   getFieldFromModel,

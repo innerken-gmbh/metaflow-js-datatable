@@ -624,12 +624,13 @@
                                     }}
                                 </template>
                             </div>
-                            <div class="d-flex mt-4">
-                                <v-btn outlined @click="massEditStep=0" class="mr-2">{{
-                                        $t('ContinueBatchProcessing')
-                                    }}
+                            <div class="mt-4">
+                                <v-btn elevation="0" color="primary lighten-4 black--text"
+                                       min-width="120"
+                                       @click="showMultipleEditDialog=false">
+                                    <v-icon left>mdi-check</v-icon>
+                                    {{ $t('Finish') }}
                                 </v-btn>
-                                <v-btn outlined @click="showMultipleEditDialog=false">{{ $t('Finish') }}</v-btn>
                             </div>
 
                         </div>
@@ -1087,18 +1088,14 @@ export default {
                     this.$t('you want to delete this item?'),
                 )
                 if (res.isConfirmed) {
-                    IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-                        .then(() => {
-                            IKUtils.toast(this.$t('delete_success'))
-                            this.reload()
-                        })
+                    await IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+                    IKUtils.toast(this.$t('delete_success'))
+                    this.reload()
                 }
             } else {
-                IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
-                    .then(() => {
-                        IKUtils.toast(this.$t('delete_success'))
-                        this.reload()
-                    })
+                await IKUtils.safeCallFunction(this.model, this.model.remove, item.id)
+                IKUtils.toast(this.$t('delete_success'))
+                this.reload()
             }
         },
         addItem () {
@@ -1182,6 +1179,7 @@ export default {
                     await action()
                     result.push({ ok: true })
                 } catch (e) {
+                    console.log('fail')
                     result.push({
                         ok: false,
                         message: e.message,
@@ -1190,6 +1188,7 @@ export default {
 
             }
             IKUtils.toast(this.$t('edit_success'))
+            console.log(result)
             this.maxProgress = result.length
             this.progress = result.filter(it => it.ok).length
             this.targetItem = {}

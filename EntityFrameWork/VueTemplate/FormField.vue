@@ -41,7 +41,7 @@
                 type="number"
                 step="0.01"
             >
-                <template #append>€</template>
+<!--                <template #append>€</template>-->
             </v-text-field>
         </template>
         <template v-if="type.name==='integer'">

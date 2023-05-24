@@ -379,11 +379,11 @@ export default {
             let rules = [...this.rule]
             if (this.required && this.type.name !== 'switch') {
                 if (!this.overwriteRule) {
-                    if (this.isNew && this.requiredNew) {
-                        rules = rules.concat(Utils.ValidateRules.NotEmpty)
-                    } else if (!this.isNew && this.requiredEdit) {
-                        rules = rules.concat(Utils.ValidateRules.NotEmpty)
-                    }
+                  if (this.isNew && this.requiredNew) {
+                    rules = rules.concat(this.$i18n.t('cantBeEmpty'))
+                  } else if (!this.isNew && this.requiredEdit) {
+                    rules = rules.concat(this.$i18n.t('cantBeEmpty'))
+                  }
                 }
             }
             rules.push(noSpecialCharRule)

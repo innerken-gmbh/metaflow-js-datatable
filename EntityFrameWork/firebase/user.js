@@ -3,11 +3,8 @@
  */
 
 import {
-  callback,
-  errorPageCallback,
   FireBaseAuth,
   FireBaseStore,
-  storePageCallback,
   StripePayment
 } from './google-fire-base'
 import {docContentOf, resultOf, resultOfId} from './queryUtils'

@@ -89,8 +89,7 @@ export default {
     },
     async reload () {
       this.loading = false
-      const storeListOfId = (await getAllStoreIdForUser(getCurrentUserId()))
-      this.restaurantInfos = await Promise.all(storeListOfId.map(async (id) => {
+      this.restaurantInfos = await Promise.all(usefulStoreId.map(async (id) => {
         return {
           ...await getInfoForDeviceId(id),
           deviceId: id

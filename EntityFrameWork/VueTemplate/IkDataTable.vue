@@ -11,7 +11,7 @@
                     class="font-weight-bold text-truncate"
                     :class="$vuetify.breakpoint.lgAndUp? 'text-h2 ' : 'text-h3'"
                 >
-          {{ entityName || model.name() }}
+          {{ $t(entityName) || model.name() }}
         </span>
                 <v-spacer></v-spacer>
                 <slot v-if="mobileView" name="primaryButton">
@@ -19,6 +19,7 @@
                         color="primary lighten-4 black--text"
                         v-if="useDefaultAction && useAddAction"
                         elevation="0"
+                        :class="entityName + '-add-button'"
                         @click="addItem"
                     >
                         <div
@@ -29,7 +30,7 @@
                             >
                                 mdi-plus-circle-outline
                             </v-icon>
-                            {{ entityName }}
+                            {{ $t(entityName) }}
                         </div>
                     </v-btn>
                 </slot>
@@ -41,9 +42,10 @@
                 class="d-flex filterBar align-center mb-6"
             >
                 <div style="display: grid;grid-auto-flow: column;grid-gap: 8px">
-                    <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ entityName || model.name() }}</span>
+                    <span v-if="!showTitle" class="text-h3 font-weight-bold">{{ $t(entityName) || model.name() }}</span>
                     <slot name="primaryButton">
                         <v-btn
+                            :class="entityName + '-add-button'"
                             color="primary lighten-4 black--text"
                             v-if="useDefaultAction && useAddAction"
                             elevation="0"
@@ -57,7 +59,7 @@
                                 >
                                     mdi-plus-circle-outline
                                 </v-icon>
-                                {{ entityName }}
+                                {{ $t(entityName) }}
                             </div>
                         </v-btn>
                     </slot>

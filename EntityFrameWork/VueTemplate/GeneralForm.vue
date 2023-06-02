@@ -1,5 +1,5 @@
 <template>
-    <v-dialog max-width="600" :fullscreen="$vuetify.breakpoint.mobile" v-model="realDialog">
+    <v-dialog max-width="600" :fullscreen="$vuetify.breakpoint.mobile" v-model="realDialog" :content-class="title + '-add-dialog'">
         <v-card>
             <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
             <div style="width: 100%" class="pa-6" v-if="editedItem">
@@ -8,9 +8,54 @@
                         <v-icon size="24">mdi-arrow-left</v-icon>
                     </v-btn>
                     <div :class="$vuetify.breakpoint.smAndDown ? 'text-h4' : 'text-h3'" class="font-weight-bold">
-                        {{ editedIndex === -1 ? $t('new') : $t('edit') + ' ' + '/' }} {{ name }}
+                        {{ editedIndex === -1 ? $t('new') : $t('edit') + ' ' + '/' }} {{ $t(name) }}
                     </div>
                     <v-spacer></v-spacer>
+                  <template v-if="$vuetify.breakpoint.smAndDown">
+                    <v-btn
+                      :class="title + '-save-button'"
+                      :disabled="!valid"
+                      :loading="loading"
+                      color="green"
+                      elevation="10"
+                      fixed
+                      bottom
+                      right
+                      fab
+                      style="background-color: #4caf50;"
+                      @click="save"
+                    >
+                      <v-icon
+                        color="white"
+                      >
+                        mdi-content-save
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <template v-else>
+                    <v-btn
+                      :loading="loading"
+                      color="primary"
+                      elevation="0"
+                      :class="title + '-save-button'"
+                      :disabled="!valid"
+                      @click="save"
+                    >
+                      {{ $t('save_change') }}
+                    </v-btn>
+                    <v-btn
+                      :loading="loading"
+                      outlined
+                      :class="$vuetify.breakpoint.smAndDown ? '' : 'ml-4'"
+                      v-if="editedIndex===-1&&showAddMoreButton"
+                      elevation="0"
+                      class="mt-2"
+                      :disabled="!valid"
+                      @click="save(false)"
+                    >
+                      {{ $t('saveAndAdd') }}
+                    </v-btn>
+                  </template>
                 </div>
                 <div style="width: 100%">
                     <v-form style="max-width: 100%;" ref="form" v-model="valid" lazy-validation>
@@ -146,49 +191,6 @@
                                     </template>
                                 </div>
                             </v-card>
-                            <template v-if="$vuetify.breakpoint.smAndDown">
-                                <v-btn
-                                    :disabled="!valid"
-                                    :loading="loading"
-                                    color="green"
-                                    elevation="10"
-                                    fixed
-                                    bottom
-                                    right
-                                    fab
-                                    style="background-color: #4caf50;"
-                                    @click="save"
-                                >
-                                    <v-icon
-                                        color="white"
-                                    >
-                                        mdi-content-save
-                                    </v-icon>
-                                </v-btn>
-                            </template>
-                            <template v-else>
-                                <v-btn
-                                    :loading="loading"
-                                    color="primary"
-                                    elevation="0"
-                                    :class="$vuetify.breakpoint.smAndDown ? '' : 'mr-4'"
-                                    :disabled="!valid"
-                                    @click="save"
-                                >
-                                    {{ $t('save_change') }}
-                                </v-btn>
-                                <v-btn
-                                    :loading="loading"
-                                    outlined
-                                    v-if="editedIndex===-1&&showAddMoreButton"
-                                    elevation="0"
-                                    class="mt-2"
-                                    :disabled="!valid"
-                                    @click="save(false)"
-                                >
-                                    {{ $t('saveAndAdd') }}
-                                </v-btn>
-                            </template>
                         </div>
                     </v-form>
                 </div>

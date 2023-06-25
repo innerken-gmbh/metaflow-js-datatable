@@ -134,6 +134,7 @@
             style="height: 0px;opacity: 0"
             class="mt-2"
             prepend-icon=""
+            accpet="image/*"
             prepend-inner-icon="mdi-file"
             :hide-details="noDetails"
             :placeholder="$t(text)"

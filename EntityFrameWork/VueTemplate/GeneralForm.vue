@@ -2,12 +2,12 @@
     <v-dialog max-width="600" :fullscreen="$vuetify.breakpoint.mobile" v-model="realDialog" :content-class="title + '-add-dialog'">
         <v-card>
             <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
-            <div style="width: 100%" class="pa-6" v-if="editedItem">
+            <div style="width: 100%" class="d-block pa-6 overflow-hidden" v-if="editedItem">
                 <div class="d-flex align-center mb-8">
                     <v-btn outlined @click="close(false)" class="mr-5 rounded" height="36px" width="36px" tile icon>
                         <v-icon size="24">mdi-arrow-left</v-icon>
                     </v-btn>
-                    <div :class="$vuetify.breakpoint.smAndDown ? 'text-h4' : 'text-h3'" class="font-weight-bold">
+                    <div :class="$vuetify.breakpoint.smAndDown ? 'text-h4' : 'text-h3'" class="font-weight-bold text-truncate">
                         {{ editedIndex === -1 ? $t('new') : $t('edit') + ' ' + '/' }} {{ $t(name) }}
                     </div>
                     <v-spacer></v-spacer>
@@ -41,7 +41,7 @@
                       :disabled="!valid"
                       @click="save"
                     >
-                      {{ $t('save_change') }}
+                      {{ $t('save') }}
                     </v-btn>
                     <v-btn
                       :loading="loading"
@@ -49,7 +49,6 @@
                       :class="$vuetify.breakpoint.smAndDown ? '' : 'ml-4'"
                       v-if="editedIndex===-1&&showAddMoreButton"
                       elevation="0"
-                      class="mt-2"
                       :disabled="!valid"
                       @click="save(false)"
                     >

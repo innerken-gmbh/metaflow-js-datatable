@@ -152,8 +152,8 @@
                         class="mr-2"
                         v-for="item in filterDisplayChips"
                 >
-            <span class="mr-2">
-                {{ item.name }}
+            <span class="mr-1">
+                {{ $t(item.name) }}:
             </span>
                     {{ $t(item.value) }}
                 </v-chip>

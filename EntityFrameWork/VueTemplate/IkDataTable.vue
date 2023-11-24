@@ -666,17 +666,17 @@
 import GeneralForm from './GeneralForm'
 import ImgTemplate from './Base/ImgTemplate'
 import FormField from './FormField'
-import { IKDataEntity } from '../../index'
+import {IKDataEntity} from '../../index'
 import IKUtils from 'innerken-js-utils'
-import { groupBy } from 'lodash'
+import {groupBy} from 'lodash'
 import DateRangePicker from './Base/DateRangePicker'
 import PriceTableDisplay from './Base/PriceTableDisplay'
-import { getNiceLabel } from '../DateRepository'
+import {getNiceLabel} from '../DateRepository'
 import NoChainScrollContainer from './Base/NoChainScrollContainer.vue'
-import { Ripple } from 'vuetify/lib/directives'
+import {Ripple} from 'vuetify/lib/directives'
 import HorizontalList from './InK/HorizontalList.vue'
 
-import { uniqBy } from 'lodash-es'
+import {intersection, uniqBy} from 'lodash-es'
 
 function key (model) {
   return Object.keys(model).join('/')
@@ -941,7 +941,15 @@ export default {
               t => {
                 const org = i[t]
                 const oth = this.filterItem[t]
-                return org == oth || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(
+                let result = []
+                let stringOrg = []
+                let stringOth = []
+                if (Array.isArray(org)) {
+                  stringOrg = org.map(x => x.toString())
+                  stringOth = oth.map(x => x.toString())
+                  result = intersection(stringOrg,stringOth)
+                }
+                return org === oth || result.length > 0 || (Array.isArray(org) && (org.includes(oth) || (Array.isArray(oth) && oth.every(
                     ot => org.includes(ot)))))
               })
         })

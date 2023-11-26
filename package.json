@@ -1,6 +1,6 @@
 {
   "name": "metaflow-js",
-  "version": "1.10.87",
+  "version": "1.10.88",
   "description": "EntityFramework for Metaflow",
   "main": "index.js",
   "scripts": {
@@ -22,21 +22,14 @@
     "url": "https://github.com/innerken-gmbh/InnerKenUtils/issues"
   },
   "dependencies": {
-    "@sweetalert2/theme-material-ui": "^3.2.0",
-    "axios": "^0.24.0",
     "core-js": "^3.20.2",
-    "dayjs": "^1.10.7",
+    "dayjs": "^1.10.8",
     "flag-icons": "^6.6.6",
     "hillo": "^1.1.23",
-    "innerken-js-utils": "^1.0.11",
-    "js-cookie": "^2.2.1",
-    "jsdoc": "^3.6.4",
-    "np": "^6.2.3",
-    "qs": "^6.10.2",
-    "sweetalert2": "^9.17.2",
+    "innerken-js-utils": "1.0.17",
     "vue": "^2.6.14",
     "vue-i18n": "^8.25.0",
-    "vuetify": "^2.6.2",
+    "vuetify": "^2.6.14",
     "lodash-es": "^4.17.21"
   },
   "homepage": "https://github.com/innerken-gmbh/InnerKenUtils#readme",

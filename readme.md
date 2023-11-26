@@ -1,6 +1,10 @@
 
 # InnerKen数据实体库(DataEntity JS-Vue)
 
+
+# 此库已经弃用，请勿使用
+因为本质上只有aaden-vue-admin在使用本库，所以本库的存在已经成为进一步更新的主要阻碍，因此弃用本库
+
 ## 一个示例实体类
 
     import { hillo, IKDataEntity } from 'innerken-utils'  
